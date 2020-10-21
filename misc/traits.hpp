@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/21 10:10:41 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/10/21 10:39:06 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/10/21 14:18:48 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,27 @@ namespace ft
 	{
 		typedef T type;
 	};
+}
 
+//are_same
+namespace ft
+{
+	template <typename, typename>
+	struct are_same
+	{
+		static const bool result = false;
+	};
+
+	template <typename T>
+	struct are_same<T, T>
+	{
+		static const bool result = true;
+	};
+}
+
+//is_iterator
+namespace ft
+{
 	template <typename T>
 	struct is_iterator
 	{

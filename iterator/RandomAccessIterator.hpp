@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/11 19:52:27 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/10/21 10:42:37 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/10/21 16:45:14 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,17 @@ namespace ft
 	{
 		private:
 			T*	ptr;
-			RandomAccessIterator() {}
 		public:
-			typedef Category iterator_category;
-			RandomAccessIterator(T* ptr) : ptr(ptr) {}
-			~RandomAccessIterator() {}
+			typedef Category					iterator_category;
+			RandomAccessIterator() : ptr(NULL)
+			{
+			}
+			RandomAccessIterator(T* ptr) : ptr(ptr)
+			{
+			}
+			~RandomAccessIterator()
+			{
+			}
 			RandomAccessIterator&	operator = (const RandomAccessIterator& iter)
 			{
 				this->ptr = iter.ptr;
@@ -41,11 +47,33 @@ namespace ft
 				ptr++;
 				return (*this);
 			}
+			RandomAccessIterator	operator+(int val)
+			{
+				RandomAccessIterator tmp = *this;
+				tmp += val;
+				return (tmp);
+			}
+			RandomAccessIterator&	operator+=(int val)
+			{
+				this->ptr += val;
+				return (*this);
+			}
 			RandomAccessIterator	operator++(int)
 			{
 				RandomAccessIterator old = *this;
 				++(*this);
 				return (old);
+			}
+			RandomAccessIterator	operator-(int val)
+			{
+				RandomAccessIterator tmp = *this;
+				tmp -= val;
+				return (tmp);
+			}
+			RandomAccessIterator&	operator-=(int val)
+			{
+				this->ptr -= val;
+				return (*this);
 			}
 			RandomAccessIterator&	operator--()
 			{

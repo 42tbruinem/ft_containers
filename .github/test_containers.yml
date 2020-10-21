@@ -1,0 +1,33 @@
+name: test_containers
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  linux:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: linux run tests
+      run: |
+        make re FT=0
+        ./containers
+        make re FT=1
+        ./containers
+  mac:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: mac run tests
+      run: |
+        make re FT=0
+        ./containers
+        make re FT=1
+        ./containers
