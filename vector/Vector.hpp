@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/06 19:28:46 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/10/11 21:26:30 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/10/21 11:17:57 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,11 @@
 # define VECTOR_HPP
 
 # include <RandomAccessIterator.hpp>
+# include <IteratorFunctions.hpp>
 # include <cstddef>
 # include <stdexcept>
+# include <traits.hpp>
+# include <iostream>
 //# include <memory>
 
 namespace ft
@@ -52,15 +55,16 @@ namespace ft
 				this->data = new T[this->capacity];
 				this->len = 0;
 			}
-			// template <classname InputIterator>
-			// vector(InputIterator first, InputIterator last)
-			// {
-			// 	this->capacity = ft::distance(first, last);
-			// 	this->data = new T[this->capacity];
-			// 	for (size_t i = 0;first != last; first++,i++)
-			// 		this->data[i] = *first;
-			// 	this->len = this->capacity;
-			// }
+			template <typename InputIterator>
+			vector(InputIterator first, InputIterator last,
+				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL)
+			{
+				this->capacity = ft::distance(first, last);
+				this->data = new T[this->capacity];
+				for (size_t i = 0;first != last; first++,i++)
+					this->data[i] = *first;
+				this->len = this->capacity;
+			}
 			vector(size_t size, T val = T())
 			{
 				this->capacity = size + (size % 4);
@@ -93,6 +97,7 @@ namespace ft
 			}
 			void	push_back(T add)
 			{
+//				std::cout << "FT" << std::endl; //<-- used to show that the ft::vector is actually being used
 				if (this->len + 1 >= this->capacity)
 					this->reallocate(this->capacity * 1.5);
 				this->data[this->len++] = add;
