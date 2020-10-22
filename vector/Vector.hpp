@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/06 19:28:46 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/10/21 21:38:45 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/10/22 19:09:29 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define VECTOR_HPP
 
 # include <RandomAccessIterator.hpp>
+# include <GenericFunctions.hpp>
 # include <ReverseRandomAccessIterator.hpp>
 # include <IteratorFunctions.hpp>
 # include <cstddef>
@@ -27,26 +28,12 @@ namespace ft
 	template <typename T, class Alloc = std::allocator<T> >
 	class	vector
 	{
-		private:
-			T *data;
-			size_t	cap;
-			size_t	len;
-			Alloc	alloc;
-			void	reallocate(size_t new_cap)
-			{
-				T* newData;
-
-				newData = new T[new_cap];
-				for (size_t i = 0; i < new_cap && i < this->len; i++)
-					newData[i] = this->data[i];
-				delete [] this->data;
-				this->data = newData;
-				this->cap = new_cap;
-				this->len = (this->len > new_cap) ? new_cap : this->len;
-			}
 		public:
 			typedef RandomAccessIterator<T>			iterator;
 			typedef ReverseRandomAccessIterator<T>	reverse_iterator;
+
+//			CONSTRUCTORS//DESTRUCTOR//OPERATOR=
+
 			vector(const Alloc& alloc = Alloc()) : alloc(alloc)
 			{
 				this->cap = 4;
@@ -95,6 +82,115 @@ namespace ft
 				this->cap = 0;
 				this->len = 0;
 			}
+
+//			ITERATORS
+
+			iterator	begin() const
+			{
+				return (iterator(this->data));
+			}
+			iterator	end() const
+			{
+				return (iterator(this->data + this->len));
+			}
+			reverse_iterator	rbegin() const
+			{
+				return (reverse_iterator(this->data + this->len - 1));
+			}
+			reverse_iterator	rend() const
+			{
+				return (reverse_iterator(this->data - 1));
+			}
+
+//			CAPACITY
+
+			size_t size() const
+			{
+				return (this->len);
+			}
+			size_t max_size() const
+			{
+				return (alloc.max_size());
+			}
+			void	resize(size_t n, T val = T())
+			{
+				this->reallocate(n);
+				for (;this->len < n; this->len++)
+					this->data[this->len] = val;
+			}
+			size_t capacity() const
+			{
+				return (this->cap);
+			}
+			bool	empty() const
+			{
+				return (!this->len);
+			}
+			void	reserve(size_t n)
+			{
+				if (n > this->cap)
+					this->reallocate(n);
+			}
+
+//			ELEMENT ACCESS
+
+			T& operator [] (size_t index)
+			{
+				return (this->data[index]);
+			}
+			const T& operator [] (size_t index) const
+			{
+//				std::cout << "CONST" << std::endl; //<--check if the const overload is actually being used
+				return (this->data[index]);
+			}
+			T&	at(size_t n)
+			{
+				if (n >= this->len)
+					throw std::out_of_range("requested index is out of range");
+				return (this->data[n]);
+			}
+			const T&	at(size_t n) const
+			{
+				if (n >= this->len)
+					throw std::out_of_range("requested index is out of range");
+				return (this->data[n]);
+			}
+			T&	front()
+			{
+				return (this->data[0]);
+			}
+			const T&	front() const
+			{
+				return (this->data[0]);
+			}
+			T&	back()
+			{
+				return (this->data[this->size() - 1]);
+			}
+			const T&	back() const
+			{
+				return (this->data[this->size() - 1]);
+			}
+
+//			MODIFIERS
+
+			template <typename InputIterator>
+			void	assign(InputIterator first, InputIterator last,
+				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL)
+			{
+				size_t	dist = ft::distance(first, last);
+				this->reallocate(dist, 0);
+				for (size_t i = 0; first != last; first++, i++)
+					this->data[i] = *first;
+				this->len = dist;
+			}
+			void	assign(size_t n, const T& val)
+			{
+				this->reallocate(n);
+				for (size_t i = 0; i < n; i++)
+					this->data[i] = val;
+				this->len = n;
+			}
 			void	push_back(T add)
 			{
 //				std::cout << "FT" << std::endl; //<-- used to show that the ft::vector is actually being used
@@ -113,87 +209,153 @@ namespace ft
 				if (this->len)
 					this->len--;
 			}
-			void	resize(size_t n, T val = T())
+			iterator	insert(iterator position, const T& val)
 			{
-				this->reallocate(n);
-				for (;this->len < n; this->len++)
-					this->data[this->len] = val;
+				T& tmp = *position;
+				size_t pos = (&tmp - this->data);
+//				std::cout << "POS: " << pos << std::endl;
+				reallocate(this->len + 1, pos, 1);
+				this->data[pos] = val;
+				this->len++;
+				return (iterator(this->data + pos));
 			}
-			void	reserve(size_t n)
+			void	insert(iterator position, size_t n, const T& val)
 			{
-				if (n > this->cap)
-					this->reallocate(n);
+				T& tmp = *position;
+				size_t pos = (&tmp - this->data);
+				reallocate(this->len + n, pos, n);
+				for (size_t i = pos; i < pos + n; i++)
+					this->data[i] = val;
+				this->len += n;
 			}
-			T& operator [] (size_t index)
+			template <typename InputIterator>
+			void	insert(iterator position, InputIterator first, InputIterator last,
+				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL)
 			{
-				return (this->data[index]);
+				size_t n = ft::distance(first, last);
+
+				T& tmp = *position;
+				size_t pos = (&tmp - this->data);
+				reallocate(this->len + n, pos, n);
+				for (;first != last; first++, pos++)
+					this->data[pos] = *first;
+				this->len += n;
 			}
-			const T& operator [] (size_t index) const
+			iterator	erase(iterator position)
 			{
-//				std::cout << "CONST" << std::endl; //<--check if the const overload is actually being used
-				return (this->data[index]);
+				size_t pos = ft::distance(this->begin(), position);
+				if (pos > this->len)
+					throw (std::out_of_range("supplied iterator was out of range"));
+				reallocate(this->len - 1, pos, 1, true);
+				return (begin() + pos);
 			}
-			T&	at(size_t n)
+			iterator	erase(iterator first, iterator last)
 			{
-				if (index >= this->len)
-					throw std::out_of_range("requested index is out of range");
-				return (this->data[index]);
+				size_t	pos = ft::distance(begin(), first);
+				size_t	dist = ft::distance(first, last);
+				if (dist > this->len)
+					dist = this->len;
+				size_t	new_size = this->len - dist;
+				reallocate(new_size, pos, dist, true);
+				return (begin() + pos);
 			}
-			const T&	at(size_t n) const
+			void	swap(vector<T>& x)
 			{
-				if (index >= this->len)
-					throw std::out_of_range("requested index is out of range");
-				return (this->data[index]);
+				ft::swap(this->data, x.data);
+				ft::swap(this->len, x.len);
+				ft::swap(this->cap, x.cap);
 			}
-			T&	front()
+			void	clear()
 			{
-				return (this->data[i]);
+				this->len = 0;
 			}
-			const T&	front() const
+
+//			OPERATORS
+
+			bool	operator == (vector<T>& other)
 			{
-				return (this->data[i]);
+				if (this->len != other.len)
+					return (false);
+				typename vector<T>::iterator this_it = this->begin();
+				typename vector<T>::iterator other_it = other.begin();
+				for (; this_it != this->end(); this_it++, other_it++)
+					if (*this_it != *other_it)
+						return (false);
+				return (true);
 			}
-			T&	back()
+			bool	operator != (vector<T>& other)
 			{
-				return (this->data[this->size() - 1]);
+				return !(*this == other);
 			}
-			const T&	back() const
+			bool	operator < (vector<T>& other)
 			{
-				return (this->data[this->size() - 1]);
+				bool	same_length = (this->len == other.len);
+
+				typename vector<T>::iterator this_it = this->begin();
+				typename vector<T>::iterator other_it = other.begin();
+				for (; this_it != this->end() && other_it != other.end(); this_it++, other_it++)
+				{
+					if (*other_it < *this_it)
+						return (false);
+					else if (*this_it < *other_it)
+						return (true);
+				}
+				return (same_length);
 			}
-			iterator	begin()
+			bool	operator > (vector<T>& other)
 			{
-				return (iterator(this->data));
+				return (other < *this);
 			}
-			iterator	end()
+			bool	operator >= (vector<T>& other)
 			{
-				return (iterator(this->data + this->len));
+				return !(*this < other);
 			}
-			reverse_iterator	rbegin()
+			bool	operator <= (vector<T>& other)
 			{
-				return (reverse_iterator(this->data + this->len - 1));
+				return !(other < *this);
 			}
-			reverse_iterator	rend()
+
+		private:
+			T *data;
+			size_t	cap;
+			size_t	len;
+			Alloc	alloc;
+
+//reallocate(this->len + 1, pos, 1);
+			void	reallocate(size_t new_cap, size_t pos = std::string::npos, size_t gap = 0, bool erase = false)
 			{
-				return (reverse_iterator(this->data - 1));
-			}
-			size_t size() const
-			{
-				return (this->len);
-			}
-			size_t max_size() const
-			{
-				return (alloc.max_size());
-			}
-			bool	empty() const
-			{
-				return (!this->len);
-			}
-			size_t capacity() const
-			{
-				return (this->cap);
+				T* newData;
+
+				if (pos > this->len)
+					pos = this->len;
+				newData = new T[new_cap];
+				//copy everything preceding pos
+				size_t i = 0;
+				for (; i < new_cap && i < pos; i++)
+					newData[i] = this->data[i];
+				size_t j = i;
+				//skip over the gap
+				if (!erase)
+					for (; j < new_cap && j < i + gap && j < this->len; j++) {}
+				else
+					for (; i < this->len && i < j + gap; i++) {}
+				//copy over the remainder
+				for (; j < new_cap && i < this->len; i++, j++)
+					newData[j] = this->data[i];
+				delete [] this->data;
+				this->data = newData;
+				this->cap = new_cap;
+				if (this->len > new_cap)
+					this->len = new_cap;
 			}
 	};
+
+	template <class T>
+	void	swap(vector<T>& x, vector<T>& y)
+	{
+		return (x.swap(y));
+	}
+
 }
 
 #endif

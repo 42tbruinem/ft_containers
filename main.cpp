@@ -6,22 +6,52 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/10 19:16:57 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/10/21 21:33:20 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/10/22 19:17:39 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//	TODO:
+//
+//	operator overloads
+//
+////////////////////////////////////////////////////////////////////////////////
 
 #include <iostream>
 #include <IteratorFunctions.hpp>
 
 #if FT == 1
  #include "Vector.hpp"
- #define vector ft::vector
+  using namespace ft;
+// #define vector ft::vector
+// #define swap	ft::swap
 #else
  #include <vector>
- #define vector std::vector
+  using namespace std;
+// #define vector std::vector
+// #define swap	std::swap
 #endif
 
 //[] operator element access print
+
+template <typename Container>
+void	comparison_operator_container(Container& a, Container& b, std::string a_title, std::string b_title)
+{
+	std::cout << a_title << " operator == " << b_title << " = " << ((a == b) ? "True" : "False") << std::endl;
+	std::cout << a_title << " operator != " << b_title << " = " << ((a != b) ? "True" : "False") << std::endl;
+	std::cout << a_title << " operator > " << b_title << " = " << ((a > b) ? "True" : "False") << std::endl;
+	std::cout << a_title << " operator < " << b_title << " = " << ((a < b) ? "True" : "False") << std::endl;
+	std::cout << a_title << " operator >= " << b_title << " = " << ((a >= b) ? "True" : "False") << std::endl;
+	std::cout << a_title << " operator <= " << b_title << " = " << ((a <= b) ? "True" : "False") << std::endl;
+	std::cout << "---" << std::endl;
+	std::cout << b_title << " operator == " << a_title << " = " << ((b == a) ? "True" : "False") << std::endl;
+	std::cout << b_title << " operator != " << a_title << " = " << ((b != a) ? "True" : "False") << std::endl;
+	std::cout << b_title << " operator > " << a_title << " = " << ((b > a) ? "True" : "False") << std::endl;
+	std::cout << b_title << " operator < " << a_title << " = " << ((b < a) ? "True" : "False") << std::endl;
+	std::cout << b_title << " operator >= " << a_title << " = " << ((b >= a) ? "True" : "False") << std::endl;
+	std::cout << b_title << " operator <= " << a_title << " = " << ((b <= a) ? "True" : "False") << std::endl;
+}
 
 template <typename Container>
 void	const_operator_print_container(const Container& c, std::string title, std::string delim = ",")
@@ -107,6 +137,10 @@ int	main(void)
 
 	std::cout << "THE VERSION BEING RAN IS: " << versions[FT] << std::endl;
 
+	std::cout << "******************************************************************" << std::endl;
+	std::cout << "                            VECTOR                                " << std::endl;
+	std::cout << "******************************************************************" << std::endl;
+
 	//Constructors
 	std::cout << "\n----CONSTRUCTORS----\n" << std::endl;
 
@@ -124,6 +158,51 @@ int	main(void)
 
 	vec_default.push_back(5);
 	vec_default.pop_back();
+//	capacity_information<vector<int> >(vec_fill, "vec_fill");
+	iter_print_container<vector<int> >(vec_fill, "vec_fill");
+	vec_fill.assign(5, 10);
+//	capacity_information<vector<int> >(vec_fill, "vec_fill");
+	iter_print_container<vector<int> >(vec_fill, "vec_fill");
+	vec_fill.assign(vec_copy.begin(), vec_copy.end());
+//	capacity_information<vector<int> >(vec_fill, "vec_fill");
+	iter_print_container<vector<int> >(vec_fill, "vec_fill");
+	vec_fill.insert(vec_fill.begin(), 99);
+	iter_print_container<vector<int> >(vec_fill, "vec_fill");
+	vec_fill.insert(vec_fill.begin() + 2, 1);
+	iter_print_container<vector<int> >(vec_fill, "vec_fill");
+	vec_fill.insert(vec_fill.end(), -10);
+	iter_print_container<vector<int> >(vec_fill, "vec_fill");
+	vec_fill.insert(vec_fill.end(), 5, 100);
+	iter_print_container<vector<int> >(vec_fill, "vec_fill");
+	vec_fill.insert(vec_fill.begin(), 5, 0);
+	iter_print_container<vector<int> >(vec_fill, "vec_fill");
+	vector<int> vec_for_insert(3, -20);
+	vec_fill.insert(vec_fill.begin(), vec_for_insert.begin(), vec_for_insert.end());
+	iter_print_container<vector<int> >(vec_fill, "vec_fill");
+	vec_fill.insert(vec_fill.begin() + 5, vec_for_insert.begin(), vec_for_insert.end());
+	iter_print_container<vector<int> >(vec_fill, "vec_fill");
+	vec_fill.insert(vec_fill.end(), vec_for_insert.begin(), vec_for_insert.end());
+	iter_print_container<vector<int> >(vec_fill, "vec_fill");
+
+	vector<int>::iterator vec_copy_begin = vec_copy.begin();
+	vector<int>::iterator vec_fill_begin = vec_fill.begin();
+	iter_print_container<vector<int> >(vec_fill, "vec_fill");
+	iter_print_container<vector<int> >(vec_copy, "vec_copy");
+	vec_fill.swap(vec_copy);
+	std::cout << "SWAPPED 'vec_copy' AND 'vec_fill'" << std::endl;
+	std::cout << "vec_copy begin: " << *vec_copy_begin << std::endl;
+	std::cout << "vec_fill begin: " << *vec_fill_begin << std::endl;
+	iter_print_container<vector<int> >(vec_copy, "vec_copy");
+	iter_print_container<vector<int> >(vec_copy, "vec_copy");
+	vec_copy.erase(vec_copy.begin());
+	iter_print_container<vector<int> >(vec_copy, "vec_copy");
+	vec_copy.erase(vec_copy.end() - 5, vec_copy.end());
+	iter_print_container<vector<int> >(vec_copy, "vec_copy");
+	vector<int> vec_fill_big(1000000, 10);
+	capacity_information<vector<int> >(vec_fill_big, "vec_fill_big");
+	vec_fill_big.clear();
+	capacity_information<vector<int> >(vec_fill_big, "vec_fill_big");
+	vec_fill_big.resize(1000000, 10);
 
 	//Capacity
 	std::cout << "\n----CAPACITY----\n" << std::endl;
@@ -145,7 +224,6 @@ int	main(void)
 
 	std::cout << std::endl;
 
-	vector<int> vec_fill_big(1000000, 10);
 	capacity_information<vector<int> >(vec_fill_big, "vec_fill_big");
 	vec_fill_big.reserve(5000000);
 	capacity_information<vector<int> >(vec_fill_big, "vec_fill_big");
@@ -156,7 +234,6 @@ int	main(void)
 
 	//Iterators
 	std::cout << "\n----ITERATORS----\n" << std::endl;
-
 
 	for (vector<int>::iterator it = vec_range.begin(); it != vec_range.end(); it++)
 		*it = ft::distance(vec_range.begin(), it);
@@ -201,9 +278,22 @@ int	main(void)
 
 	//Element Access
 	vector<int> const vec_const(5, 10);
-	std::cout << "\n----OPERATOR OVERLOAD ELEMENT ACCESS----\n" << std::endl;
+	std::cout << "\n----ELEMENT ACCESS----\n" << std::endl;
 
 	operator_print_container<vector<int> >(vec_default, "vec_default");
 	const_operator_print_container<vector<int> >(vec_const, "vec_const");
+
+	iter_print_container<vector<int> >(vec_copy, "vec_copy");
+	iter_print_container<vector<int> >(vec_default, "vec_default");
+	std::cout << "\n----SWAP----\n" << std::endl;
+
+	swap(vec_copy, vec_default);
+	iter_print_container<vector<int> >(vec_copy, "vec_copy");
+	iter_print_container<vector<int> >(vec_default, "vec_default");
+
+	std::cout << "\n----OPERATOR OVERLOAD----\n" << std::endl;
+
+	comparison_operator_container<vector<int> >(vec_copy, vec_default, "vec_copy", "vec_default");
+
 	return (0);
 }
