@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/06 19:28:46 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/10/22 19:09:29 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/11/23 12:50:16 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,7 +267,7 @@ namespace ft
 			}
 			void	clear()
 			{
-				this->len = 0;
+				reallocate(0);
 			}
 
 //			OPERATORS

@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/10 19:16:57 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/10/22 19:17:39 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/11/23 13:17:29 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 //
 //	TODO:
 //
-//	operator overloads
+//	const iterator
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -24,13 +24,9 @@
 #if FT == 1
  #include "Vector.hpp"
   using namespace ft;
-// #define vector ft::vector
-// #define swap	ft::swap
 #else
  #include <vector>
   using namespace std;
-// #define vector std::vector
-// #define swap	std::swap
 #endif
 
 //[] operator element access print
@@ -92,6 +88,23 @@ void	iter_print_container(Container c, std::string title, std::string delim = ",
 {
 	std::cout << "Printing " << title << " of size " << c.size() << " using 'iterator'" << std::endl;
 	typename Container::iterator it = c.begin();
+
+	for (;it != c.end(); it++)
+	{
+		std::cout << *it;
+		if (it + 1 < c.end())
+			std::cout << delim;
+		else
+			std::cout << "\n";
+	}
+	std::cout << std::endl;
+}
+
+template <typename Container>
+void	const_iter_print_container(Container c, std::string title, std::string delim = ",")
+{
+	std::cout << "Printing " << title << " of size " << c.size() << " using 'const_iterator'" << std::endl;
+	const typename Container::const_iterator it = c.begin();
 
 	for (;it != c.end(); it++)
 	{
@@ -285,6 +298,8 @@ int	main(void)
 
 	iter_print_container<vector<int> >(vec_copy, "vec_copy");
 	iter_print_container<vector<int> >(vec_default, "vec_default");
+	const_iter_print_container<vector<int> >(vec_copy, "vec_copy");
+	const_iter_print_container<vector<int> >(vec_default, "vec_default");
 	std::cout << "\n----SWAP----\n" << std::endl;
 
 	swap(vec_copy, vec_default);
