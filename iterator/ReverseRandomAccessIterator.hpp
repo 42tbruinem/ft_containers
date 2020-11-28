@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/11 19:52:27 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/10/21 17:19:33 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/11/26 15:06:58 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,23 @@
 # define REVERSE_RANDOM_ACCESS_ITERATOR_HPP
 
 # include <traits.hpp>
+# include "RandomAccessIterator.hpp"
 
 namespace ft
 {
-	template <class T, class Category = ft::random_access_iterator_tag>
-	class	ReverseRandomAccessIterator
+	template <class PointerType, class ReferenceType, class Category = ft::random_access_iterator_tag>
+	class	ReverseRandomAccessIterator : public RandomAccessIterator<PointerType, ReferenceType>
 	{
-		private:
-			T*	ptr;
 		public:
-			typedef Category								iterator_category;
-			ReverseRandomAccessIterator() : ptr(NULL)
+			typedef RandomAccessIterator<PointerType, ReferenceType>	iterator;
+			typedef Category											iterator_category;
+			ReverseRandomAccessIterator() : iterator()
 			{
 			}
-			ReverseRandomAccessIterator(T* ptr) : ptr(ptr)
+			ReverseRandomAccessIterator(PointerType ptr) : iterator(ptr)
 			{
 			}
-			~ReverseRandomAccessIterator()
+			ReverseRandomAccessIterator(const ReverseRandomAccessIterator& iter) : iterator(iter)
 			{
 			}
 			ReverseRandomAccessIterator&	operator = (const ReverseRandomAccessIterator& iter)
@@ -38,87 +38,83 @@ namespace ft
 				this->ptr = iter.ptr;
 				return (*this);
 			}
-			ReverseRandomAccessIterator(const ReverseRandomAccessIterator& iter)
+			ReverseRandomAccessIterator&	operator ++ ()
 			{
-				*this = iter;
-			}
-			ReverseRandomAccessIterator&	operator++()
-			{
-				ptr--;
+				this->ptr--;
 				return (*this);
 			}
-			ReverseRandomAccessIterator	operator+(int val)
+			ReverseRandomAccessIterator		operator + (int val) const
 			{
 				ReverseRandomAccessIterator tmp = *this;
 				tmp += val;
 				return (tmp);
 			}
-			ReverseRandomAccessIterator	operator+=(int val)
+			ReverseRandomAccessIterator		operator += (int val)
 			{
 				this->ptr -= val;
 				return (*this);
 			}
-			ReverseRandomAccessIterator	operator++(int)
+			ReverseRandomAccessIterator		operator ++ (int)
 			{
 				ReverseRandomAccessIterator old = *this;
 				++(*this);
 				return (old);
 			}
-			ReverseRandomAccessIterator	operator-(int val)
+			ReverseRandomAccessIterator		operator - (int val) const
 			{
 				ReverseRandomAccessIterator tmp = *this;
 				tmp -= val;
 				return (tmp);
 			}
-			ReverseRandomAccessIterator	operator-=(int val)
+			ReverseRandomAccessIterator		operator -= (int val)
 			{
 				this->ptr += val;
 				return (*this);
 			}
-			ReverseRandomAccessIterator&	operator--()
+			ReverseRandomAccessIterator&	operator -- ()
 			{
-				ptr++;
+				this->ptr++;
 				return (*this);
 			}
-			ReverseRandomAccessIterator	operator--(int)
+			ReverseRandomAccessIterator		operator -- (int)
 			{
 				ReverseRandomAccessIterator old = *this;
 				--(*this);
 				return (old);
 			}
-			T&	operator[](int index)
+			ReferenceType					operator [] (int index) const
 			{
 				return *(this->ptr - index);
 			}
-			T*	operator->()
+			PointerType						operator -> () const
 			{
 				return (this->ptr);
 			}
-			T&	operator*()
+			ReferenceType					operator * () const
 			{
 				return *(this->ptr);
 			}
-			bool	operator==(const ReverseRandomAccessIterator& iter)
+			bool							operator ==	(const ReverseRandomAccessIterator& iter) const
 			{
 				return (this->ptr == iter.ptr);
 			}
-			bool	operator!=(const ReverseRandomAccessIterator& iter)
+			bool							operator != (const ReverseRandomAccessIterator& iter) const
 			{
 				return (this->ptr != iter.ptr);
 			}
-			bool	operator<(const ReverseRandomAccessIterator& iter)
+			bool							operator < (const ReverseRandomAccessIterator& iter) const
 			{
 				return (iter.ptr < this->ptr);
 			}
-			bool	operator>(const ReverseRandomAccessIterator& iter)
+			bool							operator > (const ReverseRandomAccessIterator& iter) const
 			{
 				return (iter.ptr > this->ptr);
 			}
-			bool	operator>=(const ReverseRandomAccessIterator& iter)
+			bool							operator >=	(const ReverseRandomAccessIterator& iter) const
 			{
 				return (iter.ptr >= this->ptr);
 			}
-			bool	operator<=(const ReverseRandomAccessIterator& iter)
+			bool							operator <=	(const ReverseRandomAccessIterator& iter) const
 			{
 				return (iter.ptr <= this->ptr);
 			}

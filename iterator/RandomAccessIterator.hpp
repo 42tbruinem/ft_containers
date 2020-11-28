@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/11 19:52:27 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/10/21 16:45:14 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/11/26 15:04:52 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,108 +17,108 @@
 
 namespace ft
 {
-	template <class T, class Category = ft::random_access_iterator_tag>
+	template <class PointerType, class ReferenceType, class Category = ft::random_access_iterator_tag>
 	class	RandomAccessIterator
 	{
-		private:
-			T*	ptr;
+		protected:
+			PointerType	ptr;
 		public:
 			typedef Category					iterator_category;
 			RandomAccessIterator() : ptr(NULL)
 			{
 			}
-			RandomAccessIterator(T* ptr) : ptr(ptr)
+			RandomAccessIterator(PointerType ptr) : ptr(ptr)
 			{
 			}
 			~RandomAccessIterator()
 			{
+			}
+			RandomAccessIterator(const RandomAccessIterator& iter)
+			{
+				*this = iter;
 			}
 			RandomAccessIterator&	operator = (const RandomAccessIterator& iter)
 			{
 				this->ptr = iter.ptr;
 				return (*this);
 			}
-			RandomAccessIterator(const RandomAccessIterator& iter)
-			{
-				*this = iter;
-			}
-			RandomAccessIterator&	operator++()
+			RandomAccessIterator&	operator ++ ()
 			{
 				ptr++;
 				return (*this);
 			}
-			RandomAccessIterator	operator+(int val)
+			RandomAccessIterator	operator + (int val) const
 			{
 				RandomAccessIterator tmp = *this;
 				tmp += val;
 				return (tmp);
 			}
-			RandomAccessIterator&	operator+=(int val)
+			RandomAccessIterator&	operator += (int val)
 			{
 				this->ptr += val;
 				return (*this);
 			}
-			RandomAccessIterator	operator++(int)
+			RandomAccessIterator	operator ++ (int)
 			{
 				RandomAccessIterator old = *this;
 				++(*this);
 				return (old);
 			}
-			RandomAccessIterator	operator-(int val)
+			RandomAccessIterator	operator - (int val) const
 			{
 				RandomAccessIterator tmp = *this;
 				tmp -= val;
 				return (tmp);
 			}
-			RandomAccessIterator&	operator-=(int val)
+			RandomAccessIterator&	operator -= (int val)
 			{
 				this->ptr -= val;
 				return (*this);
 			}
-			RandomAccessIterator&	operator--()
+			RandomAccessIterator&	operator -- ()
 			{
 				ptr--;
 				return (*this);
 			}
-			RandomAccessIterator	operator--(int)
+			RandomAccessIterator	operator -- (int)
 			{
 				RandomAccessIterator old = *this;
 				--(*this);
 				return (old);
 			}
-			T&	operator[](int index)
+			ReferenceType			operator [] (int index) const
 			{
 				return *(this->ptr + index);
 			}
-			T*	operator->()
+			PointerType				operator -> () const
 			{
 				return (this->ptr);
 			}
-			T&	operator*()
+			ReferenceType			operator*() const
 			{
 				return *(this->ptr);
 			}
-			bool	operator==(const RandomAccessIterator& iter)
+			bool					operator == (const RandomAccessIterator& iter) const
 			{
 				return (this->ptr == iter.ptr);
 			}
-			bool	operator!=(const RandomAccessIterator& iter)
+			bool					operator != (const RandomAccessIterator& iter) const
 			{
 				return (!(*this == iter));
 			}
-			bool	operator<(const RandomAccessIterator& iter)
+			bool					operator < (const RandomAccessIterator& iter) const
 			{
 				return (this->ptr < iter.ptr);
 			}
-			bool	operator>(const RandomAccessIterator& iter)
+			bool					operator > (const RandomAccessIterator& iter) const
 			{
 				return (this->ptr > iter.ptr);
 			}
-			bool	operator>=(const RandomAccessIterator& iter)
+			bool					operator >= (const RandomAccessIterator& iter) const
 			{
 				return (this->ptr >= iter.ptr);
 			}
-			bool	operator<=(const RandomAccessIterator& iter)
+			bool					operator <= (const RandomAccessIterator& iter) const
 			{
 				return (this->ptr <= iter.ptr);
 			}

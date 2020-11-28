@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/06 19:28:46 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/11/23 12:50:16 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/11/28 13:40:13 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 # define VECTOR_HPP
 
 # include <RandomAccessIterator.hpp>
-# include <GenericFunctions.hpp>
 # include <ReverseRandomAccessIterator.hpp>
+# include <GenericFunctions.hpp>
 # include <IteratorFunctions.hpp>
 # include <cstddef>
 # include <stdexcept>
 # include <traits.hpp>
-# include <iostream>
+//# include <iostream>
 # include <memory>
 
 namespace ft
@@ -29,8 +29,10 @@ namespace ft
 	class	vector
 	{
 		public:
-			typedef RandomAccessIterator<T>			iterator;
-			typedef ReverseRandomAccessIterator<T>	reverse_iterator;
+			typedef RandomAccessIterator<T*, T&>					iterator;
+			typedef ReverseRandomAccessIterator<T*, T&>				reverse_iterator;
+			typedef RandomAccessIterator<const T*, const T&>		const_iterator;
+			typedef ReverseRandomAccessIterator<const T*, const T&>	const_reverse_iterator;
 
 //			CONSTRUCTORS//DESTRUCTOR//OPERATOR=
 
@@ -85,21 +87,37 @@ namespace ft
 
 //			ITERATORS
 
-			iterator	begin() const
+			iterator	begin()
 			{
 				return (iterator(this->data));
 			}
-			iterator	end() const
+			iterator	end()
 			{
 				return (iterator(this->data + this->len));
 			}
-			reverse_iterator	rbegin() const
+			const_iterator	begin() const
+			{
+				return (const_iterator(this->data));
+			}
+			const_iterator	end() const
+			{
+				return (const_iterator(this->data + this->len));
+			}
+			reverse_iterator	rbegin()
 			{
 				return (reverse_iterator(this->data + this->len - 1));
 			}
-			reverse_iterator	rend() const
+			reverse_iterator	rend()
 			{
 				return (reverse_iterator(this->data - 1));
+			}
+			const_reverse_iterator	rbegin() const
+			{
+				return (const_reverse_iterator(this->data + this->len - 1));
+			}
+			const_reverse_iterator	rend() const
+			{
+				return (const_reverse_iterator(this->data - 1));
 			}
 
 //			CAPACITY
