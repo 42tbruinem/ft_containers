@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 13:35:05 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/11/28 13:50:06 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/11/28 14:38:47 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	subject_title(std::string name)
 }
 
 template <typename Container>
-void	comparison_operator_container(Container& a, Container& b, std::string a_title, std::string b_title)
+void	comparison_operator_container(Container a, Container b, std::string a_title, std::string b_title)
 {
 	std::cout << a_title << " operator == " << b_title << " = " << ((a == b) ? "True" : "False") << std::endl;
 	std::cout << a_title << " operator != " << b_title << " = " << ((a != b) ? "True" : "False") << std::endl;
@@ -113,13 +113,13 @@ void	iter_print_container(Container c, std::string title, std::string delim = ",
 	std::cout << "Printing " << title << " of size " << c.size() << " using 'iterator'" << std::endl;
 	typename Container::iterator it = c.begin();
 
-	for (;it != c.end(); it++)
+	for (;it != c.end();)
 	{
 		std::cout << *it;
-		if (it + 1 < c.end())
-			std::cout << delim;
-		else
+		if (++it == c.end())
 			std::cout << "\n";
+		else
+			std::cout << delim;
 	}
 	std::cout << std::endl;
 }
@@ -133,10 +133,10 @@ void	const_iter_print_container(const Container c, std::string title, std::strin
 	for (;it != c.end(); it++)
 	{
 		std::cout << *it;
-		if (it + 1 < c.end())
-			std::cout << delim;
-		else
+		if (++it == c.end())
 			std::cout << "\n";
+		else
+			std::cout << delim;
 	}
 	std::cout << std::endl;
 }
@@ -150,10 +150,10 @@ void	reverse_iter_print_container(Container c, std::string title, std::string de
 	for (;it != c.rend(); it++)
 	{
 		std::cout << *it;
-		if (it + 1 < c.rend())
-			std::cout << delim;
-		else
+		if (++it == c.rend())
 			std::cout << "\n";
+		else
+			std::cout << delim;
 	}
 	std::cout << std::endl;
 }
@@ -167,10 +167,10 @@ void	const_reverse_iter_print_container(const Container c, std::string title, st
 	for (;it != c.rend(); it++)
 	{
 		std::cout << *it;
-		if (it + 1 < c.rend())
-			std::cout << delim;
-		else
+		if (++it == c.rend())
 			std::cout << "\n";
+		else
+			std::cout << delim;
 	}
 	std::cout << std::endl;
 }

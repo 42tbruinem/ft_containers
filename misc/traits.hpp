@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/21 10:10:41 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/10/21 14:18:48 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/11/28 15:45:04 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,12 @@ namespace ft
 
 	template <>
 	struct is_iterator<ft::random_access_iterator_tag>
+	{
+		static const bool result = true;
+	};
+
+	template <>
+	struct is_iterator<ft::bidirectional_iterator_tag>
 	{
 		static const bool result = true;
 	};

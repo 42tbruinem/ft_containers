@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/26 15:50:30 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/11/28 13:31:50 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/11/28 15:45:34 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 # include <limits>
 # include <traits.hpp>
 # include "IteratorFunctions.hpp"
+# include <BidirectionalIterator.hpp>
+# include <ReverseBidirectionalIterator.hpp>
+# include <GenericFunctions.hpp>
 # include <list>
 
 namespace ft
@@ -24,26 +27,30 @@ namespace ft
 	template <class T, class Alloc = std::allocator<T> >
 	class	list
 	{
-		template <class T>
 		class node
 		{
 			public:
+				T		element;
 				node	*prev;
 				node	*next;
-				T		element;
-				node(T element, node *prev = NULL, node *next = NULL) : element(element), prev(prev), next(next) {}
+				node(const T& element, node *prev = NULL, node *next = NULL) : element(element), prev(prev), next(next) {}
+//				bool operator == (const node& other) { return (prev == other.prev && next == other.next); }
+//				bool operator != (const node& other) { return !(*this == other); }
 		};
 		public:
-			typedef T*										pointer;
-			typedef T&										reference;
-			typedef const T*								const_pointer;
-			typedef const T& 								const_reference;
-			typedef BidirectionalIterator<node, T*, T&>		iterator;
+			typedef T*														pointer;
+			typedef T&														reference;
+			typedef const T*												const_pointer;
+			typedef const T& 												const_reference;
+			typedef BidirectionalIterator<node, T*, T&>						iterator;
+			typedef BidirectionalIterator<node, const T*, const T&>			const_iterator;
+			typedef ReverseBidirectionalIterator<node, T&, const T&>		reverse_iterator;
+			typedef ReverseBidirectionalIterator<node, const T*, const T&>	const_reverse_iterator;
 
 			//CONSTRUCTORS / DESTRUCTOR
 
-			list(const Alloc& alloc = Alloc()) : len(0), begin(NULL), end(NULL), alloc(alloc) {}
-			list(size_t n, const T& val = T(), const Alloc& alloc = Alloc())
+			list(const Alloc& alloc = Alloc()) : len(0), head(NULL), tail(NULL), alloc(alloc) {}
+			list(size_t n, const T& val = T(), const Alloc& alloc = Alloc()) : len(0), head(NULL), tail(NULL), alloc(alloc)
 			{
 				for (size_t i = 0; i < n; i++)
 					newNode(val, i);
@@ -51,16 +58,14 @@ namespace ft
 			template<class InputIterator>
 			list(InputIterator first, InputIterator last,
 				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL,
-				const Alloc& alloc = Alloc()) : alloc(alloc)
+				const Alloc& alloc = Alloc()) : len(0), head(NULL), tail(NULL), alloc(alloc)
 			{
-				size_t len = ft::distance(first, last);
-
 				for (; first != last; first++)
 					newNode(*first);
 			}
-			list(const list& other)
+			list(const list& other) : len(0), head(NULL), tail(NULL), alloc(other.alloc)
 			{
-				for (list<T>::iterator it = other.begin(); it != other.end(); it++)
+				for (typename list<T>::const_iterator it = other.begin(); it != other.end(); it++)
 					newNode(*it);
 			}
 			~list()
@@ -70,7 +75,7 @@ namespace ft
 			list& operator = (const list& other)
 			{
 				clear();
-				for (list<T>::iterator it = other.begin(); it != other.end(); it++)
+				for (typename list<T>::const_iterator it = other.begin(); it != other.end(); it++)
 					newNode(*it);
 			}
 
@@ -78,19 +83,35 @@ namespace ft
 
 			iterator begin()
 			{
-				return (iterator(this->begin));
+				return (iterator(this->head));
 			}
 			const_iterator begin() const
 			{
-				return (const_iterator(this->begin));
+				return (const_iterator(this->head));
 			}
 			iterator end()
 			{
-				return (iterator(this->end));
+				return (iterator(NULL));
 			}
 			const_iterator end() const
 			{
-				return (const_iterator(this->end));
+				return (const_iterator(NULL));
+			}
+			reverse_iterator rbegin()
+			{
+				return (reverse_iterator(this->tail));
+			}
+			const_reverse_iterator rbegin() const
+			{
+				return (const_reverse_iterator(this->tail));
+			}
+			reverse_iterator rend()
+			{
+				return (reverse_iterator(NULL));
+			}
+			const_reverse_iterator rend() const
+			{
+				return (const_reverse_iterator(NULL));
 			}
 
 			//CAPACITY
@@ -112,24 +133,24 @@ namespace ft
 
 			T& front()
 			{
-				return (this->begin->element);
+				return (this->head->element);
 			}
 			const T& front() const
 			{
-				return (this->begin->element);
+				return (this->head->element);
 			}
 			T& back()
 			{
-				return (this->end->element);
+				return (this->tail->element);
 			}
 			const T& back() const
 			{
-				return (this->end->element);
+				return (this->tail->element);
 			}
 
 			//MODIFIERS
 
-			template class <InputIterator>
+			template <class InputIterator>
 			void assign(InputIterator first, InputIterator last,
 				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL)
 			{
@@ -161,13 +182,13 @@ namespace ft
 			}
 			iterator insert(iterator position, const T& val)
 			{
-				size_t pos = ft::distance(this->begin(), position);
+				size_t pos = ft::distance(this->head(), position);
 				node *Node = newNode(val, pos);
 				return (iterator(Node));
 			}
 			void insert(iterator position, size_t n, const T& val)
 			{
-				size_t pos = ft::distance(this->begin(), position);
+				size_t pos = ft::distance(this->head(), position);
 
 				if (pos + n >= std::numeric_limits<size_t>::max()) //protection I guess
 					return ;
@@ -178,29 +199,29 @@ namespace ft
 			void insert(iterator position, InputIterator first, InputIterator last,
 				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL)
 			{
-				size_t pos = ft::distance(this->begin(), position);
+				size_t pos = ft::distance(this->head(), position);
 
 				for (; first != last; first++)
 					newNode(*first, pos++);
 			}
 			iterator erase(iterator position)
 			{
-				size_t pos = ft::distance(this->begin(), position);
+				size_t pos = ft::distance(this->head(), position);
 
 				delNode(pos);
 			}
 			iterator erase(iterator first, iterator last)
 			{
-				size_t pos = ft::distance(this->begin(), first);
+				size_t pos = ft::distance(this->head(), first);
 
 				for (; first != last; first++)
 					delNode(pos++);
 			}
-			void swap(const list& other)
+			void swap(list& x)
 			{
-				ft::swap(this->begin, x.begin);
-				ft::swap(this->len, x.len);
-				ft::swap(this->end, x.end);
+				ft::swap(this->head, x.head);
+				ft::swap<size_t>(this->len, x.len);
+				ft::swap(this->tail, x.tail);
 			}
 			void resize(size_t n, T val = T())
 			{
@@ -234,12 +255,12 @@ namespace ft
 					return ;
 				node *Node = position.ptr;
 
-				transfer(Node->prev, Node, x.begin, x.end);
+				transfer(Node->prev, Node, x.head, x.tail);
 
 				this->len += x.len;
 				x.len = 0;
-				x.begin = NULL;
-				x.end = NULL;
+				x.head = NULL;
+				x.tail = NULL;
 			}
 			void splice (iterator position, list& x, iterator i)
 			{
@@ -265,7 +286,7 @@ namespace ft
 			}
 			void remove (const T& val)
 			{
-				node *iter = this->begin;
+				node *iter = this->head;
 				for (size_t i = 0; iter;)
 				{
 					iter = iter->next;
@@ -278,7 +299,7 @@ namespace ft
 			template <class Predicate>
 			void remove_if (Predicate pred)
 			{
-				node *iter = this->begin;
+				node *iter = this->head;
 				for (size_t i = 0; iter;)
 				{
 					iter = iter->next;
@@ -290,7 +311,7 @@ namespace ft
 			}
 			void unique()
 			{
-				node *iter = this->begin;
+				node *iter = this->head;
 				node *prev = NULL;
 				for (size_t i = 0; iter;)
 				{
@@ -310,7 +331,7 @@ namespace ft
 			template <class BinaryPredicate>
 			void unique(BinaryPredicate binary_pred)
 			{
-				node *iter = this->begin;
+				node *iter = this->head;
 				node *prev = NULL;
 				for (size_t i = 0; iter;)
 				{
@@ -326,14 +347,6 @@ namespace ft
 						i++;
 					}
 				}
-			}
-			void merge(list& x)
-			{
-				if (&x == this)
-					return ;
-				node *iter = this->begin;
-
-				for (size_t i = 0; iter;)
 			}
 		private:
 			void	transfer(node *prev, node *pos, node *otherBegin, node *otherEnd)
@@ -361,28 +374,28 @@ namespace ft
 			}
 			void	delNode(size_t pos = std::numeric_limits<size_t>::max())
 			{
-				node *ptr = this->begin;
+				node *ptr = this->head;
 
 				if (!ptr)
 					return ;
 				if (pos == 0)
 				{
-					ptr = this->begin;
-					this->begin = this->begin->next;
-					if (this->begin)
-						this->begin->prev = NULL;
+					ptr = this->head;
+					this->head = this->head->next;
+					if (this->head)
+						this->head->prev = NULL;
 					if (this->len == 1)
-						this->end = this->begin;
+						this->tail = this->head;
 					delete ptr;
 				}
 				else if (pos >= this->len)
 				{
-					ptr = this->end;
-					this->end = this->end->prev;
-					if (this->end)
-						this->end->next = NULL;
+					ptr = this->tail;
+					this->tail = this->tail->prev;
+					if (this->tail)
+						this->tail->next = NULL;
 					if (this->len == 1)
-						this->begin = this->end;
+						this->head = this->tail;
 					delete ptr;
 				}
 				else
@@ -397,16 +410,16 @@ namespace ft
 				}
 				--this->len;
 			}
-			node	*newNode(T value, size_t pos = std::numeric_limits<size_t>::max())
+			node	*newNode(const T& value, size_t pos = std::numeric_limits<size_t>::max())
 			{
-				node *ptr = this->begin;
+				node *ptr = this->head;
 				//if push_back()
 				if (this->len && pos >= this->len)
 				{
 					this->len++;
-					this->end->next = new node(T, this->end, NULL);
-					this->end = this->end->next;
-					return (this->end);
+					this->tail->next = new node(value, this->tail, NULL);
+					this->tail = this->tail->next;
+					return (this->tail);
 				}
 				else //index
 					for (size_t i = 0; i < pos && ptr != NULL; i++)
@@ -415,25 +428,26 @@ namespace ft
 				//if start of the list
 				if (!ptr)
 				{
-					this->begin = new node(T);
-					this->end = this->begin;
-					return (this->begin);
+					this->head = new node(value);
+					this->tail = this->head;
+					return (this->head);
 				}
 				//if index 0
-				if (ptr == this->begin)
+				if (ptr == this->head)
 				{
-					this->begin = new node(T, NULL, this->begin);
-					this->begin->next->prev = this->begin;
-					return (this->begin);
+					this->head = new node(value, NULL, this->head);
+					if (this->head->next)
+						this->head->next->prev = this->head;
+					return (this->head);
 				}
 				//if any other index
-				ptr->prev->next = new node(T, ptr->prev, ptr);
+				ptr->prev->next = new node(value, ptr->prev, ptr);
 				ptr->prev = ptr->prev->next;
 				return (ptr->prev);
 			}
 			size_t	len;
-			node	*begin;
-			node	*end;
+			node	*head;
+			node	*tail;
 			Alloc	alloc;
 	};
 
@@ -443,6 +457,6 @@ namespace ft
 		return (x.swap(y));
 	}
 
-};
+}
 
 #endif

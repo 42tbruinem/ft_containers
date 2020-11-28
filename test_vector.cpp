@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/10 19:16:57 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/11/28 13:51:27 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/11/28 14:05:44 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,7 @@ int	main(void)
 	reverse_iter_print_container<vector<int> >(vec_copy, "vec_default");
 	const_reverse_iter_print_container<vector<int> >(vec_copy, "vec_copy");
 	const_reverse_iter_print_container<vector<int> >(vec_copy, "vec_default");
-	std::cout << "\n----SWAP----\n" << std::endl;
+	subject_title("SWAP");
 
 	swap(vec_copy, vec_default);
 	iter_print_container<vector<int> >(vec_copy, "vec_copy");
@@ -199,6 +199,7 @@ int	main(void)
 	subject_title("OPERATOR OVERLOAD");
 
 	comparison_operator_container<vector<int> >(vec_copy, vec_default, "vec_copy", "vec_default");
+	comparison_operator_container<vector<int>::iterator>(vec_copy.begin() + vec_copy.size(), vec_copy.end(), "vec_copy::begin + size()", "vec_copy::end"); 
 
 	return (0);
 }
