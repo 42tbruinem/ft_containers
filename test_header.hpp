@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 13:35:05 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/11/28 14:38:47 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/11/30 14:28:27 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,13 @@
  #include <vector>
   using namespace std;
 #endif
+
+template <typename Container>
+void	capacity_information(Container c, std::string title)
+{
+	std::cout << "Size of " << title << " is " << c.size() << std::endl;
+	std::cout << "Capacity of " << title << " is " << c.capacity() << std::endl;
+}
 
 void	print_version()
 {
@@ -130,7 +137,7 @@ void	const_iter_print_container(const Container c, std::string title, std::strin
 	std::cout << "Printing " << title << " of size " << c.size() << " using 'const_iterator'" << std::endl;
 	typename Container::const_iterator it = c.begin();
 
-	for (;it != c.end(); it++)
+	for (;it != c.end();)
 	{
 		std::cout << *it;
 		if (++it == c.end())
@@ -147,7 +154,7 @@ void	reverse_iter_print_container(Container c, std::string title, std::string de
 	std::cout << "Printing " << title << " of size " << c.size() << " using 'reverse_iterator'" << std::endl;
 	typename Container::reverse_iterator it = c.rbegin();
 
-	for (;it != c.rend(); it++)
+	for (;it != c.rend();)
 	{
 		std::cout << *it;
 		if (++it == c.rend())
@@ -164,7 +171,7 @@ void	const_reverse_iter_print_container(const Container c, std::string title, st
 	std::cout << "Printing " << title << " of size " << c.size() << " using 'const_reverse_iterator'" << std::endl;
 	typename Container::const_reverse_iterator it = c.rbegin();
 
-	for (;it != c.rend(); it++)
+	for (;it != c.rend();)
 	{
 		std::cout << *it;
 		if (++it == c.rend())

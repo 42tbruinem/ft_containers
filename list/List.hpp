@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/26 15:50:30 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/11/28 15:45:34 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/11/30 23:03:27 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ namespace ft
 				clear();
 				for (typename list<T>::const_iterator it = other.begin(); it != other.end(); it++)
 					newNode(*it);
+				return (*this);
 			}
 
 			// ITERATORS
@@ -182,13 +183,13 @@ namespace ft
 			}
 			iterator insert(iterator position, const T& val)
 			{
-				size_t pos = ft::distance(this->head(), position);
+				size_t pos = ft::distance(this->begin(), position);
 				node *Node = newNode(val, pos);
 				return (iterator(Node));
 			}
 			void insert(iterator position, size_t n, const T& val)
 			{
-				size_t pos = ft::distance(this->head(), position);
+				size_t pos = ft::distance(this->begin(), position);
 
 				if (pos + n >= std::numeric_limits<size_t>::max()) //protection I guess
 					return ;
@@ -199,23 +200,27 @@ namespace ft
 			void insert(iterator position, InputIterator first, InputIterator last,
 				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL)
 			{
-				size_t pos = ft::distance(this->head(), position);
+				size_t pos = ft::distance(this->begin(), position);
 
 				for (; first != last; first++)
 					newNode(*first, pos++);
 			}
 			iterator erase(iterator position)
 			{
-				size_t pos = ft::distance(this->head(), position);
+				size_t pos = ft::distance(this->begin(), position);
 
+				position++;
 				delNode(pos);
+				return (position);
 			}
 			iterator erase(iterator first, iterator last)
 			{
-				size_t pos = ft::distance(this->head(), first);
-
-				for (; first != last; first++)
-					delNode(pos++);
+				size_t pos = ft::distance(this->begin(), first);
+				size_t length = ft::distance(first, last);
+				for (size_t i = 0; i < length ; i++)
+					delNode(pos);
+				last++;
+				return (last);
 			}
 			void swap(list& x)
 			{
@@ -225,18 +230,18 @@ namespace ft
 			}
 			void resize(size_t n, T val = T())
 			{
+				size_t len = this->len;
 				if (this->len == n)
 					return ;
 				if (this->len > n)
 				{
-					for (size_t i = this->len; i < n; i++)
-						newNode(val);
+					for (size_t i = 0 ; i < (len - n); i++)
+						delNode();
 				}
 				else
 				{
-					size_t len = this->len;
-					for (; n < len; n++)
-						delNode();
+					for (; len < n; len++)
+						newNode(val);
 				}
 			}
 			void clear()
@@ -254,8 +259,7 @@ namespace ft
 				if (&x == this)
 					return ;
 				node *Node = position.ptr;
-
-				transfer(Node->prev, Node, x.head, x.tail);
+				transfer((Node) ? Node->prev : this->tail, Node, x.head, x.tail);
 
 				this->len += x.len;
 				x.len = 0;
@@ -351,10 +355,18 @@ namespace ft
 		private:
 			void	transfer(node *prev, node *pos, node *otherBegin, node *otherEnd)
 			{
+				//NULL->prev->otherBegin->...->otherEnd->pos
 				if (prev)
 					prev->next = otherBegin;
+				//NULL->otherBegin->...->otherEnd->pos
+				else
+					this->head = otherBegin;
+				//NULL->otherBegin->...->otherEnd->pos->NULL
 				if (pos)
 					pos->prev = otherEnd;
+				//NULL->otherBegin->...->otherEnd->NULL
+				else
+					this->tail = otherEnd;
 				if (otherBegin)
 				{
 					if (otherBegin->prev && otherEnd)
@@ -378,16 +390,18 @@ namespace ft
 
 				if (!ptr)
 					return ;
+				//if start of list
 				if (pos == 0)
 				{
 					ptr = this->head;
 					this->head = this->head->next;
 					if (this->head)
 						this->head->prev = NULL;
-					if (this->len == 1)
+					if (this->len <= 1)
 						this->tail = this->head;
 					delete ptr;
 				}
+				//if end of list
 				else if (pos >= this->len)
 				{
 					ptr = this->tail;
@@ -398,6 +412,7 @@ namespace ft
 						this->head = this->tail;
 					delete ptr;
 				}
+				//if any other index
 				else
 				{
 					for (size_t i = 0; i < pos && ptr; i++)
@@ -409,6 +424,9 @@ namespace ft
 					delete ptr;
 				}
 				--this->len;
+//				dprintf(2, "head: %p\n", (void *)this->head);
+//				dprintf(2, "tail: %p\n", (void *)this->tail);
+//				dprintf(2, "size: %ld\n", this->len);
 			}
 			node	*newNode(const T& value, size_t pos = std::numeric_limits<size_t>::max())
 			{

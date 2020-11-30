@@ -19,17 +19,15 @@
 namespace ft
 {
 	template <class Node, class PointerType, class ReferenceType, class Category = ft::bidirectional_iterator_tag>
-	class	ReverseBidirectionalIterator : BidirectionalIterator<Node, PointerType, ReferenceType>
+	class	ReverseBidirectionalIterator : public BidirectionalIterator<Node, PointerType, ReferenceType>
 	{
-		protected:
-			Node	ptr;
 		public:
 			typedef BidirectionalIterator<Node, PointerType, ReferenceType>	iterator;
 			typedef Category												iterator_category;
 			ReverseBidirectionalIterator() : iterator(NULL)
 			{
 			}
-			ReverseBidirectionalIterator(Node ptr) : iterator(ptr)
+			ReverseBidirectionalIterator(Node *ptr) : iterator(ptr)
 			{
 			}
 			~ReverseBidirectionalIterator()
@@ -43,23 +41,25 @@ namespace ft
 				this->ptr = iter.ptr;
 				return (*this);
 			}
-			ReverseBidirectionalIterator&	operator ++ ()
-			{
-				return (iterator::operator++);
-			}
-			ReverseBidirectionalIterator	operator ++ (int)
-			{
-				ReverseBidirectionalIterator old = *this;
-				++(*this);
-				return (old);
-			}
-			ReverseBidirectionalIterator&	operator -- ()
+			iterator&	operator ++ ()
 			{
 				if (this->ptr)
 					this->ptr = this->ptr->prev;
 				return (*this);
 			}
-			ReverseBidirectionalIterator	operator -- (int)
+			iterator	operator ++ (int)
+			{
+				ReverseBidirectionalIterator old(*this);
+				++(*this);
+				return (old);
+			}
+			iterator&	operator -- ()
+			{
+				if (this->ptr)
+					this->ptr = this->ptr->next;
+				return (*this);
+			}
+			iterator	operator -- (int)
 			{
 				ReverseBidirectionalIterator old(*this);
 				--(*this);

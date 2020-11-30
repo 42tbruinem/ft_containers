@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/10 19:16:57 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/11/28 14:05:44 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/11/30 14:28:20 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,6 @@
 #include <iostream>
 #include <IteratorFunctions.hpp>
 #include <test_header.hpp>
-
-template <typename Container>
-void	capacity_information(Container c, std::string title)
-{
-	std::cout << "Size of " << title << " is " << c.size() << std::endl;
-	std::cout << "Capacity of " << title << " is " << c.capacity() << std::endl;
-}
 
 int	main(void)
 {

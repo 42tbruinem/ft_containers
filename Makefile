@@ -6,7 +6,7 @@
 #    By: tbruinem <tbruinem@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/07/27 16:25:13 by tbruinem      #+#    #+#                  #
-#    Updated: 2020/11/28 14:22:13 by tbruinem      ########   odam.nl          #
+#    Updated: 2020/11/30 14:54:29 by tbruinem      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,7 +52,7 @@ clean:
 	rm -rf $(OBJ)
 
 fclean: clean
-	rm -rf $(NAME)
+	rm -rf list_test vector_test
 
 re: fclean all
 
