@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 14:16:22 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/11/30 23:04:30 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/01 14:45:42 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,12 +131,18 @@ int main(void)
 	list<verbose> list_verbose2(5, 5);
 	iter_print_container(list_verbose1, "list_verbose1");
 	iter_print_container(list_verbose2, "list_verbose2");
-	list_verbose2.splice(list_verbose2.end(), list_verbose1);
+	subject_title("START OF SPLICE");
+	list_verbose2.splice(++(list_verbose2.begin()), list_verbose1);
+	subject_title("END OF SPLICE");
 	iter_print_container(list_verbose2, "list_verbose2");
 	iter_print_container(list_verbose1, "list_verbose1");
-	iter_print_container(list_verbose2, "list_verbose2");
-	list<int>	list_single(1,1);
+	list<verbose>	list_single(2,1);
 	iter_print_container(list_single, "list_single");
-	list_single.clear();
+	list_verbose2.splice(list_verbose2.begin(), list_single, list_single.begin());
+	iter_print_container(list_verbose2, "list_verbose2");
+	list<verbose>	list_multiple(5, 3);
+	list<verbose>	list_verbose3;
+	list_verbose3.splice(list_verbose3.begin(), list_multiple, ++(list_multiple.begin()), --(list_multiple.end()));
+	iter_print_container(list_verbose3, "list_verbose3");
 	return (0);
 }

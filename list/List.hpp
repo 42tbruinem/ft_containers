@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/26 15:50:30 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/11/30 23:03:27 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/01 14:31:02 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,36 +256,22 @@ namespace ft
 
 			void splice (iterator position, list& x)
 			{
-				if (&x == this)
-					return ;
-				node *Node = position.ptr;
-				transfer((Node) ? Node->prev : this->tail, Node, x.head, x.tail);
-
-				this->len += x.len;
-				x.len = 0;
-				x.head = NULL;
-				x.tail = NULL;
+				splice(position, x, x.begin(), iterator(x.tail));
 			}
 			void splice (iterator position, list& x, iterator i)
 			{
-				if (&x == this)
-					return ;
-				node *Node = position.ptr;
-				node *otherNode = i.ptr;
-
-				transfer(Node->prev, Node, otherNode, otherNode);
-
-				if (x.len)
-					x.len -= 1;
+				splice(position, x, i, i);
 			}
 			void splice (iterator position, list& x, iterator first, iterator last)
 			{
 				if (&x == this)
 					return ;
-				size_t len = ft::distance(first, last);
+				size_t len = 1 + ft::distance(first, last);
+				connect(x, *this, last++, position--); //connect last<->pos
+				connect(*this, x, position, first--); //connect pos->prev<->first
+				connect(x, x, first, last); //fix up hole
 
-				transfer(position.ptr->prev, position.ptr, first.ptr, last.ptr);
-
+				this->len += len;
 				x.len -= (len > x.len) ? x.len : len;
 			}
 			void remove (const T& val)
@@ -353,36 +339,16 @@ namespace ft
 				}
 			}
 		private:
-			void	transfer(node *prev, node *pos, node *otherBegin, node *otherEnd)
+			void	connect(list& x, list& y, iterator front, iterator back)
 			{
-				//NULL->prev->otherBegin->...->otherEnd->pos
-				if (prev)
-					prev->next = otherBegin;
-				//NULL->otherBegin->...->otherEnd->pos
+				if (front.ptr)
+					front.ptr->next = back.ptr;
 				else
-					this->head = otherBegin;
-				//NULL->otherBegin->...->otherEnd->pos->NULL
-				if (pos)
-					pos->prev = otherEnd;
-				//NULL->otherBegin->...->otherEnd->NULL
+					x.head = back.ptr;
+				if (back.ptr)
+					back.ptr->prev = front.ptr;
 				else
-					this->tail = otherEnd;
-				if (otherBegin)
-				{
-					if (otherBegin->prev && otherEnd)
-						otherBegin->prev->next = otherEnd->next;
-					else if (otherBegin->prev)
-						otherBegin->prev->next = NULL;
-					otherBegin->prev = prev;
-				}
-				if (otherEnd)
-				{
-					if (otherEnd->next && otherBegin)
-						otherEnd->next->prev = otherBegin->prev;
-					else if (otherEnd->next)
-						otherEnd->next->prev = NULL;
-					otherEnd->next = pos;
-				}
+					y.tail = front.ptr;
 			}
 			void	delNode(size_t pos = std::numeric_limits<size_t>::max())
 			{

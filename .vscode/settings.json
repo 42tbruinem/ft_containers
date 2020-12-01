@@ -44,6 +44,7 @@
 		"typeinfo": "cpp",
 		"random": "cpp",
 		"ranges": "cpp",
-		"list": "cpp"
+		"list": "cpp",
+		"map": "cpp"
 	}
 }
