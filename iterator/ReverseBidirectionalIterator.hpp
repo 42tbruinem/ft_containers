@@ -43,7 +43,7 @@ namespace ft
 			}
 			iterator&	operator ++ ()
 			{
-				if (this->ptr)
+				if (this->ptr->prev)
 					this->ptr = this->ptr->prev;
 				return (*this);
 			}
@@ -55,7 +55,7 @@ namespace ft
 			}
 			iterator&	operator -- ()
 			{
-				if (this->ptr)
+				if (this->ptr->next)
 					this->ptr = this->ptr->next;
 				return (*this);
 			}

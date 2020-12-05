@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/26 15:50:30 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/01 14:31:02 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/02 21:22:44 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ namespace ft
 				T		element;
 				node	*prev;
 				node	*next;
+				node() : prev(NULL), next(NULL) {}
 				node(const T& element, node *prev = NULL, node *next = NULL) : element(element), prev(prev), next(next) {}
 //				bool operator == (const node& other) { return (prev == other.prev && next == other.next); }
 //				bool operator != (const node& other) { return !(*this == other); }
@@ -49,28 +50,40 @@ namespace ft
 
 			//CONSTRUCTORS / DESTRUCTOR
 
-			list(const Alloc& alloc = Alloc()) : len(0), head(NULL), tail(NULL), alloc(alloc) {}
-			list(size_t n, const T& val = T(), const Alloc& alloc = Alloc()) : len(0), head(NULL), tail(NULL), alloc(alloc)
+			list(const Alloc& alloc = Alloc()) : len(0), head(new node()), tail(new node()), alloc(alloc)
 			{
+				head->next = tail;
+				tail->prev = head;
+			}
+			list(size_t n, const T& val = T(), const Alloc& alloc = Alloc()) : len(0), head(new node()), tail(new node()), alloc(alloc)
+			{
+				head->next = tail;
+				tail->prev = head;
 				for (size_t i = 0; i < n; i++)
 					newNode(val, i);
 			}
 			template<class InputIterator>
 			list(InputIterator first, InputIterator last,
 				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL,
-				const Alloc& alloc = Alloc()) : len(0), head(NULL), tail(NULL), alloc(alloc)
+				const Alloc& alloc = Alloc()) : len(0), head(new node()), tail(new node()), alloc(alloc)
 			{
+				head->next = tail;
+				tail->prev = head;
 				for (; first != last; first++)
 					newNode(*first);
 			}
-			list(const list& other) : len(0), head(NULL), tail(NULL), alloc(other.alloc)
+			list(const list& other) : len(0), head(new node()), tail(new node()), alloc(other.alloc)
 			{
-				for (typename list<T>::const_iterator it = other.begin(); it != other.end(); it++)
+				head->next = tail;
+				tail->prev = head;
+				for (const_iterator it = other.begin(); it != other.end(); it++)
 					newNode(*it);
 			}
 			~list()
 			{
 				clear();
+				delete this->head;
+				delete this->tail;
 			}
 			list& operator = (const list& other)
 			{
@@ -84,42 +97,42 @@ namespace ft
 
 			iterator begin()
 			{
-				return (iterator(this->head));
+				return (iterator(this->head->next));
 			}
 			const_iterator begin() const
 			{
-				return (const_iterator(this->head));
+				return (const_iterator(this->head->next));
 			}
 			iterator end()
 			{
-				return (iterator(NULL));
+				return (iterator(this->tail));
 			}
 			const_iterator end() const
 			{
-				return (const_iterator(NULL));
+				return (const_iterator(this->tail));
 			}
 			reverse_iterator rbegin()
 			{
-				return (reverse_iterator(this->tail));
+				return (reverse_iterator(this->tail->prev));
 			}
 			const_reverse_iterator rbegin() const
 			{
-				return (const_reverse_iterator(this->tail));
+				return (const_reverse_iterator(this->tail->prev));
 			}
 			reverse_iterator rend()
 			{
-				return (reverse_iterator(NULL));
+				return (reverse_iterator(this->head));
 			}
 			const_reverse_iterator rend() const
 			{
-				return (const_reverse_iterator(NULL));
+				return (const_reverse_iterator(this->head));
 			}
 
 			//CAPACITY
 
 			bool empty() const
 			{
-				return (this->len);
+				return !(this->len);
 			}
 			size_t size() const
 			{
@@ -134,19 +147,19 @@ namespace ft
 
 			T& front()
 			{
-				return (this->head->element);
+				return (this->head->next->element);
 			}
 			const T& front() const
 			{
-				return (this->head->element);
+				return (this->head->next->element);
 			}
 			T& back()
 			{
-				return (this->tail->element);
+				return (this->tail->prev->element);
 			}
 			const T& back() const
 			{
-				return (this->tail->element);
+				return (this->tail->prev->element);
 			}
 
 			//MODIFIERS
@@ -184,8 +197,7 @@ namespace ft
 			iterator insert(iterator position, const T& val)
 			{
 				size_t pos = ft::distance(this->begin(), position);
-				node *Node = newNode(val, pos);
-				return (iterator(Node));
+				return (iterator(newNode(val, pos)));
 			}
 			void insert(iterator position, size_t n, const T& val)
 			{
@@ -217,9 +229,9 @@ namespace ft
 			{
 				size_t pos = ft::distance(this->begin(), first);
 				size_t length = ft::distance(first, last);
+				last++;
 				for (size_t i = 0; i < length ; i++)
 					delNode(pos);
-				last++;
 				return (last);
 			}
 			void swap(list& x)
@@ -256,20 +268,21 @@ namespace ft
 
 			void splice (iterator position, list& x)
 			{
-				splice(position, x, x.begin(), iterator(x.tail));
+				splice(position, x, x.begin(), x.end());
 			}
 			void splice (iterator position, list& x, iterator i)
 			{
-				splice(position, x, i, i);
+				splice(position, x, i, ++i);
 			}
 			void splice (iterator position, list& x, iterator first, iterator last)
 			{
 				if (&x == this)
 					return ;
-				size_t len = 1 + ft::distance(first, last);
-				connect(x, *this, last++, position--); //connect last<->pos
-				connect(*this, x, position, first--); //connect pos->prev<->first
-				connect(x, x, first, last); //fix up hole
+				size_t len = ft::distance(first, last);
+
+				connect(--iterator(position), first--);
+				connect(first, last--);
+				connect(last, position);
 
 				this->len += len;
 				x.len -= (len > x.len) ? x.len : len;
@@ -339,95 +352,39 @@ namespace ft
 				}
 			}
 		private:
-			void	connect(list& x, list& y, iterator front, iterator back)
+			void	connect(iterator front, iterator back)
 			{
-				if (front.ptr)
-					front.ptr->next = back.ptr;
-				else
-					x.head = back.ptr;
-				if (back.ptr)
-					back.ptr->prev = front.ptr;
-				else
-					y.tail = front.ptr;
+				front.ptr->next = back.ptr;
+				back.ptr->prev = front.ptr;
 			}
 			void	delNode(size_t pos = std::numeric_limits<size_t>::max())
 			{
-				node *ptr = this->head;
+				node *ptr = this->head->next;
 
-				if (!ptr)
+				if (!this->len)
 					return ;
-				//if start of list
-				if (pos == 0)
-				{
-					ptr = this->head;
-					this->head = this->head->next;
-					if (this->head)
-						this->head->prev = NULL;
-					if (this->len <= 1)
-						this->tail = this->head;
-					delete ptr;
-				}
-				//if end of list
-				else if (pos >= this->len)
-				{
-					ptr = this->tail;
-					this->tail = this->tail->prev;
-					if (this->tail)
-						this->tail->next = NULL;
-					if (this->len == 1)
-						this->head = this->tail;
-					delete ptr;
-				}
-				//if any other index
-				else
-				{
-					for (size_t i = 0; i < pos && ptr; i++)
-						ptr = ptr->next;
-					if (!ptr)
-						return ; //should never happen
-					ptr->prev->next = ptr->next;
-					ptr->next->prev = ptr->prev;
-					delete ptr;
-				}
+				for (size_t i = 0; i < pos && ptr != NULL && ptr->next != this->tail; i++) //skip to the right position
+					ptr = ptr->next;
+				if (!ptr || ptr == this->tail)
+					return ;
+				node *prev = ptr->prev;
+				ptr->prev->next = ptr->next;
+				ptr->next->prev = prev;
 				--this->len;
-//				dprintf(2, "head: %p\n", (void *)this->head);
-//				dprintf(2, "tail: %p\n", (void *)this->tail);
-//				dprintf(2, "size: %ld\n", this->len);
+				delete ptr;
 			}
 			node	*newNode(const T& value, size_t pos = std::numeric_limits<size_t>::max())
 			{
 				node *ptr = this->head;
-				//if push_back()
-				if (this->len && pos >= this->len)
-				{
-					this->len++;
-					this->tail->next = new node(value, this->tail, NULL);
-					this->tail = this->tail->next;
-					return (this->tail);
-				}
-				else //index
-					for (size_t i = 0; i < pos && ptr != NULL; i++)
-						ptr = ptr->next;
-				this->len++;
-				//if start of the list
+
+				for (size_t i = 0; i < pos && ptr && ptr->next != this->tail; i++)
+					ptr = ptr->next;
 				if (!ptr)
-				{
-					this->head = new node(value);
-					this->tail = this->head;
-					return (this->head);
-				}
-				//if index 0
-				if (ptr == this->head)
-				{
-					this->head = new node(value, NULL, this->head);
-					if (this->head->next)
-						this->head->next->prev = this->head;
-					return (this->head);
-				}
-				//if any other index
-				ptr->prev->next = new node(value, ptr->prev, ptr);
-				ptr->prev = ptr->prev->next;
-				return (ptr->prev);
+					return (NULL);
+				ptr->next = new node(value, ptr, ptr->next);
+				ptr->next->next->prev = ptr->next;
+				this->len++;
+				return (ptr->next);
 			}
 			size_t	len;
 			node	*head;

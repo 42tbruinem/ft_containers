@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/11 19:52:27 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/11/30 16:48:17 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/02 17:59:32 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,8 @@ namespace ft
 			}
 			BidirectionalIterator&	operator ++ ()
 			{
-//				dprintf(2, "ptr: %p\n", (void *)this->ptr);
-				if (this->ptr)
-				{
-//					dprintf(2, "next: %p\n", (void *)this->ptr->next);
-//					dprintf(2, "prev: %p\n", (void *)this->ptr->prev);
+				if (this->ptr->next)
 					this->ptr = this->ptr->next;
-				}
 				return (*this);
 			}
 			BidirectionalIterator	operator ++ (int)
@@ -62,7 +57,7 @@ namespace ft
 			}
 			BidirectionalIterator&	operator -- ()
 			{
-				if (this->ptr)
+				if (this->ptr->prev)
 					this->ptr = this->ptr->prev;
 				return (*this);
 			}

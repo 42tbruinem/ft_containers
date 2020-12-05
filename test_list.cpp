@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 14:16:22 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/01 14:45:42 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/02 21:19:45 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ int main(void)
 
 	subject_title("CAPACITY");
 
+	iter_print_container(list_copy, "list_copy");
 	std::cout << "list_copy" << " is empty? " << (list_copy.empty() ? "TRUE" : "FALSE") << std::endl;
 	std::cout << "list_copy" << " size is: " << list_copy.size() << std::endl;
 	list_copy.clear();
@@ -136,13 +137,17 @@ int main(void)
 	subject_title("END OF SPLICE");
 	iter_print_container(list_verbose2, "list_verbose2");
 	iter_print_container(list_verbose1, "list_verbose1");
+	list_verbose2.clear();
 	list<verbose>	list_single(2,1);
 	iter_print_container(list_single, "list_single");
 	list_verbose2.splice(list_verbose2.begin(), list_single, list_single.begin());
 	iter_print_container(list_verbose2, "list_verbose2");
+	iter_print_container(list_single, "list_single");
 	list<verbose>	list_multiple(5, 3);
 	list<verbose>	list_verbose3;
+	iter_print_container(list_multiple, "list_multiple");
 	list_verbose3.splice(list_verbose3.begin(), list_multiple, ++(list_multiple.begin()), --(list_multiple.end()));
 	iter_print_container(list_verbose3, "list_verbose3");
+	iter_print_container(list_multiple, "list_multiple");
 	return (0);
 }
