@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/06 19:28:46 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/11/28 13:40:13 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/09 17:51:08 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ namespace ft
 			{
 				this->cap = ft::distance(first, last);
 				this->data = new T[this->cap];
-				for (size_t i = 0;first != last; first++,i++)
+				for (size_t i = 0; first != last; first++, i++)
 					this->data[i] = *first;
 				this->len = this->cap;
 			}

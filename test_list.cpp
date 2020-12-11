@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 14:16:22 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/02 21:19:45 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/11 21:43:15 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ class verbose
 };
 
 std::ostream& operator << (std::ostream& stream, const verbose& object) { stream << object.get(); return (stream); }
+
+bool	int_is_2(const int& number) { return (number == 2); }
 
 int main(void)
 {
@@ -149,5 +151,26 @@ int main(void)
 	list_verbose3.splice(list_verbose3.begin(), list_multiple, ++(list_multiple.begin()), --(list_multiple.end()));
 	iter_print_container(list_verbose3, "list_verbose3");
 	iter_print_container(list_multiple, "list_multiple");
+
+	list<int>	list_remove(10, 3);
+
+	size_t i = 0;
+	for (list<int>::iterator it = list_remove.begin(); it != list_remove.end(); it++)
+	{
+		*it += (i % 3 == 0);
+		i++;
+	}
+	i = 0;
+	iter_print_container(list_remove, "list_remove");
+	list_remove.remove(4);
+	iter_print_container(list_remove, "list_remove");
+	for (list<int>::iterator it = list_remove.begin(); it != list_remove.end(); it++)
+	{
+		*it -= (i % 2 == 0);
+		i++;
+	}
+	iter_print_container(list_remove, "list_remove");
+	list_remove.remove_if(int_is_2);
+	iter_print_container(list_remove, "list_remove");
 	return (0);
 }

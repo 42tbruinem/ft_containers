@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/26 15:50:30 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/02 21:22:44 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/11 21:42:53 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,66 +289,46 @@ namespace ft
 			}
 			void remove (const T& val)
 			{
-				node *iter = this->head;
-				for (size_t i = 0; iter;)
+				for (iterator it = this->begin(); it != this->end();)
 				{
-					iter = iter->next;
-					if (iter->element == val)
-						delNode(i);
+					if (*it == val)
+						it = erase(it);
 					else
-						i++;
+						it++;
+				}
+			}
+			void remove (const T& val, iterator first, iterator last) //illegal
+			{
+				for (; first != last;)
+				{
+					if (*first == val)
+						first = erase(first);
+					else
+						first++;
 				}
 			}
 			template <class Predicate>
 			void remove_if (Predicate pred)
 			{
-				node *iter = this->head;
-				for (size_t i = 0; iter;)
+				for (iterator it = this->begin(); it != this->end();)
 				{
-					iter = iter->next;
-					if (pred(iter->element))
-						delNode(i);
+					if (pred(*it))
+						it = erase(it);
 					else
-						i++;
+						it++;
 				}
 			}
 			void unique()
 			{
-				node *iter = this->head;
-				node *prev = NULL;
-				for (size_t i = 0; iter;)
-				{
-					if (prev && prev->element == iter->element)
-					{
-						iter = iter->next;
-						delNode(i);
-					}
-					else
-					{
-						prev = iter;
-						iter = iter->next;
-						i++;
-					}
-				}
+				for (iterator it = this->begin(); it != this->end(); it++)
+					remove(*it, ++iterator(it), this->end());
 			}
 			template <class BinaryPredicate>
 			void unique(BinaryPredicate binary_pred)
 			{
-				node *iter = this->head;
-				node *prev = NULL;
-				for (size_t i = 0; iter;)
+				for (iterator it = this->begin(); it != this->end(); it++)
 				{
-					if (prev && binary_pred(prev->element, iter->element))
-					{
-						iter = iter->next;
-						delNode(i);
-					}
-					else
-					{
-						prev = iter;
-						iter = iter->next;
-						i++;
-					}
+				
 				}
 			}
 		private:
