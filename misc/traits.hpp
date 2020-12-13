@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/21 10:10:41 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/11 21:42:23 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/11 22:09:02 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,56 @@ namespace ft
 	struct is_iterator<ft::bidirectional_iterator_tag>
 	{
 		static const bool result = true;
+	};
+}
+
+
+//------------------------------------------------------------------
+
+namespace ft
+{
+	//add category if pointer
+
+	//check if input_iterator
+
+	//see if iterator_category is defined
+
+	template<typename T>
+	struct has_category
+	{
+		private:
+			typedef int false_type;
+			typedef char true_type;
+			template <typename V>
+			false_type test(...);
+			template <typename V>
+			true_type test( typename V::iterator_category* = NULL);
+		public:
+			static const bool result = sizeof(test<T>(0)) == sizeof(true_type);
+	};
+
+	template <typename T, bool>
+	struct _is_iterator {};
+
+	template <typename T>
+	struct _is_iterator<T, true>
+	{
+		typedef typename T::iterator_category	iterator_category;
+	};
+
+	template <typename T>
+	struct get_category : public _is_iterator<T, has_category<T>::result> {};
+
+	template <typename T>
+	struct get_category<T*>
+	{
+		typedef ft::random_access_iterator_tag	iterator_category;
+	};
+
+	template <typename T>
+	struct get_category<const T*>
+	{
+		typedef ft::random_access_iterator_tag	iterator_category;
 	};
 }
 

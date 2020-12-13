@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 13:35:05 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/01 20:06:22 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/13 22:24:23 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <iostream>
 # include <string>
 # include <stdio.h>
+# include <List.hpp>
 
 #if FT == 1
  #include "Vector.hpp"

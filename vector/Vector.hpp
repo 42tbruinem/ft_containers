@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/06 19:28:46 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/09 17:51:08 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/13 21:48:37 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,51 +288,6 @@ namespace ft
 				reallocate(0);
 			}
 
-//			OPERATORS
-
-			bool	operator == (vector<T>& other)
-			{
-				if (this->len != other.len)
-					return (false);
-				typename vector<T>::iterator this_it = this->begin();
-				typename vector<T>::iterator other_it = other.begin();
-				for (; this_it != this->end(); this_it++, other_it++)
-					if (*this_it != *other_it)
-						return (false);
-				return (true);
-			}
-			bool	operator != (vector<T>& other)
-			{
-				return !(*this == other);
-			}
-			bool	operator < (vector<T>& other)
-			{
-				bool	same_length = (this->len == other.len);
-
-				typename vector<T>::iterator this_it = this->begin();
-				typename vector<T>::iterator other_it = other.begin();
-				for (; this_it != this->end() && other_it != other.end(); this_it++, other_it++)
-				{
-					if (*other_it < *this_it)
-						return (false);
-					else if (*this_it < *other_it)
-						return (true);
-				}
-				return (same_length);
-			}
-			bool	operator > (vector<T>& other)
-			{
-				return (other < *this);
-			}
-			bool	operator >= (vector<T>& other)
-			{
-				return !(*this < other);
-			}
-			bool	operator <= (vector<T>& other)
-			{
-				return !(other < *this);
-			}
-
 		private:
 			T *data;
 			size_t	cap;
@@ -367,6 +322,39 @@ namespace ft
 					this->len = new_cap;
 			}
 	};
+
+	template<class T>
+	bool	operator == (vector<T>& src, vector<T>& other)
+	{
+		if (src.size() != other.size())
+			return (false);
+		return (ft::equal(src.begin(), src.end(), other.begin()));
+	}
+	template<class T>
+	bool	operator != (vector<T>& src, vector<T>& other)
+	{
+		return !(src == other);
+	}
+	template<class T>
+	bool	operator < (vector<T>& src, vector<T>& other)
+	{
+		return (ft::lexicographical_compare(src.begin(), other.begin(), src.end(), other.end()));
+	}
+	template<class T>
+	bool	operator > (vector<T>& src, vector<T>& other)
+	{
+		return (other < src);
+	}
+	template<class T>
+	bool	operator >= (vector<T>& src, vector<T>& other)
+	{
+		return !(src < other);
+	}
+	template<class T>
+	bool	operator <= (vector<T>& src, vector<T>& other)
+	{
+		return !(other < src);
+	}
 
 	template <class T>
 	void	swap(vector<T>& x, vector<T>& y)

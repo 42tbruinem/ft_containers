@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 14:16:22 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/11 21:43:15 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/13 22:30:10 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include <IteratorFunctions.hpp>
 #include <List.hpp>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 class verbose
 {
@@ -31,6 +33,16 @@ class verbose
 std::ostream& operator << (std::ostream& stream, const verbose& object) { stream << object.get(); return (stream); }
 
 bool	int_is_2(const int& number) { return (number == 2); }
+
+template <class T>
+void	bidirectional_iterator_comparison(T a, T b, std::string a_title, std::string b_title)
+{
+	std::cout << a_title << " operator == " << b_title << " = " << ((a == b) ? "True" : "False") << std::endl;
+	std::cout << a_title << " operator != " << b_title << " = " << ((a != b) ? "True" : "False") << std::endl;
+	std::cout << "---" << std::endl;
+	std::cout << b_title << " operator == " << a_title << " = " << ((b == a) ? "True" : "False") << std::endl;
+	std::cout << b_title << " operator != " << a_title << " = " << ((b != a) ? "True" : "False") << std::endl;
+}
 
 int main(void)
 {
@@ -151,6 +163,11 @@ int main(void)
 	list_verbose3.splice(list_verbose3.begin(), list_multiple, ++(list_multiple.begin()), --(list_multiple.end()));
 	iter_print_container(list_verbose3, "list_verbose3");
 	iter_print_container(list_multiple, "list_multiple");
+	list_verbose1.clear();
+	list_verbose2.clear();
+	list_verbose3.clear();
+	list_multiple.clear();
+	list_single.clear();
 
 	list<int>	list_remove(10, 3);
 
@@ -172,5 +189,57 @@ int main(void)
 	iter_print_container(list_remove, "list_remove");
 	list_remove.remove_if(int_is_2);
 	iter_print_container(list_remove, "list_remove");
+
+	srand(time(NULL));
+	list<int>	list_sort;
+
+	for (size_t i = 0; i < 10; i++)
+	{
+		list_sort.push_back(rand() % 15);
+	}
+	iter_print_container(list_sort, "list_sort");
+	list<int>	list_partial;
+	list<int>::iterator list_sort_it = list_sort.begin();
+	for (size_t i = 0; i < list_sort.size() / 2; i++)
+		list_sort_it++;
+	list_partial.splice(list_partial.begin(), list_sort, list_sort.begin(), list_sort_it);
+	iter_print_container(list_partial, "list_partial");
+	iter_print_container(list_sort, "list_sort");
+	list_sort.sort();
+	list_partial.sort();
+	iter_print_container(list_partial, "list_partial");
+	iter_print_container(list_sort, "list_sort");
+	list_sort.merge(list_partial);
+	iter_print_container(list_sort, "list_sort");
+	list_sort.remove(6);
+	std::cout << "LIST_SORT AFTER REMOVING '6':\n";
+	iter_print_container(list_sort, "list_sort");
+	list_sort.reverse();
+	iter_print_container(list_sort, "list_sort");
+	list<int>	list_reverse;
+	list_reverse.push_back(1);
+	list_reverse.push_back(2);
+	iter_print_container(list_reverse, "list_reverse");
+	list_reverse.reverse();
+	iter_print_container(list_reverse, "list_reverse");
+
+	subject_title("SWAP");
+
+	list_copy.push_back(42);
+	list_default.push_back(404);
+	iter_print_container<list<int> >(list_copy, "list_copy");
+	iter_print_container<list<int> >(list_default, "list_default");
+	swap(list_copy, list_default);
+	iter_print_container<list<int> >(list_copy, "list_copy");
+	iter_print_container<list<int> >(list_default, "list_default");
+
+	subject_title("OPERATOR OVERLOAD");
+
+	comparison_operator_container<list<int> >(list_copy, list_default, "list_copy", "list_default");
+	list<int>::iterator list_copy_it = list_copy.begin();
+	for (size_t i = 0; i < list_copy.size(); i++)
+		list_copy_it++;
+	bidirectional_iterator_comparison(list_copy_it, list_copy.end(), "list_copy::begin + size()", "list_copy::end"); 
+
 	return (0);
 }

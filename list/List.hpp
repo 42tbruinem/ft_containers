@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/26 15:50:30 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/11 21:42:53 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/13 21:49:06 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 # include <BidirectionalIterator.hpp>
 # include <ReverseBidirectionalIterator.hpp>
 # include <GenericFunctions.hpp>
-# include <list>
 
 namespace ft
 {
@@ -272,11 +271,11 @@ namespace ft
 			}
 			void splice (iterator position, list& x, iterator i)
 			{
-				splice(position, x, i, ++i);
+				splice(position, x, i, ++iterator(i));
 			}
 			void splice (iterator position, list& x, iterator first, iterator last)
 			{
-				if (&x == this)
+				if (first == last)
 					return ;
 				size_t len = ft::distance(first, last);
 
@@ -297,16 +296,6 @@ namespace ft
 						it++;
 				}
 			}
-			void remove (const T& val, iterator first, iterator last) //illegal
-			{
-				for (; first != last;)
-				{
-					if (*first == val)
-						first = erase(first);
-					else
-						first++;
-				}
-			}
 			template <class Predicate>
 			void remove_if (Predicate pred)
 			{
@@ -321,15 +310,79 @@ namespace ft
 			void unique()
 			{
 				for (iterator it = this->begin(); it != this->end(); it++)
-					remove(*it, ++iterator(it), this->end());
+				{
+					iterator jt = it;
+					jt++;
+					for (; *jt == *it && jt != this->end(); jt++)
+						erase(jt);
+				}
 			}
 			template <class BinaryPredicate>
 			void unique(BinaryPredicate binary_pred)
 			{
+				iterator it = this->begin();
 				for (iterator it = this->begin(); it != this->end(); it++)
 				{
-				
+					for (iterator jt = ++iterator(it); jt != this->end() && binary_pred(*it, *jt); jt++)
+						erase(jt);
 				}
+			}
+			void	merge(list& x)
+			{
+				iterator orig = this->begin();
+				for (iterator it = x.begin(); it != x.end();)
+				{
+					for (; *it > *orig && orig != this->end(); orig++) {}
+					splice(orig, x, it++);
+				}
+			}
+			template<class Compare>
+			void	merge(list& x, Compare comp)
+			{
+				iterator orig = this->begin();
+				for (iterator it = x.begin(); it != x.end();)
+				{
+					for (; comp(*orig, *it) && orig != this->end(); orig++) {}
+					splice(orig, x, it++);
+				}
+			}
+			void	sort()
+			{
+				if (this->size() == 1)
+					return ;
+				iterator middle = this->begin();
+				for (size_t i = 0; i < this->size() / 2; i++)
+					middle++;
+				list<T>	right;
+				list<T>	left;
+				right.splice(right.begin(), *this, this->begin(), middle);
+				left.splice(left.begin(), *this);
+				right.sort();
+				left.sort();
+				right.merge(left);
+				this->splice(this->begin(), right);
+			}
+			template <class Compare>
+			void	sort(Compare comp)
+			{
+				if (this->size() == 1)
+					return ;
+				iterator middle = this->begin();
+				for (size_t i = 0; i < this->size() / 2; i++)
+					middle++;
+				list<T>	right;
+				list<T>	left;
+				right.splice(right.begin(), *this, this->begin(), middle);
+				left.splice(left.begin(), *this);
+				right.sort(comp);
+				left.sort(comp);
+				right.merge(left, comp);
+				this->splice(this->begin(), right);
+			}
+			void	reverse()
+			{
+				for (iterator it = ++(this->begin()); it != this->end();)
+					splice(this->begin(), *this, it++);
 			}
 		private:
 			void	connect(iterator front, iterator back)
@@ -371,6 +424,45 @@ namespace ft
 			node	*tail;
 			Alloc	alloc;
 	};
+
+	
+	template <class T>
+	bool	operator == (const list<T>& src, const list<T>& other)
+	{
+		if (src.size() != other.size())
+			return (false);
+		return (ft::equal(src.begin(), src.end(), other.begin()));
+	}
+
+	template <class T>
+	bool	operator != (const list<T>& src, const list<T>& other)
+	{
+		return !(src == other);
+	}
+
+	template <class T>
+	bool	operator < (const list<T>& src, const list<T>& other)
+	{
+		return (ft::lexicographical_compare(src.begin(), other.begin(), src.end(), other.end()));
+	}
+
+	template <class T>
+	bool	operator > (const list<T>& src, const list<T>& other)
+	{
+		return (other < src);
+	}
+
+	template <class T>
+	bool	operator >= (const list<T>& src, const list<T>& other)
+	{
+		return !(src < other);
+	}
+
+	template <class T>
+	bool	operator <= (const list<T>& src, const list<T>& other)
+	{
+		return !(other < src);
+	}
 
 	template <class T, class Alloc>
 	void swap (list<T,Alloc>& x, list<T,Alloc>& y)
