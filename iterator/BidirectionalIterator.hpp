@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/11 19:52:27 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/02 17:59:32 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/16 16:08:00 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,9 @@ namespace ft
 			Node	*ptr;
 		public:
 			typedef Category					iterator_category;
-			BidirectionalIterator() : ptr(NULL)
-			{
-			}
-			BidirectionalIterator(Node *ptr) : ptr(ptr)
-			{
-			}
-			~BidirectionalIterator()
-			{
-			}
+			BidirectionalIterator() : ptr(NULL) {}
+			BidirectionalIterator(Node *ptr) : ptr(ptr) {}
+			~BidirectionalIterator() {}
 			BidirectionalIterator(const BidirectionalIterator& iter)
 			{
 				*this = iter;

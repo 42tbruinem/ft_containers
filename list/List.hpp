@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/26 15:50:30 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/13 21:49:06 by tbruinem      ########   odam.nl         */
+/*   Updated: 2020/12/16 16:08:37 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,22 @@ namespace ft
 		class node
 		{
 			public:
+				node() : prev(NULL), next(NULL) {}
+				node(const T& element, node *prev = NULL, node *next = NULL) : element(element), prev(prev), next(next) {}
+				node& operator = (const node& other)
+				{
+					if (this != &other)
+					{
+						this->element = other.element;
+						this->prev = other.prev;
+						this->next = other.next;
+					}
+					return (*this);
+				}
+				~node() {}
 				T		element;
 				node	*prev;
 				node	*next;
-				node() : prev(NULL), next(NULL) {}
-				node(const T& element, node *prev = NULL, node *next = NULL) : element(element), prev(prev), next(next) {}
-//				bool operator == (const node& other) { return (prev == other.prev && next == other.next); }
-//				bool operator != (const node& other) { return !(*this == other); }
 		};
 		public:
 			typedef T*														pointer;
