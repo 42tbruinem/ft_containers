@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/16 16:41:23 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/18 17:09:08 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,102 +18,264 @@
 # include <iostream>
 # include <memory>
 # include <limits>
-# include <BidirectionalIterator.hpp>
+# include <utility>
+# include <unistd.h>
 
 namespace ft
 {
-	template <class Key, class Value, class Compare = std::less<Key>, class Alloc = std::allocator<std::pair<Key, Value> > >
+	class nodebase
+	{
+		public:
+			nodebase(nodebase *parent = NULL, nodebase *left = NULL, nodebase *right = NULL) : parent(parent), left(left), right(right) {}
+			nodebase(const nodebase& other) : parent(other.parent), left(other.left), right(other.right) {}
+			nodebase& operator = (const nodebase& other)
+			{
+				if (this != &other)
+				{
+					this->parent = other.parent;
+					this->left = other.left;
+					this->right = other.right;
+				}
+				return (*this);
+			}
+			~nodebase() {}
+			nodebase	*next()
+			{
+				nodebase *iter = this;
+				if (iter->right)
+				{
+					iter = iter->right;
+					while (iter->left)
+						iter = iter->left;
+				}
+				else
+				{
+					while (iter->parent->right == iter)
+						iter = iter->parent;
+					iter = iter->parent;
+				}
+				return (iter);
+			}
+			nodebase	*prev()
+			{
+				nodebase *iter = this;
+				if (iter->left)
+				{
+					iter = iter->left;
+					while (iter->right)
+						iter = iter->right;
+				}
+				else
+				{
+					while (iter->parent->left == iter)
+						iter = iter->parent;
+					iter = iter->parent;
+				}
+				return (iter);
+			}
+		public:
+			nodebase	*parent;
+			nodebase	*left;
+			nodebase	*right;
+	};
+
+	template <class Key, class T>
+	class node : public nodebase
+	{
+		typedef std::pair<Key, T>	Value;
+		public:
+			typedef nodebase			base;
+			node(const Key& key, const T& mapped = T(), nodebase *parent = NULL, nodebase *left = NULL, nodebase *right = NULL) : value(key, mapped), nodebase(parent, left, right) {}
+			node(const node& other) : value(other.value), nodebase(other.parent, other.left, other.right) {}
+			node& operator = (const node& other)
+			{
+				if (this != &other)
+				{
+					this->key = other.key;
+					this->value = other.value;
+					this->parent = other.parent;
+					this->left = other.left;
+					this->right = other.right;
+				}
+				return (*this);
+			}
+			Value&	getval()
+			{
+//				std::cout << "Key: " << this->value.first << " | " << "Val: " << this->value.second << std::endl;
+//				sleep(1);
+				return (this->value);
+			}
+			~node() {}
+		private:
+			Value	value;
+	};
+}
+
+namespace ft
+{
+	template <class Node, class Value>
+	class Iterator
+	{
+		public:
+			Iterator(typename Node::base *ptr = NULL) : ptr(ptr) {}
+			Iterator(const Iterator& other) : ptr(other.ptr) {}
+			Iterator&	operator = (const Iterator& other)
+			{
+				if (this != &other)
+				{
+					this->ptr = other.ptr;
+				}
+				return (*this);
+			}
+			~Iterator() {}
+			bool	operator == (const Iterator& other)
+			{
+				return (this->ptr == other.ptr);
+			}
+			bool	operator != (const Iterator& other)
+			{
+				return !(*this == other);
+			}
+			Iterator	operator ++ (int)
+			{
+				Iterator old(*this);
+
+				this->ptr = this->ptr->next();
+				return (old);
+			}
+			Iterator&	operator ++ ()
+			{
+				this->ptr = this->ptr->next();
+				return (*this);
+			}
+			Iterator	operator -- (int)
+			{
+				Iterator old(*this);
+
+				this->ptr = this->ptr->prev();
+				return (old);
+			}
+			Iterator&	operator -- ()
+			{
+				this->ptr = this->ptr->prev();
+				return (*this);
+			}
+			Value*	operator -> ()
+			{
+				return (&static_cast<Node *>(this->ptr)->getval());
+			}
+			Value&	operator * ()
+			{
+				return (static_cast<Node *>(this->ptr)->getval());
+			}
+		private:
+			typename Node::base *ptr;
+	};
+}
+
+namespace ft
+{
+	template <class Node, class Value>
+	class ReverseIterator : public Iterator<Node, Value>
+	{
+		public:
+			ReverseIterator() : Iterator<Node, Value>() {}
+			ReverseIterator(const ReverseIterator& other) : Iterator<Node, Value>(other) {}
+			ReverseIterator& operator = (const ReverseIterator& other) { return(Iterator<Node, Value>::operator=(other)); }
+			~ReverseIterator() {}
+			ReverseIterator&	operator ++ () { return (Iterator<Node, Value>::operator--()); }
+			ReverseIterator		operator ++ (int) { return (Iterator<Node, Value>::operator--(1)); }
+			ReverseIterator&	operator -- () { return (Iterator<Node, Value>::operator++()); }
+			ReverseIterator		operator -- (int) { return (Iterator<Node, Value>::operator++(1)); }
+	};
+}
+
+namespace ft
+{
+	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<std::pair<Key, T> > >
 	class map
 	{
-		class node
-		{
-			public:
-				node(node *parent = NULL, node *left = NULL, node *right = NULL, const T& value = T()) : parent(parent), left(left), right(right), content(value) {}
-				node(const node& other) : parent(other.parent), left(other.left), right(other.right), content(other.content) {}
-				node& operator = (const node& other)
-				{
-					if (this != &other)
-					{
-						this->parent = other.parent;
-						this->left = other.left;
-						this->right = other.right;
-						this->content = other.content;
-					}
-					return (*this);
-				}
-				~node() {}
-				node	*parent;
-				node	*left;
-				node	*right;
-				T		content;
-		};
 		public:
-			typedef std::pair<Key, Value>														value_type;
-			typedef BidirectionalIterator<node, value_type*, value_type&>						iterator;
-			typedef BidirectionalIterator<node, const value_type*, const value_type&>			const_iterator;
-			typedef ReverseBidirectionalIterator<node, value_type*, value_type&>				reverse_iterator;
-			typedef ReverseBidirectionalIterator<node, const value_type*, const value_type&>	const_reverse_iterator;
+			typedef std::pair<Key, T>															value_type;
+			typedef Key																			key_type;
+			typedef Compare																		key_compare;
+			typedef T																			mapped_type;
+			typedef value_type&																	reference;
+			typedef value_type*																	pointer;
+			typedef node<Key, T>																mapnode;
+			typedef nodebase																	mapnodebase;
+
+		public:
+			typedef Iterator<mapnode, value_type>												iterator;
+			typedef Iterator<mapnode, const value_type>											const_iterator;
+			typedef ReverseIterator<mapnode, value_type>										reverse_iterator;
+			typedef ReverseIterator<mapnode, const value_type>									const_reverse_iterator;
 
 			//CONSTRUCTORS
 
-			explicit map(const Compare& compare = Compare(), const Alloc& alloc = Alloc()) : root(new node()), tail(new node()), len(0), compare(compare), allocator(alloc) {}
-			map(const map& other) : root(new node(other.root)), tail(new node(other.tail)), len(other.len), compare(other.compare), allocator(other.allocator)
-			{
-				//copy construct
-			}
-			template <class InputIterator>
-			map(InputIterator first, InputIterator last, const Compare& comp = Compare(), const Alloc& alloc = Alloc())
-			{
-				//construct tree from first<->last
-			}
+			explicit map(const Compare& compare = Compare(), const Alloc& alloc = Alloc()) : root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), len(0), compare(compare), allocator(alloc) {}
+			map(const map& other) : root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), len(other.len), compare(other.compare), allocator(other.allocator) {}
+
+			// template <class InputIterator>
+			// map(InputIterator first, InputIterator last, const Compare& comp = Compare(), this->first(nodebase(&this->last)), last(nodebase(&this->first)), const Alloc& alloc = Alloc())
+			// {
+			// 	//construct tree from first<->last
+			// }
+
 			map& operator = (const map& other)
 			{
 				if (this != &other)
 				{
-					//deepcopy the entire container
+					
 				}
 				return (*this);
 			}
+
 			~map()
 			{
 				//delete entire container
-				delete this->root;
-				delete this->tail;
 			}
 
 			//ITERATORS
 
 			iterator	begin()
 			{
-				return (iterator(root));
+				return (iterator(this->first.parent));
 			}
+
 			const_iterator begin() const
 			{
-				return (const_iterator(root));
+				return (const_iterator(this->first.parent));
 			}
+
 			iterator	end()
 			{
-				return (iterator(tail));
+				return (iterator(&this->last));
 			}
+
 			const_iterator end() const
 			{
-				return (const_iterator(tail));
+				return (const_iterator(&this->last));
 			}
+
 			reverse_iterator rbegin()
 			{
-				return (reverse_iterator(tail));
+				return (reverse_iterator(this->last.parent));
 			}
+
 			const_reverse_iterator rbegin() const
 			{
-				return (const_reverse_iterator(tail));
+				return (const_reverse_iterator(this->last.parent));
 			}
+
 			reverse_iterator rend()
 			{
-				return (reverse_iterator(root));
+				return (reverse_iterator(&this->first));
 			}
+
 			const_reverse_iterator rend() const
 			{
-				return (const_reverse_iterator(root));
+				return (const_reverse_iterator(&this->first));
 			}
 
 			//CAPACITY
@@ -122,10 +284,12 @@ namespace ft
 			{
 				return (!this->len);
 			}
+
 			size_t	size() const
 			{
 				return (this->len);
 			}
+
 			size_t max_size() const
 			{
 				return (this->allocator.max_size());
@@ -133,39 +297,77 @@ namespace ft
 
 			//ELEMENT ACCESS
 
-			Value&	operator [] (const Key& key)
+			T&	operator [] (const Key& key)
 			{
-				//return Value at Key
+				iterator it = find(key);
+				if (it == this->end())
+					it = insert(value_type(key, T())).first;
+				return (it->second);
 			}
 
 			//MODIFIERS
 
-			std::pair<iterator,bool> insert (const value_type& keyval)
+			void	clear()
 			{
-				//insert the given keyval.second at keyval.first in the map
+//				for (iterator it = this->begin(); it != this->end(); it++)
+					
+			}
 
-				//return true if it was inserted else false
-				//return iterator to the newly inserted element else the element that was already there
-			}
-			iterator insert (iterator position, const value_type& val)
+			std::pair<iterator,bool> insert (const value_type& value)
 			{
-				//insert in list, with position as hint
-				//return iterator to the newly inserted element else the element that was already there
+				iterator it = find(value.first);
+//				std::cout << "found == end() ? " << ((it == this->end()) ? "True" : "False") << std::endl;
+				if (it != this->end())
+					return (std::pair<iterator, bool>(it, false));
+				//move down the tree binary-search style and when an empty node is encountered, add a new node there
+				typename mapnode::base **iter = &this->root;
+				typename mapnode::base *parent = NULL;
+
+				while (*iter && *iter != &this->first && *iter != &this->last)
+				{
+//					std::cout << "here?" << std::endl;
+					parent = (*iter);
+					if (value.first > static_cast<mapnode *>((*iter))->getval().first)
+						iter = &(*iter)->right;
+					else if (value.first < static_cast<mapnode *>((*iter))->getval().first)
+						iter = &(*iter)->left;
+				}
+//				std::cout << "not stuck here" << std::endl;
+				*iter = new mapnode(value.first, value.second, parent, NULL, NULL);
+				if (this->last.parent == &this->first || static_cast<mapnode *>(this->last.parent)->getval().first < value.first)
+				{
+	//				std::cout << "updated highest key is " << key << std::endl;
+					(*iter)->right = &this->last;
+					this->last.parent = (*iter);
+				}
+				if (this->first.parent == &this->last || static_cast<mapnode *>(this->first.parent)->getval().first > value.first)
+				{
+	//				std::cout << "updated lowest key is " << key << std::endl;
+					(*iter)->left = &this->first;
+					this->first.parent = (*iter);
+				}
+//				std::cout << "Key: " << value.first << " | Val: " << value.second << " | left: " << (void *)(*iter)->left << " | right: " << (void *)(*iter)->right << " | parent: " << (void *)(*iter)->parent << std::endl;
+	//			std::cout << key << " : " << val << " : " << (void *)(*iter) << std::endl;
+				return (std::pair<iterator, bool>(iterator(*iter), true));
 			}
+
 			template <class InputIterator>
 			void insert (InputIterator first, InputIterator last)
 			{
 				//insert first<->last into map
 			}
+
 			void	erase(iterator position)
 			{
 				//delete element at position from map
 			}
+
 			size_t	erase(const Key& key)
 			{
 				//delete element at 'key' from map
 				//return how many are deleted (0 or 1);
 			}
+
 			void	erase(iterator first, iterator last)
 			{
 				//delete all the elements from first to last (not deleting last))
@@ -180,11 +382,6 @@ namespace ft
 				ft::swap(this->compare, other.compare);
 			}
 
-			void	clear()
-			{
-				//delete all the elements in the map
-			}
-
 			//OBSERVERS
 
 			key_compare key_comp() const
@@ -192,17 +389,31 @@ namespace ft
 				return (compare);
 			}
 
-			value_compare value_comp() const
-			{
-				//HOOFDPIJN
-			}
+			// value_compare value_comp() const
+			// {
+			// 	//HOOFDPIJN
+			// }
 
 			//OPERATIONS
 
 			iterator find (const key_type& k)
 			{
-				//return iterator to element matching key k
+				if (!this->root)
+					return (this->end());
+				typename mapnode::base *iter = this->root;
+				iterator it = iterator(this->root);
+				while (iter && iter != &this->first && iter != &this->last)
+				{
+					if (static_cast<mapnode *>(iter)->getval().first > k)
+						iter = iter->left;
+					else if (static_cast<mapnode *>(iter)->getval().first < k)
+						iter = iter->right;
+					else
+						return (iterator(iter));
+				}
+				return (this->end());
 			}
+
 			const_iterator find (const key_type& k) const
 			{
 				//same dealio, but return a const iterator
@@ -242,8 +453,9 @@ namespace ft
 			}
 
 		private:
-			node	*root;
-			node	*tail;
+			mapnodebase	*root;
+			mapnodebase	first;
+			mapnodebase	last;
 			size_t	len;
 			Compare	compare;
 			Alloc	allocator;
