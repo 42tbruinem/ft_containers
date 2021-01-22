@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/18 17:09:08 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/22 20:24:09 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ namespace ft
 				}
 				else
 				{
-					while (iter->parent->right == iter)
+					while (iter->parent && iter->parent->right == iter) //might be fucked??
 						iter = iter->parent;
 					iter = iter->parent;
 				}
@@ -67,7 +67,7 @@ namespace ft
 				}
 				else
 				{
-					while (iter->parent->left == iter)
+					while (iter->parent && iter->parent->left == iter) //might be fucked?
 						iter = iter->parent;
 					iter = iter->parent;
 				}
@@ -109,6 +109,23 @@ namespace ft
 		private:
 			Value	value;
 	};
+}
+
+void	print_node_info(ft::nodebase *node, ft::nodebase *root)
+{
+	std::cout << "Root ? " << ((root == node) ? "True" : "False") << std::endl;
+	std::cout << "Parent ? " << ((node->parent) ? "True " : "False ");
+	if (node->parent)
+		std::cout << (void *)node->parent;
+	std::cout << std::endl;
+	std::cout << "Left ? " << ((node->left) ? "True " : "False ");
+	if (node->left)
+		std::cout << (void *)node->left;
+	std::cout << std::endl;
+	std::cout << "Right ? " << ((node->right) ? "True " : "False ");
+	if (node->right)
+		std::cout << (void *)node->right;
+	std::cout << std::endl;
 }
 
 namespace ft
@@ -168,6 +185,7 @@ namespace ft
 			{
 				return (static_cast<Node *>(this->ptr)->getval());
 			}
+			typename Node::base *getptr() { return this->ptr; }
 		private:
 			typename Node::base *ptr;
 	};
@@ -179,7 +197,7 @@ namespace ft
 	class ReverseIterator : public Iterator<Node, Value>
 	{
 		public:
-			ReverseIterator() : Iterator<Node, Value>() {}
+			ReverseIterator(typename Node::base *ptr) : Iterator<Node, Value>(ptr) {}
 			ReverseIterator(const ReverseIterator& other) : Iterator<Node, Value>(other) {}
 			ReverseIterator& operator = (const ReverseIterator& other) { return(Iterator<Node, Value>::operator=(other)); }
 			~ReverseIterator() {}
@@ -213,7 +231,21 @@ namespace ft
 
 			//CONSTRUCTORS
 
-			explicit map(const Compare& compare = Compare(), const Alloc& alloc = Alloc()) : root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), len(0), compare(compare), allocator(alloc) {}
+			void	info(void)
+			{
+				std::cout << "Root: " << this->root << std::endl;
+				std::cout << "Len: " << this->len << std::endl;
+				std::cout << "First:" << std::endl;
+				print_node_info(&this->first, this->root);
+				std::cout << "Last:" << std::endl;
+				print_node_info(&this->last, this->root);
+			}
+
+			explicit map(const Compare& compare = Compare(), const Alloc& alloc = Alloc()) : root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), len(0), compare(compare), allocator(alloc)
+			{
+				std::cout << "Address of first: " << (void *)&this->first << std::endl;
+				std::cout << "Address of last: " << (void *)&this->last << std::endl;
+			}
 			map(const map& other) : root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), len(other.len), compare(other.compare), allocator(other.allocator) {}
 
 			// template <class InputIterator>
@@ -233,7 +265,7 @@ namespace ft
 
 			~map()
 			{
-				//delete entire container
+				this->clear();
 			}
 
 			//ITERATORS
@@ -309,68 +341,102 @@ namespace ft
 
 			void	clear()
 			{
-//				for (iterator it = this->begin(); it != this->end(); it++)
-					
+				erase(this->begin(), this->end());
 			}
 
 			std::pair<iterator,bool> insert (const value_type& value)
 			{
 				iterator it = find(value.first);
-//				std::cout << "found == end() ? " << ((it == this->end()) ? "True" : "False") << std::endl;
 				if (it != this->end())
 					return (std::pair<iterator, bool>(it, false));
-				//move down the tree binary-search style and when an empty node is encountered, add a new node there
 				typename mapnode::base **iter = &this->root;
 				typename mapnode::base *parent = NULL;
-
 				while (*iter && *iter != &this->first && *iter != &this->last)
 				{
-//					std::cout << "here?" << std::endl;
 					parent = (*iter);
 					if (value.first > static_cast<mapnode *>((*iter))->getval().first)
 						iter = &(*iter)->right;
 					else if (value.first < static_cast<mapnode *>((*iter))->getval().first)
 						iter = &(*iter)->left;
 				}
-//				std::cout << "not stuck here" << std::endl;
 				*iter = new mapnode(value.first, value.second, parent, NULL, NULL);
+				std::cout << "new! " << (void *)*iter << " | Key: " << value.first << " | Value: " << value.second << std::endl;
 				if (this->last.parent == &this->first || static_cast<mapnode *>(this->last.parent)->getval().first < value.first)
 				{
-	//				std::cout << "updated highest key is " << key << std::endl;
 					(*iter)->right = &this->last;
 					this->last.parent = (*iter);
 				}
 				if (this->first.parent == &this->last || static_cast<mapnode *>(this->first.parent)->getval().first > value.first)
 				{
-	//				std::cout << "updated lowest key is " << key << std::endl;
 					(*iter)->left = &this->first;
 					this->first.parent = (*iter);
 				}
-//				std::cout << "Key: " << value.first << " | Val: " << value.second << " | left: " << (void *)(*iter)->left << " | right: " << (void *)(*iter)->right << " | parent: " << (void *)(*iter)->parent << std::endl;
-	//			std::cout << key << " : " << val << " : " << (void *)(*iter) << std::endl;
+				this->len++;
 				return (std::pair<iterator, bool>(iterator(*iter), true));
 			}
 
 			template <class InputIterator>
 			void insert (InputIterator first, InputIterator last)
 			{
-				//insert first<->last into map
+				for (;first != last; first++)
+					insert(*first);
 			}
 
 			void	erase(iterator position)
 			{
-				//delete element at position from map
+				//fix up first/last
+				if (position.getptr()->right == &this->last) //highest element
+				{
+					this->last.parent = this->last.parent->prev();
+					if (!this->last.parent)
+						this->last.parent = &this->first;
+					position.getptr()->right = NULL;
+				}
+				if (position.getptr()->left == &this->first) //lowest element
+				{
+					this->first.parent = this->first.parent->next();
+					if (!this->first.parent)
+						this->first.parent = &this->last;
+					position.getptr()->left = NULL;
+				}
+
+				std::cout << "in erase - " << position->first << " : " << position->second << std::endl;
+				print_node_info(position.getptr(), this->root);
+				mapnodebase *node = position.getptr();
+				if (node->left && node->right) //two children
+				{
+					mapnodebase *replacement = node->left;
+					while (replacement->right)
+						replacement = replacement->right;
+					connect(node, replacement);
+				}
+				else if (node->left) //one child
+					connect(node, node->left);
+				else if (node->right) //one child
+					connect(node, node->right);
+				else if (node->parent && node->parent->right == node) //no children
+					node->parent->right = NULL;
+				else if (node->parent && node->parent->left == node) //no children
+					node->parent->left = NULL;
+				delete static_cast<mapnode *>(node);
+				this->len--; //what if an invalid iterator is given??
 			}
 
 			size_t	erase(const Key& key)
 			{
-				//delete element at 'key' from map
-				//return how many are deleted (0 or 1);
+				iterator it = find(key);
+				if (it == this->end())
+					return (0);
+				erase(it);
+				return (1);
 			}
 
 			void	erase(iterator first, iterator last)
 			{
-				//delete all the elements from first to last (not deleting last))
+				for (;first != last;)
+				{
+					erase(first++);
+				}
 			}
 
 			void	swap(map& other)
@@ -428,6 +494,7 @@ namespace ft
 			{
 				//return iterator to first element that would be lower than k
 			}
+
 			const_iterator lower_bound (const key_type& k) const
 			{
 				//#same
@@ -437,6 +504,7 @@ namespace ft
 			{
 				//return iterator to first element that would be lower than k
 			}
+
 			const_iterator upper_bound (const key_type& k) const
 			{
 				//#same
@@ -447,12 +515,46 @@ namespace ft
 				//useless function
 				//only returns an iterator to k and one past
 			}
+
 			std::pair<const_iterator,const_iterator> equal_range (const key_type& k) const
 			{
 				//same bullshit
 			}
 
 		private:
+			void	connect(mapnodebase *oldnode, mapnodebase* newnode)
+			{
+				bool	left_child = (oldnode->parent && oldnode->parent->left == oldnode);
+
+				//set the parent of old to new
+				if (!oldnode->parent)
+					this->root = newnode;
+				else if (left_child)
+					oldnode->parent->left = newnode;
+				else
+					oldnode->parent->right = newnode;
+
+				//turn the spot of new to NULL
+				if (newnode->parent && newnode->parent->left == newnode)
+					newnode->parent->left = NULL;
+				if (newnode->parent && newnode->parent->right == newnode)
+					newnode->parent->right = NULL;
+
+				//set new's parent to old's parent
+				newnode->parent = oldnode->parent;
+
+				//if there are left and/or right children
+				if (oldnode->left && oldnode->left != newnode)
+				{
+					newnode->left = oldnode->left;
+					newnode->left->parent = newnode;
+				}
+				if (oldnode->right && oldnode->right != newnode)
+				{
+					newnode->right = oldnode->right;
+					newnode->right->parent = newnode;
+				}
+			}
 			mapnodebase	*root;
 			mapnodebase	first;
 			mapnodebase	last;

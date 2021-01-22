@@ -6,24 +6,37 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/13 13:50:22 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/18 17:09:57 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/22 20:23:29 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Map.hpp"
 #include <string>
 #include <iostream>
+#include <vector>
 
 int main(void)
 {
 	ft::map<std::string, size_t>	container;
+	std::vector<std::string> strings = {
+		"aa",
+		"a",
+		"za",
+		"zb",
+		"c",
+		"b",
+		"y",
+		"hoi",
+		"ab",
+	};
 
-	container["y"] = 24;
-//	std::cout << "------" << std::endl;
+	container["aa"] = 1;
+	container["a"] = 100;
+	container["za"] = 25;
+	container["zb"] = 26;
 	container["c"] = 4;
-	container["z"] = 25;
-	container["a"] = 1;
 	container["b"] = 3;
+	container["y"] = 24;
 
 	std::cout << container["a"] << std::endl;
 	std::cout << container["hoi"] << std::endl;
@@ -40,8 +53,28 @@ int main(void)
 
 	for (ft::map<std::string, size_t>::iterator it = container.begin(); it != container.end(); it++)
 	{
-		std::cout << it->first << " : " << it->second << std::endl;
-//		sleep(1);
+		std::cout << "ITERATE: " << it->first << " : " << it->second << std::endl;
 	}
-	return (0);
+	// container.info();
+	// container.erase("aa");
+	// auto test = container.find("a");
+	// std::cout << ((test == container.end()) ? "True" : "False") << std::endl;
+	// container.erase("a");
+	// container.info();
+	// for (ft::map<std::string, size_t>::iterator it = container.begin(); it != container.end(); it++)
+	// {
+	// 	std::cout << it->first << " : " << it->second << std::endl;
+	// 	sleep(1);
+	// }
+	// container.clear();
+	// container.info();
+	// container["a"] = 5;
+// 	for (size_t i = 0; i < strings.size(); i++)
+// 		container[std::string(strings[i])] = i;
+// 	for (ft::map<std::string, size_t>::iterator it = container.begin(); it != container.end(); it++)
+// 	{
+// 		std::cout << it->first << " : " << it->second << std::endl;
+// //		sleep(1);
+// 	}
+// 	return (0);
 }
