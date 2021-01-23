@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/13 13:50:22 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/23 12:32:23 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/23 13:44:27 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,5 +79,9 @@ int main(void)
 		std::cout << it->first << " : " << it->second << std::endl;
 //		sleep(1);
 	}
+	container.erase("a");
+	container.erase("a");
+	ft::map<std::string, size_t>::iterator it = container.find("a");
+	std::cout << "returned iterator == to end() ? " << ((it == container.end()) ? "True" : "False") << std::endl;
 // 	return (0);
 }

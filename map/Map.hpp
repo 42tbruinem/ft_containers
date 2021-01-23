@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/23 12:31:51 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/23 16:49:01 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <limits>
 # include <utility>
 # include <unistd.h>
+# include <traits.hpp>
 
 namespace ft
 {
@@ -83,13 +84,12 @@ namespace ft
 			nodebase	*right;
 	};
 
-	template <class Key, class T>
+	template <class Value>
 	class node : public nodebase
 	{
-		typedef std::pair<Key, T>	Value;
 		public:
 			typedef nodebase			base;
-			node(const Key& key, const T& mapped = T(), nodebase *parent = NULL, nodebase *left = NULL, nodebase *right = NULL) : value(key, mapped), nodebase(parent, left, right) {}
+			node(const Value& value, nodebase *parent = NULL, nodebase *left = NULL, nodebase *right = NULL) : value(value), nodebase(parent, left, right) {}
 			node(const node& other) : value(other.value), nodebase(other.parent, other.left, other.right) {}
 			node& operator = (const node& other)
 			{
@@ -115,6 +115,8 @@ namespace ft
 	};
 }
 
+//DELETE
+
 void	print_node_info(ft::nodebase *node, ft::nodebase *root)
 {
 	std::cout << "Root ? " << ((root == node) ? "True" : "False") << std::endl;
@@ -132,7 +134,7 @@ void	print_node_info(ft::nodebase *node, ft::nodebase *root)
 
 namespace ft
 {
-	template <class Node, class Value>
+	template <class Node, class Value, class Category = ft::bidirectional_iterator_tag>
 	class Iterator
 	{
 		public:
@@ -216,13 +218,13 @@ namespace ft
 	class map
 	{
 		public:
-			typedef std::pair<Key, T>															value_type;
+			typedef std::pair<const Key, T>														value_type;
 			typedef Key																			key_type;
 			typedef Compare																		key_compare;
 			typedef T																			mapped_type;
 			typedef value_type&																	reference;
 			typedef value_type*																	pointer;
-			typedef node<Key, T>																mapnode;
+			typedef node<value_type>															mapnode;
 			typedef nodebase																	mapnodebase;
 
 		public:
@@ -232,6 +234,8 @@ namespace ft
 			typedef ReverseIterator<mapnode, const value_type>									const_reverse_iterator;
 
 			//CONSTRUCTORS
+
+			//DELETE
 
 			void	info(void)
 			{
@@ -245,22 +249,28 @@ namespace ft
 
 			explicit map(const Compare& compare = Compare(), const Alloc& alloc = Alloc()) : root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), len(0), compare(compare), allocator(alloc)
 			{
-				std::cout << "Address of first: " << (void *)&this->first << std::endl;
-				std::cout << "Address of last: " << (void *)&this->last << std::endl;
+//				std::cout << "Address of first: " << (void *)&this->first << std::endl;
+//				std::cout << "Address of last: " << (void *)&this->last << std::endl;
 			}
-			map(const map& other) : root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), len(other.len), compare(other.compare), allocator(other.allocator) {}
+			map(const map& other) : root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), len(0), compare(other.compare), allocator(other.allocator)
+			{
+				*this = other;
+			}
 
-			// template <class InputIterator>
-			// map(InputIterator first, InputIterator last, const Compare& comp = Compare(), this->first(nodebase(&this->last)), last(nodebase(&this->first)), const Alloc& alloc = Alloc())
-			// {
-			// 	//construct tree from first<->last
-			// }
+			template <class InputIterator>
+			map(InputIterator first, InputIterator last, const Compare& compare = Compare(), const Alloc& alloc = Alloc(),
+			typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL) :
+				len(0), root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), compare(compare), allocator(alloc)
+			{
+				this->insert(first, last);
+			}
 
 			map& operator = (const map& other)
 			{
 				if (this != &other)
 				{
-					
+					this->clear();
+					this->insert(other.begin(), other.end());
 				}
 				return (*this);
 			}
@@ -361,7 +371,7 @@ namespace ft
 					else if (value.first < static_cast<mapnode *>((*iter))->getval().first)
 						iter = &(*iter)->left;
 				}
-				*iter = new mapnode(value.first, value.second, parent, NULL, NULL);
+				*iter = new mapnode(value, parent, NULL, NULL);
 				std::cout << "new! " << (void *)*iter << " | Key: " << value.first << " | Value: " << value.second << std::endl;
 				if (this->last.parent == &this->first || static_cast<mapnode *>(this->last.parent)->getval().first < value.first)
 				{
@@ -388,7 +398,7 @@ namespace ft
 			{
 				//fix up first/last
 				mapnodebase *node = position.getptr();
-				print_node_info(node, this->root);
+//				print_node_info(node, this->root);
 				if (node->right == &this->last) //highest element
 				{
 					this->last.parent = node->prev();
@@ -407,9 +417,8 @@ namespace ft
 						this->first.parent->left = &this->first;
 					node->left = NULL;
 				}
-
-				std::cout << "in erase - " << position->first << " : " << position->second << std::endl;
-				print_node_info(node, this->root);
+//				std::cout << "in erase - " << position->first << " : " << position->second << std::endl;
+//				print_node_info(node, this->root);
 				if (node->left && node->right) //two children
 				{
 					mapnodebase *replacement = node->left;
@@ -425,7 +434,7 @@ namespace ft
 					node->parent->right = NULL;
 				else if (node->parent && node->parent->left == node) //no children
 					node->parent->left = NULL;
-				else if (!node->parent)
+				if (!node->parent)
 					this->root = node->next();
 				delete static_cast<mapnode *>(node);
 				this->len--; //what if an invalid iterator is given??
@@ -511,7 +520,7 @@ namespace ft
 
 			iterator upper_bound (const key_type& k)
 			{
-				//return iterator to first element that would be lower than k
+				//return iterator to first element that would be higher than k
 			}
 
 			const_iterator upper_bound (const key_type& k) const
