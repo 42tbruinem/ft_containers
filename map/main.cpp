@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/13 13:50:22 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/23 13:44:27 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/24 00:28:31 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,14 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <IteratorFunctions.hpp>
+#include <test_header.hpp>
 
 int main(void)
 {
-	ft::map<std::string, size_t>	container;
+	print_version();
+
+	map<std::string, size_t>	container;
 	std::vector<std::string> strings = {
 		"aa",
 		"a",
@@ -51,7 +55,7 @@ int main(void)
 
 	std::cout << std::endl;
 
-	for (ft::map<std::string, size_t>::iterator it = container.begin(); it != container.end(); it++)
+	for (map<std::string, size_t>::iterator it = container.begin(); it != container.end(); it++)
 	{
 		std::cout << "ITERATE: " << it->first << " : " << it->second << std::endl;
 	}
@@ -61,27 +65,36 @@ int main(void)
 	// std::cout << ((test == container.end()) ? "True" : "False") << std::endl;
 	// container.erase("a");
 	// container.info();
-	// for (ft::map<std::string, size_t>::iterator it = container.begin(); it != container.end(); it++)
+	// for (map<std::string, size_t>::iterator it = container.begin(); it != container.end(); it++)
 	// {
 	// 	std::cout << it->first << " : " << it->second << std::endl;
 	// 	sleep(1);
 	// }
 	container.erase("a");
-	container.info();
 	container.clear();
-	container.info();
 
 	container["a"] = 5;
 	for (size_t i = 0; i < strings.size(); i++)
 		container[std::string(strings[i])] = i;
-	for (ft::map<std::string, size_t>::iterator it = container.begin(); it != container.end(); it++)
+	for (map<std::string, size_t>::iterator it = container.begin(); it != container.end(); it++)
 	{
 		std::cout << it->first << " : " << it->second << std::endl;
 //		sleep(1);
 	}
 	container.erase("a");
 	container.erase("a");
-	ft::map<std::string, size_t>::iterator it = container.find("a");
+	map<std::string, size_t>::iterator it = container.find("a");
 	std::cout << "returned iterator == to end() ? " << ((it == container.end()) ? "True" : "False") << std::endl;
+	map<std::string, size_t>	container2(container);
+	for (auto it = container2.begin(); it != container2.end(); it++)
+		std::cout << "Key: " << it->first << " | Val: " << it->second << std::endl;
+
+	const map<std::string, size_t>	container3(container2);
+	for (auto it = container3.begin(); it != container3.end(); it++)
+		std::cout << "Const Key: " << it->first << " | Val: " << it->second << std::endl;
+
+	map<std::string, size_t>::const_iterator const_it(container2.begin());
+	const_it++;
+	std::cout << const_it->first << std::endl;
 // 	return (0);
 }

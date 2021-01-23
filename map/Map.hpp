@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/23 16:49:01 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/24 00:27:29 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,8 +105,6 @@ namespace ft
 			}
 			Value&	getval()
 			{
-//				std::cout << "Key: " << this->value.first << " | " << "Val: " << this->value.second << std::endl;
-//				sleep(1);
 				return (this->value);
 			}
 			~node() {}
@@ -134,11 +132,14 @@ void	print_node_info(ft::nodebase *node, ft::nodebase *root)
 
 namespace ft
 {
-	template <class Node, class Value, class Category = ft::bidirectional_iterator_tag>
+	template <class Value, class Category = ft::bidirectional_iterator_tag>
 	class Iterator
 	{
+//		typedef Iterator<Node, const Value>	const_iterator;
+		typedef ft::nodebase				nodebase;
+		typedef ft::node<Value>				node;
 		public:
-			Iterator(typename Node::base *ptr = NULL) : ptr(ptr) {}
+			Iterator(const nodebase *ptr = NULL) : ptr(const_cast<nodebase *>(ptr)) {}
 			Iterator(const Iterator& other) : ptr(other.ptr) {}
 			Iterator&	operator = (const Iterator& other)
 			{
@@ -148,6 +149,10 @@ namespace ft
 				}
 				return (*this);
 			}
+			// Iterator&	operator = (const const_iterator& other)
+			// {
+			// 	Iterator::operator=(static_cast<Iterator>(other));
+			// }
 			~Iterator() {}
 			bool	operator == (const Iterator& other)
 			{
@@ -183,32 +188,48 @@ namespace ft
 			}
 			Value*	operator -> ()
 			{
-				return (&static_cast<Node *>(this->ptr)->getval());
+				return (&static_cast<node *>(this->ptr)->getval());
 			}
 			Value&	operator * ()
 			{
-				return (static_cast<Node *>(this->ptr)->getval());
+				return (static_cast<node *>(this->ptr)->getval());
 			}
-			typename Node::base *getptr() { return this->ptr; }
+			nodebase *getptr() { return this->ptr; }
 		private:
-			typename Node::base *ptr;
+			nodebase *ptr;
 	};
 }
 
 namespace ft
 {
-	template <class Node, class Value>
-	class ReverseIterator : public Iterator<Node, Value>
+	template <class Value>
+	class ConstIterator : public Iterator<Value>
 	{
+		typedef Iterator<Value>	iterator;
 		public:
-			ReverseIterator(typename Node::base *ptr) : Iterator<Node, Value>(ptr) {}
-			ReverseIterator(const ReverseIterator& other) : Iterator<Node, Value>(other) {}
-			ReverseIterator& operator = (const ReverseIterator& other) { return(Iterator<Node, Value>::operator=(other)); }
+			ConstIterator(const ft::nodebase *ptr = NULL) : iterator(ptr) {}
+			ConstIterator(const iterator& other) : iterator(other) {}
+			const Value& operator * () { return iterator::operator*(); }
+			const Value* operator -> () { return iterator::operator->(); }
+	};
+}
+
+namespace ft
+{
+	template <class Value>
+	class ReverseIterator : public Iterator<Value>
+	{
+		typedef Iterator<Value>		iterator;
+		public:
+			ReverseIterator(typename iterator::nodebase *ptr) : iterator(ptr) {}
+			ReverseIterator(const ReverseIterator& other) : iterator(other) {}
+			ReverseIterator& operator = (const ReverseIterator& other) { return(iterator::operator=(other)); }
+//			ReverseIterator& operator = (const const_reverse_iterator& other) { return(iterator::operator=(other)); }
 			~ReverseIterator() {}
-			ReverseIterator&	operator ++ () { return (Iterator<Node, Value>::operator--()); }
-			ReverseIterator		operator ++ (int) { return (Iterator<Node, Value>::operator--(1)); }
-			ReverseIterator&	operator -- () { return (Iterator<Node, Value>::operator++()); }
-			ReverseIterator		operator -- (int) { return (Iterator<Node, Value>::operator++(1)); }
+			ReverseIterator&	operator ++ () { return (iterator::operator--()); }
+			ReverseIterator		operator ++ (int) { return (iterator::operator--(1)); }
+			ReverseIterator&	operator -- () { return (iterator::operator++()); }
+			ReverseIterator		operator -- (int) { return (iterator::operator++(1)); }
 	};
 }
 
@@ -218,40 +239,37 @@ namespace ft
 	class map
 	{
 		public:
-			typedef std::pair<const Key, T>														value_type;
-			typedef Key																			key_type;
-			typedef Compare																		key_compare;
-			typedef T																			mapped_type;
-			typedef value_type&																	reference;
-			typedef value_type*																	pointer;
-			typedef node<value_type>															mapnode;
-			typedef nodebase																	mapnodebase;
+			typedef std::pair<const Key, T>									value_type;
+			typedef Key														key_type;
+			typedef Compare													key_compare;
+			typedef T														mapped_type;
+			typedef value_type&												reference;
+			typedef value_type*												pointer;
+			typedef ft::node<value_type>									mapnode;
+			typedef ft::nodebase											mapnodebase;
 
 		public:
-			typedef Iterator<mapnode, value_type>												iterator;
-			typedef Iterator<mapnode, const value_type>											const_iterator;
-			typedef ReverseIterator<mapnode, value_type>										reverse_iterator;
-			typedef ReverseIterator<mapnode, const value_type>									const_reverse_iterator;
+			typedef Iterator<value_type>									iterator;
+//			typedef Iterator<const value_type>								const_iterator;
+			typedef ConstIterator<value_type>								const_iterator;
+			typedef ReverseIterator<value_type>								reverse_iterator;
+			typedef ReverseIterator<const value_type>						const_reverse_iterator;
 
 			//CONSTRUCTORS
 
 			//DELETE
 
-			void	info(void)
-			{
-				std::cout << "Root: " << this->root << std::endl;
-				std::cout << "Len: " << this->len << std::endl;
-				std::cout << "First:" << std::endl;
-				print_node_info(&this->first, this->root);
-				std::cout << "Last:" << std::endl;
-				print_node_info(&this->last, this->root);
-			}
+			// void	info(void)
+			// {
+			// 	std::cout << "Root: " << this->root << std::endl;
+			// 	std::cout << "Len: " << this->len << std::endl;
+			// 	std::cout << "First:" << std::endl;
+			// 	print_node_info(&this->first, this->root);
+			// 	std::cout << "Last:" << std::endl;
+			// 	print_node_info(&this->last, this->root);
+			// }
 
-			explicit map(const Compare& compare = Compare(), const Alloc& alloc = Alloc()) : root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), len(0), compare(compare), allocator(alloc)
-			{
-//				std::cout << "Address of first: " << (void *)&this->first << std::endl;
-//				std::cout << "Address of last: " << (void *)&this->last << std::endl;
-			}
+			explicit map(const Compare& compare = Compare(), const Alloc& alloc = Alloc()) : root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), len(0), compare(compare), allocator(alloc) {}
 			map(const map& other) : root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), len(0), compare(other.compare), allocator(other.allocator)
 			{
 				*this = other;
@@ -299,7 +317,7 @@ namespace ft
 
 			const_iterator end() const
 			{
-				return (const_iterator(&this->last));
+				return (const_iterator(const_cast<mapnodebase*>(&this->last)));
 			}
 
 			reverse_iterator rbegin()
