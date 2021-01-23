@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/13 13:50:22 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/22 20:23:29 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/23 12:32:23 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,15 +66,18 @@ int main(void)
 	// 	std::cout << it->first << " : " << it->second << std::endl;
 	// 	sleep(1);
 	// }
-	// container.clear();
-	// container.info();
-	// container["a"] = 5;
-// 	for (size_t i = 0; i < strings.size(); i++)
-// 		container[std::string(strings[i])] = i;
-// 	for (ft::map<std::string, size_t>::iterator it = container.begin(); it != container.end(); it++)
-// 	{
-// 		std::cout << it->first << " : " << it->second << std::endl;
-// //		sleep(1);
-// 	}
+	container.erase("a");
+	container.info();
+	container.clear();
+	container.info();
+
+	container["a"] = 5;
+	for (size_t i = 0; i < strings.size(); i++)
+		container[std::string(strings[i])] = i;
+	for (ft::map<std::string, size_t>::iterator it = container.begin(); it != container.end(); it++)
+	{
+		std::cout << it->first << " : " << it->second << std::endl;
+//		sleep(1);
+	}
 // 	return (0);
 }

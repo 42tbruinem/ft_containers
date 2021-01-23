@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/22 20:24:09 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/23 12:31:51 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,14 @@ namespace ft
 					while (iter->left)
 						iter = iter->left;
 				}
-				else
+				else if (iter->parent)
 				{
 					while (iter->parent && iter->parent->right == iter) //might be fucked??
 						iter = iter->parent;
 					iter = iter->parent;
 				}
+				else
+					return (NULL);
 				return (iter);
 			}
 			nodebase	*prev()
@@ -65,12 +67,14 @@ namespace ft
 					while (iter->right)
 						iter = iter->right;
 				}
-				else
+				else if (iter->parent)
 				{
 					while (iter->parent && iter->parent->left == iter) //might be fucked?
 						iter = iter->parent;
 					iter = iter->parent;
 				}
+				else
+					return (NULL);
 				return (iter);
 			}
 		public:
@@ -117,12 +121,10 @@ void	print_node_info(ft::nodebase *node, ft::nodebase *root)
 	std::cout << "Parent ? " << ((node->parent) ? "True " : "False ");
 	if (node->parent)
 		std::cout << (void *)node->parent;
-	std::cout << std::endl;
-	std::cout << "Left ? " << ((node->left) ? "True " : "False ");
+	std::cout << " | Left ? " << ((node->left) ? "True " : "False ");
 	if (node->left)
 		std::cout << (void *)node->left;
-	std::cout << std::endl;
-	std::cout << "Right ? " << ((node->right) ? "True " : "False ");
+	std::cout << " | Right ? " << ((node->right) ? "True " : "False ");
 	if (node->right)
 		std::cout << (void *)node->right;
 	std::cout << std::endl;
@@ -385,24 +387,29 @@ namespace ft
 			void	erase(iterator position)
 			{
 				//fix up first/last
-				if (position.getptr()->right == &this->last) //highest element
+				mapnodebase *node = position.getptr();
+				print_node_info(node, this->root);
+				if (node->right == &this->last) //highest element
 				{
-					this->last.parent = this->last.parent->prev();
+					this->last.parent = node->prev();
 					if (!this->last.parent)
 						this->last.parent = &this->first;
-					position.getptr()->right = NULL;
+					else
+						this->last.parent->right = &this->last;
+					node->right = NULL;
 				}
-				if (position.getptr()->left == &this->first) //lowest element
+				if (node->left == &this->first) //lowest element
 				{
-					this->first.parent = this->first.parent->next();
+					this->first.parent = node->next();
 					if (!this->first.parent)
 						this->first.parent = &this->last;
-					position.getptr()->left = NULL;
+					else
+						this->first.parent->left = &this->first;
+					node->left = NULL;
 				}
 
 				std::cout << "in erase - " << position->first << " : " << position->second << std::endl;
-				print_node_info(position.getptr(), this->root);
-				mapnodebase *node = position.getptr();
+				print_node_info(node, this->root);
 				if (node->left && node->right) //two children
 				{
 					mapnodebase *replacement = node->left;
@@ -418,6 +425,8 @@ namespace ft
 					node->parent->right = NULL;
 				else if (node->parent && node->parent->left == node) //no children
 					node->parent->left = NULL;
+				else if (!node->parent)
+					this->root = node->next();
 				delete static_cast<mapnode *>(node);
 				this->len--; //what if an invalid iterator is given??
 			}
