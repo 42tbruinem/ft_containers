@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/22 14:37:01 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/13 21:32:53 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/24 02:31:56 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,14 @@
 
 namespace ft
 {
+	template<typename _Arg1, typename _Arg2, typename _Result>
+	struct binary_function
+	{
+		typedef _Arg1 	first_argument_type; 
+		typedef _Arg2 	second_argument_type;
+		typedef _Result 	result_type;
+	};
+
 	template <typename T>
 	void	swap(T& a, T& b)
 	{

@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 13:35:05 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/13 22:24:23 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/24 15:56:42 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,20 @@
 # include <iostream>
 # include <string>
 # include <stdio.h>
-# include <List.hpp>
+
+#ifndef FT
+# define FT 1
+#endif
 
 #if FT == 1
  #include "Vector.hpp"
+ #include "List.hpp"
+ #include "Map.hpp"
   using namespace ft;
 #else
  #include <vector>
+ #include <map>
+ #include <list>
   using namespace std;
 #endif
 

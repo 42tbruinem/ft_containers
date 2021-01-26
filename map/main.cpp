@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/13 13:50:22 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/24 00:28:31 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/24 13:20:20 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,9 @@ int main(void)
 		std::cout << "Const Key: " << it->first << " | Val: " << it->second << std::endl;
 
 	map<std::string, size_t>::const_iterator const_it(container2.begin());
+	map<std::string, size_t>	mapperino(container2.begin(), container2.end());
+	for (auto it = mapperino.begin(); it != mapperino.end(); it++)
+		std::cout << "Mapperino Key: " << it->first << " : " << it->second << std::endl;
 	const_it++;
 	std::cout << const_it->first << std::endl;
 // 	return (0);

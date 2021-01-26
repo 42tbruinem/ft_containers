@@ -43,6 +43,11 @@
 		"map": "cpp",
 		"memory_resource": "cpp",
 		"random": "cpp",
-		"string": "cpp"
+		"string": "cpp",
+		"iomanip": "cpp",
+		"chrono": "cpp",
+		"ctime": "cpp",
+		"list": "cpp",
+		"ratio": "cpp"
 	}
 }

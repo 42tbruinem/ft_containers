@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/24 00:27:29 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/26 17:36:19 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,12 @@ namespace ft
 					while (iter->left)
 						iter = iter->left;
 				}
-				else if (iter->parent)
+				else
 				{
 					while (iter->parent && iter->parent->right == iter) //might be fucked??
 						iter = iter->parent;
 					iter = iter->parent;
 				}
-				else
-					return (NULL);
 				return (iter);
 			}
 			nodebase	*prev()
@@ -68,15 +66,22 @@ namespace ft
 					while (iter->right)
 						iter = iter->right;
 				}
-				else if (iter->parent)
+				else
 				{
 					while (iter->parent && iter->parent->left == iter) //might be fucked?
 						iter = iter->parent;
 					iter = iter->parent;
 				}
-				else
-					return (NULL);
 				return (iter);
+			}
+			nodebase	**link_to_parent()
+			{
+				nodebase *parent = this->parent;
+				if (!parent)
+					return (NULL);
+				if (parent->left == this)
+					return (&parent->left);
+				return (&parent->right);
 			}
 		public:
 			nodebase	*parent;
@@ -113,32 +118,17 @@ namespace ft
 	};
 }
 
-//DELETE
-
-void	print_node_info(ft::nodebase *node, ft::nodebase *root)
-{
-	std::cout << "Root ? " << ((root == node) ? "True" : "False") << std::endl;
-	std::cout << "Parent ? " << ((node->parent) ? "True " : "False ");
-	if (node->parent)
-		std::cout << (void *)node->parent;
-	std::cout << " | Left ? " << ((node->left) ? "True " : "False ");
-	if (node->left)
-		std::cout << (void *)node->left;
-	std::cout << " | Right ? " << ((node->right) ? "True " : "False ");
-	if (node->right)
-		std::cout << (void *)node->right;
-	std::cout << std::endl;
-}
-
 namespace ft
 {
 	template <class Value, class Category = ft::bidirectional_iterator_tag>
 	class Iterator
 	{
-//		typedef Iterator<Node, const Value>	const_iterator;
-		typedef ft::nodebase				nodebase;
-		typedef ft::node<Value>				node;
+		private:
+			typedef ft::nodebase				nodebase;
+			typedef ft::node<Value>				node;
 		public:
+			typedef Category					iterator_category;
+
 			Iterator(const nodebase *ptr = NULL) : ptr(const_cast<nodebase *>(ptr)) {}
 			Iterator(const Iterator& other) : ptr(other.ptr) {}
 			Iterator&	operator = (const Iterator& other)
@@ -149,10 +139,6 @@ namespace ft
 				}
 				return (*this);
 			}
-			// Iterator&	operator = (const const_iterator& other)
-			// {
-			// 	Iterator::operator=(static_cast<Iterator>(other));
-			// }
 			~Iterator() {}
 			bool	operator == (const Iterator& other)
 			{
@@ -205,8 +191,11 @@ namespace ft
 	template <class Value>
 	class ConstIterator : public Iterator<Value>
 	{
-		typedef Iterator<Value>	iterator;
+		private:
+			typedef Iterator<Value>								iterator;
 		public:
+			typedef typename iterator::iterator_category		iterator_category;
+
 			ConstIterator(const ft::nodebase *ptr = NULL) : iterator(ptr) {}
 			ConstIterator(const iterator& other) : iterator(other) {}
 			const Value& operator * () { return iterator::operator*(); }
@@ -219,12 +208,14 @@ namespace ft
 	template <class Value>
 	class ReverseIterator : public Iterator<Value>
 	{
-		typedef Iterator<Value>		iterator;
+		private:
+			typedef Iterator<Value>									iterator;
 		public:
+			typedef typename iterator::iterator_category			iterator_category;
+
 			ReverseIterator(typename iterator::nodebase *ptr) : iterator(ptr) {}
 			ReverseIterator(const ReverseIterator& other) : iterator(other) {}
 			ReverseIterator& operator = (const ReverseIterator& other) { return(iterator::operator=(other)); }
-//			ReverseIterator& operator = (const const_reverse_iterator& other) { return(iterator::operator=(other)); }
 			~ReverseIterator() {}
 			ReverseIterator&	operator ++ () { return (iterator::operator--()); }
 			ReverseIterator		operator ++ (int) { return (iterator::operator--(1)); }
@@ -247,27 +238,27 @@ namespace ft
 			typedef value_type*												pointer;
 			typedef ft::node<value_type>									mapnode;
 			typedef ft::nodebase											mapnodebase;
-
-		public:
 			typedef Iterator<value_type>									iterator;
-//			typedef Iterator<const value_type>								const_iterator;
 			typedef ConstIterator<value_type>								const_iterator;
 			typedef ReverseIterator<value_type>								reverse_iterator;
 			typedef ReverseIterator<const value_type>						const_reverse_iterator;
 
+			class value_compare : ft::binary_function<value_type,value_type,bool>
+			{
+				protected:
+					Compare comp;
+					value_compare (Compare c) : comp(c) {}
+				public:
+					typedef bool											result_type;
+					typedef value_type										first_argument_type;
+					typedef value_type										second_argument_type;
+					bool operator() (const value_type& x, const value_type& y) const
+					{
+						return comp(x.first, y.first);
+					}
+			};
+
 			//CONSTRUCTORS
-
-			//DELETE
-
-			// void	info(void)
-			// {
-			// 	std::cout << "Root: " << this->root << std::endl;
-			// 	std::cout << "Len: " << this->len << std::endl;
-			// 	std::cout << "First:" << std::endl;
-			// 	print_node_info(&this->first, this->root);
-			// 	std::cout << "Last:" << std::endl;
-			// 	print_node_info(&this->last, this->root);
-			// }
 
 			explicit map(const Compare& compare = Compare(), const Alloc& alloc = Alloc()) : root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), len(0), compare(compare), allocator(alloc) {}
 			map(const map& other) : root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), len(0), compare(other.compare), allocator(other.allocator)
@@ -291,6 +282,18 @@ namespace ft
 					this->insert(other.begin(), other.end());
 				}
 				return (*this);
+			}
+
+			void	info()
+			{
+				std::cout << "---------------------" << "INFO" << "------------------------" << std::endl;
+				std::cout << "----Root" << std::endl;
+				print_node_info(root);
+				std::cout << "----First" << std::endl;
+				print_node_info(&this->first);
+				std::cout << "----Last" << std::endl;
+				print_node_info(&this->last);
+				std::cout << "-------------------------------------------------" << std::endl;
 			}
 
 			~map()
@@ -412,50 +415,179 @@ namespace ft
 					insert(*first);
 			}
 
-			void	erase(iterator position)
+			// void	erase(iterator position)
+			// {
+			// 	mapnodebase *node = position.getptr();
+			// 	mapnodebase *replacement = NULL;
+			// 	std::cout << "Before: " << std::endl;
+			// 	print_node_info(node);
+			// 	if (node->right == &this->last)
+			// 	{
+			// 		this->last.parent = node->prev();
+			// 		if (!this->last.parent)
+			// 			this->last.parent = &this->first;
+			// 		else
+			// 			this->last.parent->right = &this->last;
+			// 		node->right = NULL;
+			// 	}
+			// 	if (node->left == &this->first) //lowest element
+			// 	{
+			// 		this->first.parent = node->next(); //should just return &this->last if there is no next
+			// 		if (!this->first.parent)
+			// 			this->first.parent = &this->last;
+			// 		else
+			// 			this->first.parent->left = &this->first;
+			// 		node->left = NULL;
+			// 	}
+			// 	if (node->left && node->right)
+			// 	{
+			// 		std::cout << "Two children" << std::endl;
+			// 		replacement = node->left;
+			// 		while ((replacement->right && replacement->right != &this->last) || (replacement->left && replacement->left != &this->first))
+			// 			replacement = (replacement->right && replacement->right != &this->last) ? replacement->right : replacement->left;
+			// 		if (replacement->parent)
+			// 			replacement->parent = NULL;
+			// 		connect(node, replacement);
+			// 	}
+			// 	else if (node->left)
+			// 	{
+			// 		std::cout << "Only one child: left" << std::endl;
+			// 		replacement = node->left;
+			// 		if (replacement->parent)
+			// 			replacement->parent = NULL;
+			// 		connect(node, node->left);
+			// 	}
+			// 	else if (node->right)
+			// 	{
+			// 		std::cout << "Only one child: right" << std::endl;
+			// 		replacement = node->right;
+			// 		if (replacement->parent)
+			// 			replacement->parent = NULL;
+			// 		connect(node, node->right);
+			// 	}
+			// 	else if (node->parent && node->parent->right == node)
+			// 	{
+			// 		node->parent->right = NULL;
+			// 		std::cout << "No children" << std::endl;
+			// 	}
+			// 	else if (node->parent && node->parent->left == node)
+			// 	{
+			// 		node->parent->left = NULL;
+			// 		std::cout << "No children" << std::endl;
+			// 	}
+			// 	else if (!node->parent)
+			// 		this->root = NULL;
+			// 	// if (!node->parent)
+			// 	// {
+			// 	// 	this->root = node->next();
+			// 	// 	if (this->root)
+			// 	// 		this->root->parent = NULL;
+			// 	// }
+			// 	delete static_cast<mapnode *>(node);
+			// 	std::cout << "After:" << std::endl;
+			// 	print_node_info(replacement);
+			// 	std::cout << "Root:" << std::endl;
+			// 	print_node_info(this->root);
+			// 	this->len--; //what if an invalid iterator is given??
+			// }
+			void	erase(iterator it)
 			{
-				//fix up first/last
-				mapnodebase *node = position.getptr();
-//				print_node_info(node, this->root);
-				if (node->right == &this->last) //highest element
+				mapnodebase *node = it.getptr();
+				if (!node)
+					return ;
+				mapnodebase **oldleft = &node->left;
+				mapnodebase **oldright = &node->right;
+				mapnodebase **oldparent = &node->parent;
+				mapnodebase **parent_childptr = node->link_to_parent();
+				bool		isroot = false;
+
+				std::cout << "Before: " << std::endl;
+				print_node_info(node);
+				//deal with first/last
+				if (*oldleft == &this->first)
 				{
-					this->last.parent = node->prev();
-					if (!this->last.parent)
-						this->last.parent = &this->first;
-					else
-						this->last.parent->right = &this->last;
-					node->right = NULL;
-				}
-				if (node->left == &this->first) //lowest element
-				{
+					*oldleft = NULL; //set the left of node to NULL
 					this->first.parent = node->next();
-					if (!this->first.parent)
+					if (!this->first.parent || this->first.parent == &this->last)
 						this->first.parent = &this->last;
 					else
 						this->first.parent->left = &this->first;
-					node->left = NULL;
+					std::cout << "first's parent changed to Node:" << std::endl;
+					print_node_info(this->first.parent);
 				}
-//				std::cout << "in erase - " << position->first << " : " << position->second << std::endl;
-//				print_node_info(node, this->root);
-				if (node->left && node->right) //two children
+				if (*oldright == &this->last)
 				{
-					mapnodebase *replacement = node->left;
-					while (replacement->right)
-						replacement = replacement->right;
-					connect(node, replacement);
+					*oldright = NULL; //set the right of node to NULL
+					this->last.parent = node->prev();
+					if (!this->last.parent || this->last.parent == &this->first)
+						this->last.parent = &this->first;
+					else
+						this->last.parent->right = &this->last;
+					std::cout << "last's parent changed to Node:" << std::endl;
+					print_node_info(this->last.parent);
 				}
-				else if (node->left) //one child
-					connect(node, node->left);
-				else if (node->right) //one child
-					connect(node, node->right);
-				else if (node->parent && node->parent->right == node) //no children
-					node->parent->right = NULL;
-				else if (node->parent && node->parent->left == node) //no children
-					node->parent->left = NULL;
-				if (!node->parent)
-					this->root = node->next();
+
+				//get replacement if needed
+				mapnodebase *replacement = NULL;
+				if (*oldright && *oldleft)
+				{
+					replacement = node->left;
+					if (replacement->right && replacement->right != &this->last)
+						while ((replacement->right && replacement->right != &this->last) || (replacement->left && replacement->left != &this->first))
+							replacement = (replacement->right && replacement->right != &this->last) ? replacement->right : replacement->left;
+				}
+				else if (*oldright)
+					replacement = node->right;
+				else if (*oldleft)
+					replacement = node->left;
+
+				//replace the old parent's corresponding left/right child with replacement
+				if (*oldparent && (*oldparent)->left == node) //is not root and is left child
+					(*oldparent)->left = replacement;
+				else if (*oldparent && (*oldparent)->right == node) //is not root and is right child
+					(*oldparent)->right = replacement;
+				else if (!*oldparent)//is root
+				{
+					isroot = true;
+				}
+				if (replacement) //connect the replacement
+				{
+					//set the old corresponding left/right pointer of parent to NULL
+					if (replacement->parent->left == replacement)
+						replacement->parent->left = NULL;
+					else if (replacement->parent->right == replacement)
+						replacement->parent->right = NULL;
+
+					//if the left of old is not the replacement (otherwise we're making an infinite loop)
+					if (!replacement->left)
+					{
+						if (*oldleft != replacement)
+							replacement->left = (*oldleft);
+						if (*oldleft && *oldleft != replacement)
+							(*oldleft)->parent = replacement;
+					}
+
+					//if the right of old is not the replacement (otherwise we're making an infinite loop)
+					if (!replacement->right)
+					{
+						if (*oldright != replacement)
+							replacement->right = (*oldright);
+						if (*oldright && *oldright != replacement)
+							(*oldright)->parent = replacement;
+					}
+
+					//change the parent of replacement to the parent of old
+					replacement->parent = (*oldparent);
+				}
+				std::cout << "After: " << std::endl;
+				if (isroot)
+				{
+					std::cout << "ROOT CHANGED:" << std::endl;
+					this->root = replacement;
+				}
+				print_node_info(replacement);
 				delete static_cast<mapnode *>(node);
-				this->len--; //what if an invalid iterator is given??
+				this->len--;
 			}
 
 			size_t	erase(const Key& key)
@@ -463,6 +595,7 @@ namespace ft
 				iterator it = find(key);
 				if (it == this->end())
 					return (0);
+				std::cout << "not stuck in find" << std::endl;
 				erase(it);
 				return (1);
 			}
@@ -470,9 +603,7 @@ namespace ft
 			void	erase(iterator first, iterator last)
 			{
 				for (;first != last;)
-				{
 					erase(first++);
-				}
 			}
 
 			void	swap(map& other)
@@ -491,10 +622,10 @@ namespace ft
 				return (compare);
 			}
 
-			// value_compare value_comp() const
-			// {
-			// 	//HOOFDPIJN
-			// }
+			value_compare value_comp() const
+			{
+				return (map::value_compare(this->compare));
+			}
 
 			//OPERATIONS
 
@@ -523,7 +654,9 @@ namespace ft
 
 			size_t count (const key_type& k) const
 			{
-				//return how many elements match the key k (0 or 1);
+				if (this->find(k) == this->end())
+					return (0);
+				return (1);
 			}
 
 			iterator lower_bound (const key_type& k)
@@ -558,38 +691,76 @@ namespace ft
 			}
 
 		private:
+			//oldnode = node, newnode = replacement
 			void	connect(mapnodebase *oldnode, mapnodebase* newnode)
 			{
-				bool	left_child = (oldnode->parent && oldnode->parent->left == oldnode);
-
-				//set the parent of old to new
-				if (!oldnode->parent)
+				//CONNECT TO PARENT
+				if (this->root == oldnode) //this is the root
+				{
 					this->root = newnode;
-				else if (left_child)
+					this->root->parent = NULL;
+				}
+				else if (oldnode->parent->left == oldnode)
+				{
 					oldnode->parent->left = newnode;
-				else
+					if (newnode->parent)
+						newnode->parent->left = NULL;
+					newnode->parent = oldnode->parent;
+				}
+				else if (oldnode->parent->right == oldnode)
+				{
 					oldnode->parent->right = newnode;
-
-				//turn the spot of new to NULL
-				if (newnode->parent && newnode->parent->left == newnode)
-					newnode->parent->left = NULL;
-				if (newnode->parent && newnode->parent->right == newnode)
-					newnode->parent->right = NULL;
-
-				//set new's parent to old's parent
-				newnode->parent = oldnode->parent;
+					if (newnode->parent)
+						newnode->parent->right = NULL;
+					newnode->parent = oldnode->parent;
+				}
 
 				//if there are left and/or right children
 				if (oldnode->left && oldnode->left != newnode)
 				{
+					std::cout << "Connecting oldnode->left to newnode and vice versa" << std::endl;
 					newnode->left = oldnode->left;
 					newnode->left->parent = newnode;
 				}
 				if (oldnode->right && oldnode->right != newnode)
 				{
+					std::cout << "Connecting oldnode->right to newnode and vice versa" << std::endl;
 					newnode->right = oldnode->right;
 					newnode->right->parent = newnode;
 				}
+			}
+			void		print_keyval(const std::string& title, mapnodebase *node, bool parent)
+			{
+				std::cout << "---- " << title << " ----" << std::endl;
+				if (!node)
+					std::cout << ((parent) ? "Root" : "NULL(EMPTY)") << std::endl;
+				else if (node == &this->first)
+					std::cout << "First" << std::endl;
+				else if (node == &this->last)
+					std::cout << "Last" << std::endl;
+				else
+				{
+					value_type keyval = static_cast<mapnode*>(node)->getval();
+					std::cout << "Key: " << keyval.first << " : Val: " << keyval.second << std::endl;
+				}
+			}
+			void		connect_parent_child(mapnodebase *parent, mapnodebase **parent_childptr, mapnodebase *child)
+			{
+				if (child)
+					child->parent = parent;
+				if (parent_childptr)
+					*parent_childptr = child;
+			}
+			void		print_node_info(mapnodebase *node)
+			{
+				std::cout << "-------------------" << std::endl;
+				print_keyval("Node", node, false);
+				if (!node)
+					return ;
+				print_keyval("Parent", node->parent, true);
+				print_keyval("Left", node->left, false);
+				print_keyval("Right", node->right, false);
+				std::cout << "-------------------" << std::endl;
 			}
 			mapnodebase	*root;
 			mapnodebase	first;
