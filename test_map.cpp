@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/24 15:10:32 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/26 17:44:05 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/26 20:23:11 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ void	random_order_erase(Map& container, const Vec& content)
 		if (!container.size())
 			break ;
 	//	usleep(20000);
-		sleep(1);
+//		sleep(1);
 	}
 	container.info();
 }
@@ -144,7 +144,7 @@ int main(void)
 //	init_map_operator_index(map_sequence, sequential_pairs);
 
 	std::set<size_t>	numbers;
-	generate_random_numberkeys(map_numbers, 20, numbers);
+	generate_random_numberkeys(map_numbers, 1000, numbers);
 	std::vector<size_t>	number_vec;
 	for (auto it = numbers.begin(); it != numbers.end(); it++)
 		number_vec.push_back(*it);

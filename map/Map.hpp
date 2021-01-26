@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/26 17:36:19 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/26 20:20:01 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -414,82 +414,6 @@ namespace ft
 				for (;first != last; first++)
 					insert(*first);
 			}
-
-			// void	erase(iterator position)
-			// {
-			// 	mapnodebase *node = position.getptr();
-			// 	mapnodebase *replacement = NULL;
-			// 	std::cout << "Before: " << std::endl;
-			// 	print_node_info(node);
-			// 	if (node->right == &this->last)
-			// 	{
-			// 		this->last.parent = node->prev();
-			// 		if (!this->last.parent)
-			// 			this->last.parent = &this->first;
-			// 		else
-			// 			this->last.parent->right = &this->last;
-			// 		node->right = NULL;
-			// 	}
-			// 	if (node->left == &this->first) //lowest element
-			// 	{
-			// 		this->first.parent = node->next(); //should just return &this->last if there is no next
-			// 		if (!this->first.parent)
-			// 			this->first.parent = &this->last;
-			// 		else
-			// 			this->first.parent->left = &this->first;
-			// 		node->left = NULL;
-			// 	}
-			// 	if (node->left && node->right)
-			// 	{
-			// 		std::cout << "Two children" << std::endl;
-			// 		replacement = node->left;
-			// 		while ((replacement->right && replacement->right != &this->last) || (replacement->left && replacement->left != &this->first))
-			// 			replacement = (replacement->right && replacement->right != &this->last) ? replacement->right : replacement->left;
-			// 		if (replacement->parent)
-			// 			replacement->parent = NULL;
-			// 		connect(node, replacement);
-			// 	}
-			// 	else if (node->left)
-			// 	{
-			// 		std::cout << "Only one child: left" << std::endl;
-			// 		replacement = node->left;
-			// 		if (replacement->parent)
-			// 			replacement->parent = NULL;
-			// 		connect(node, node->left);
-			// 	}
-			// 	else if (node->right)
-			// 	{
-			// 		std::cout << "Only one child: right" << std::endl;
-			// 		replacement = node->right;
-			// 		if (replacement->parent)
-			// 			replacement->parent = NULL;
-			// 		connect(node, node->right);
-			// 	}
-			// 	else if (node->parent && node->parent->right == node)
-			// 	{
-			// 		node->parent->right = NULL;
-			// 		std::cout << "No children" << std::endl;
-			// 	}
-			// 	else if (node->parent && node->parent->left == node)
-			// 	{
-			// 		node->parent->left = NULL;
-			// 		std::cout << "No children" << std::endl;
-			// 	}
-			// 	else if (!node->parent)
-			// 		this->root = NULL;
-			// 	// if (!node->parent)
-			// 	// {
-			// 	// 	this->root = node->next();
-			// 	// 	if (this->root)
-			// 	// 		this->root->parent = NULL;
-			// 	// }
-			// 	delete static_cast<mapnode *>(node);
-			// 	std::cout << "After:" << std::endl;
-			// 	print_node_info(replacement);
-			// 	std::cout << "Root:" << std::endl;
-			// 	print_node_info(this->root);
-			// 	this->len--; //what if an invalid iterator is given??
-			// }
 			void	erase(iterator it)
 			{
 				mapnodebase *node = it.getptr();
@@ -532,9 +456,17 @@ namespace ft
 				if (*oldright && *oldleft)
 				{
 					replacement = node->left;
-					if (replacement->right && replacement->right != &this->last)
-						while ((replacement->right && replacement->right != &this->last) || (replacement->left && replacement->left != &this->first))
-							replacement = (replacement->right && replacement->right != &this->last) ? replacement->right : replacement->left;
+					while ((replacement->right && replacement->right != &this->last))
+						replacement = replacement->right;
+					if (replacement != node->left)
+					{
+						replacement->parent->right = replacement->left;
+						if (replacement->left && replacement->left != &this->first)
+						{
+							replacement->left->parent = replacement->parent;
+							replacement->left = NULL;
+						}
+					}
 				}
 				else if (*oldright)
 					replacement = node->right;
