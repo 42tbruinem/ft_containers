@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   test_map.cpp                                       :+:    :+:            */
+/*   test_map_erase.cpp                                 :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/24 15:10:32 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/27 16:20:33 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/27 14:09:46 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,8 @@ void	random_order_erase(Map& container, const Vec& content)
 	{
 		lastsize = container.size();
 		size_t element_to_delete_index = std::rand() % content.size();
-		std::cout << "Deleting: " << content[element_to_delete_index] << " (" << element_to_delete_index << ")\n";
-		container.erase(content[element_to_delete_index]);
+		std::cout << "Deleting: " << content[element_to_delete_index].first << " (" << element_to_delete_index << ")\n";
+		container.erase(content[element_to_delete_index].first);
 		std::cout << "CONTAINER SIZE AFTER: " << container.size() << std::endl;
 		if (container.size() != lastsize)
 			deleted.insert(element_to_delete_index);
@@ -111,57 +111,41 @@ void	random_order_erase(Map& container, const Vec& content)
 	container.info();
 }
 
-template <class Type>
-Type	generate_key()
-{
-	return (rand() % 300);
-}
-
-template <>
-std::string	generate_key<std::string>()
-{
-	const size_t		length = 10;
-	const std::string	characters("abcdefghijklmnopqrstuvwxyz");
-	std::string			key(10, '\0');
-
-	for (size_t i = 0; i < length; i++)
-		key[i] = characters[rand() % characters.size()];
-	return (key);
-}
-
-template<class Map, class Key>
-void	init_map_random(Map& container, size_t amount, std::vector<Key>& keys)
+template<class Map>
+void	generate_random_numberkeys(Map& container, size_t amount, std::set<size_t>& numbers)
 {
 	srand(time(NULL));
 
-	size_t i = 0;
-	for (; i < amount;)
+	for (size_t i = 0; i < amount; i++)
 	{
-		Key key = generate_key<Key>();
-		size_t oldsize = container.size();
-		container.insert(std::pair<Key, size_t>(key, i));
-		if (oldsize != container.size())
-		{
-			keys.push_back(key);
-			i++;
-		}
+		size_t key = rand() % 300;
+		numbers.insert(key);
+		container.insert(std::pair<size_t, size_t>(key, i));
 	}
 }
 
 int main(void)
 {
+	std::vector<std::string>	strings = generate_random_strings("abcdefghijklmnop", 20, 5);
+	std::vector<std::pair<std::string, size_t> >	sequential_pairs = create_pairs_sequence(strings);
+
 	print_version();
 	container_header("MAP");
 
 	subject_title("CONSTRUCTORS");
 
-	std::vector<std::string>	map_default_keys;
 	map<std::string, size_t>	map_default;
+	map<size_t, size_t>			map_numbers;
 
-	init_map_random(map_default, 1000, map_default_keys);
-	iter_print_container(map_default, "map_default", "\n");
-//	map<std::string, size_t>	map_range(map_default.begin(), map_default.end());
+	std::set<size_t>	numbers;
+	generate_random_numberkeys(map_numbers, 1000, numbers);
+	std::vector<size_t>	number_vec;
+	for (std::set<size_t>::iterator it = numbers.begin(); it != numbers.end(); it++)
+		number_vec.push_back(*it);
+	std::vector<std::pair<size_t, size_t> >	number_pairs(number_vec.size());
+	for (size_t i = 0 ; i < number_vec.size(); i++)
+		number_pairs[i].first = number_vec[i];
 
-	random_order_erase(map_default, map_default_keys);
+	random_order_erase(map_numbers, number_pairs);
 	return (0);
 }

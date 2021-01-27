@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/27 12:02:24 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/27 19:35:58 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ namespace ft
 			nodebase	**link_to_parent()
 			{
 				nodebase *parent = this->parent;
-				if (!parent)
+				if (!parent) //only happens if the node is root
 					return (NULL);
 				if (parent->left == this)
 					return (&parent->left);
@@ -269,7 +269,7 @@ namespace ft
 			template <class InputIterator>
 			map(InputIterator first, InputIterator last, const Compare& compare = Compare(), const Alloc& alloc = Alloc(),
 			typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL) :
-				len(0), root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), compare(compare), allocator(alloc)
+				root(NULL), first(nodebase(&this->last)), last(nodebase(&this->first)), len(0), compare(compare), allocator(alloc)
 			{
 				this->insert(first, last);
 			}
@@ -419,43 +419,33 @@ namespace ft
 				mapnodebase *node = it.getptr();
 				if (!node)
 					return ;
-				mapnodebase **oldleft = &node->left;
-				mapnodebase **oldright = &node->right;
-				mapnodebase **oldparent = &node->parent;
-				bool		isroot = false;
 
 				std::cout << "Before: " << std::endl;
 				print_node_info(node);
 				//deal with first/last
-				if (*oldleft == &this->first)
+				mapnodebase *lowest = NULL;
+				mapnodebase *highest = NULL;
+				if (node->left == &this->first)
 				{
-					*oldleft = NULL; //set the left of node to NULL
-					this->first.parent = node->next();
-					if (!this->first.parent || this->first.parent == &this->last)
-						this->first.parent = &this->last;
-					else
-						this->first.parent->left = &this->first;
-					std::cout << "first's parent changed to Node:" << std::endl;
-					print_node_info(this->first.parent);
+					lowest = node->next();
+					connect_parent_child(lowest, &lowest->left, &this->first);
 				}
-				if (*oldright == &this->last)
+				if (node->right == &this->last)
 				{
-					*oldright = NULL; //set the right of node to NULL
-					this->last.parent = node->prev();
-					if (!this->last.parent || this->last.parent == &this->first)
-						this->last.parent = &this->first;
-					else
-						this->last.parent->right = &this->last;
-					std::cout << "last's parent changed to Node:" << std::endl;
-					print_node_info(this->last.parent);
+					highest = node->prev();
+					connect_parent_child(highest, &highest->right, &this->last);
 				}
+				if (lowest)
+					node->left = NULL;
+				if (highest)
+					node->right = NULL;
 
 				//get replacement if needed
 				mapnodebase *replacement = NULL;
-				if (*oldright && *oldleft)
+				if (node->right && node->left)
 				{
 					replacement = node->left;
-					while ((replacement->right && replacement->right != &this->last))
+					while (replacement->right)
 						replacement = replacement->right;
 					if (replacement != node->left)
 					{
@@ -467,55 +457,38 @@ namespace ft
 						}
 					}
 				}
-				else if (*oldright)
+				else if (node->right)
 					replacement = node->right;
-				else if (*oldleft)
+				else if (node->left)
 					replacement = node->left;
 
 				//replace the old parent's corresponding left/right child with replacement
-				if (*oldparent && (*oldparent)->left == node) //is not root and is left child
-					(*oldparent)->left = replacement;
-				else if (*oldparent && (*oldparent)->right == node) //is not root and is right child
-					(*oldparent)->right = replacement;
-				else if (!*oldparent)//is root
-				{
-					isroot = true;
-				}
+				if (node->parent && node->parent->left == node) //is not root and is left child
+					node->parent->left = replacement;
+				else if (node->parent && node->parent->right == node) //is not root and is right child
+					node->parent->right = replacement;
+				else if (!node->parent)//is root
+					this->root = replacement;
 				if (replacement) //connect the replacement
 				{
-					//set the old corresponding left/right pointer of parent to NULL
+					//set the old corresponding left/right pointer of replacement->parent to NULL
+					// mapnodebase **link_to_parent = replacement->link_to_parent();
+					// *link_to_parent = NULL;
 					if (replacement->parent->left == replacement)
 						replacement->parent->left = NULL;
 					else if (replacement->parent->right == replacement)
 						replacement->parent->right = NULL;
 
-					//if the left of old is not the replacement (otherwise we're making an infinite loop)
-					if (!replacement->left)
-					{
-						if (*oldleft != replacement)
-							replacement->left = (*oldleft);
-						if (*oldleft && *oldleft != replacement)
-							(*oldleft)->parent = replacement;
-					}
+					if (!replacement->left) //dont override existing link to child
+						connect_parent_child(replacement, &replacement->left, node->left);
 
-					//if the right of old is not the replacement (otherwise we're making an infinite loop)
-					if (!replacement->right)
-					{
-						if (*oldright != replacement)
-							replacement->right = (*oldright);
-						if (*oldright && *oldright != replacement)
-							(*oldright)->parent = replacement;
-					}
+					if (!replacement->right) //dont override existing link to child
+						connect_parent_child(replacement, &replacement->right, node->right);
 
 					//change the parent of replacement to the parent of old
-					replacement->parent = (*oldparent);
+					replacement->parent = node->parent;
 				}
 				std::cout << "After: " << std::endl;
-				if (isroot)
-				{
-					std::cout << "ROOT CHANGED:" << std::endl;
-					this->root = replacement;
-				}
 				print_node_info(replacement);
 				delete static_cast<mapnode *>(node);
 				this->len--;
@@ -580,7 +553,8 @@ namespace ft
 
 			const_iterator find (const key_type& k) const
 			{
-				return (const_iterator(find(k)));
+				std::cout << "CONST FIND" << std::endl;
+				return (const_iterator(const_cast<map *>(this)->find(k)));
 			}
 
 			size_t count (const key_type& k) const
@@ -679,6 +653,8 @@ namespace ft
 			{
 				if (child)
 					child->parent = parent;
+				if ((child == &this->first || child == &this->last) && (parent == &this->first || parent == &this->last))
+					return ;
 				if (parent_childptr)
 					*parent_childptr = child;
 			}
