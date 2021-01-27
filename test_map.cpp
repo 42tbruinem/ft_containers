@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/24 15:10:32 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/26 20:23:11 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/27 12:00:11 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ int main(void)
 	std::set<size_t>	numbers;
 	generate_random_numberkeys(map_numbers, 1000, numbers);
 	std::vector<size_t>	number_vec;
-	for (auto it = numbers.begin(); it != numbers.end(); it++)
+	for (std::set<size_t>::iterator it = numbers.begin(); it != numbers.end(); it++)
 		number_vec.push_back(*it);
 	std::vector<std::pair<size_t, size_t> >	number_pairs(number_vec.size());
 	for (size_t i = 0 ; i < number_vec.size(); i++)

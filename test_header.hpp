@@ -6,20 +6,9 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 13:35:05 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/24 15:56:42 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/27 12:07:23 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
-
-#ifndef TEST_HEADER_HPP
-# define TEST_HEADER_HPP
-
-# include <iostream>
-# include <string>
-# include <stdio.h>
-
-#ifndef FT
-# define FT 1
-#endif
 
 #if FT == 1
  #include "Vector.hpp"
@@ -31,6 +20,17 @@
  #include <map>
  #include <list>
   using namespace std;
+#endif
+
+#ifndef TEST_HEADER_HPP
+# define TEST_HEADER_HPP
+
+# include <iostream>
+# include <string>
+# include <stdio.h>
+
+#ifndef FT
+# define FT 1
 #endif
 
 template <typename Container>
@@ -89,14 +89,27 @@ void	comparison_operator_container(Container a, Container b, std::string a_title
 	std::cout << b_title << " operator <= " << a_title << " = " << ((b <= a) ? "True" : "False") << std::endl;
 }
 
+
+template <class T>
+void	print_content(const T& content)
+{
+	std::cout << content;
+}
+
+template <class Key, class Value>
+void	print_content(const std::pair<Key, Value>& content)
+{
+	std::cout << content.first << " : " << content.second;
+}
+
 template <typename Container>
 void	const_operator_print_container(const Container& c, std::string title, std::string delim = ",")
 {
 	std::cout << "Printing " << title << " of size " << c.size() << " using const [] operator element access" << std::endl;
 
-	for (size_t i = 0;i < c.size(); i++)
+	for (size_t i = 0; i < c.size() ; i++)
 	{
-		std::cout << c[i];
+		print_content(c[i]);
 		if (i + 1 < c.size())
 			std::cout << delim;
 		else
@@ -112,7 +125,7 @@ void	operator_print_container(Container c, std::string title, std::string delim 
 
 	for (size_t i = 0;i < c.size(); i++)
 	{
-		std::cout << c[i];
+		print_content(c[i]);
 		if (i + 1 < c.size())
 			std::cout << delim;
 		else
@@ -131,7 +144,7 @@ void	iter_print_container(Container c, std::string title, std::string delim = ",
 
 	for (;it != c.end();)
 	{
-		std::cout << *it;
+		print_content(*it);
 		if (++it == c.end())
 			std::cout << "\n";
 		else
@@ -148,7 +161,7 @@ void	const_iter_print_container(const Container c, std::string title, std::strin
 
 	for (;it != c.end();)
 	{
-		std::cout << *it;
+		print_content(*it);
 		if (++it == c.end())
 			std::cout << "\n";
 		else
@@ -165,7 +178,7 @@ void	reverse_iter_print_container(Container c, std::string title, std::string de
 
 	for (;it != c.rend();)
 	{
-		std::cout << *it;
+		print_content(*it);
 		if (++it == c.rend())
 			std::cout << "\n";
 		else
@@ -182,7 +195,7 @@ void	const_reverse_iter_print_container(const Container c, std::string title, st
 
 	for (;it != c.rend();)
 	{
-		std::cout << *it;
+		print_content(*it);
 		if (++it == c.rend())
 			std::cout << "\n";
 		else

@@ -6,12 +6,14 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/21 10:10:41 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/11 22:09:02 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/27 12:08:19 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TRAITS_HPP
  #define TRAITS_HPP
+
+# include <stdlib.h>
 
 //tags
 namespace ft

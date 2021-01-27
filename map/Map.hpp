@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   Map.hpp                                            :+:    :+:            */
+/*   map.hpp                                            :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/26 20:20:01 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/27 12:02:24 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,8 @@ namespace ft
 	{
 		public:
 			typedef nodebase			base;
-			node(const Value& value, nodebase *parent = NULL, nodebase *left = NULL, nodebase *right = NULL) : value(value), nodebase(parent, left, right) {}
-			node(const node& other) : value(other.value), nodebase(other.parent, other.left, other.right) {}
+			node(const Value& value, nodebase *parent = NULL, nodebase *left = NULL, nodebase *right = NULL) : nodebase(parent, left, right), value(value) {}
+			node(const node& other) : nodebase(other.parent, other.left, other.right), value(other.value) {}
 			node& operator = (const node& other)
 			{
 				if (this != &other)
@@ -422,7 +422,6 @@ namespace ft
 				mapnodebase **oldleft = &node->left;
 				mapnodebase **oldright = &node->right;
 				mapnodebase **oldparent = &node->parent;
-				mapnodebase **parent_childptr = node->link_to_parent();
 				bool		isroot = false;
 
 				std::cout << "Before: " << std::endl;
@@ -581,7 +580,7 @@ namespace ft
 
 			const_iterator find (const key_type& k) const
 			{
-				//same dealio, but return a const iterator
+				return (const_iterator(find(k)));
 			}
 
 			size_t count (const key_type& k) const
@@ -701,6 +700,6 @@ namespace ft
 			Compare	compare;
 			Alloc	allocator;
 	};
-};
+}
 
 #endif
