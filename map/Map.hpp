@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/29 19:02:29 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/29 20:00:11 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,79 +14,23 @@
 # define MAP_HPP
 
 # include "GenericFunctions.hpp"
-# include <stdio.h>
-# include <iostream>
 # include <memory>
-# include <limits>
 # include <utility>
-# include <unistd.h>
 # include <traits.hpp>
-# include <iterator>
 
 namespace ft
 {
 	class nodebase
 	{
 		public:
-			nodebase(nodebase *parent = NULL, nodebase *left = NULL, nodebase *right = NULL) : parent(parent), left(left), right(right) {}
-			nodebase(const nodebase& other) : parent(other.parent), left(other.left), right(other.right) {}
-			nodebase& operator = (const nodebase& other)
-			{
-				if (this != &other)
-				{
-					this->parent = other.parent;
-					this->left = other.left;
-					this->right = other.right;
-				}
-				return (*this);
-			}
-			~nodebase() {}
-			nodebase	*next()
-			{
-				nodebase *iter = this;
-				if (iter->right)
-				{
-					iter = iter->right;
-					while (iter->left)
-						iter = iter->left;
-				}
-				else
-				{
-					while (iter->parent && iter->parent->right == iter) //might be fucked??
-						iter = iter->parent;
-					iter = iter->parent;
-				}
-				return (iter);
-			}
-			nodebase	*prev()
-			{
-				nodebase *iter = this;
-				if (iter->left)
-				{
-					iter = iter->left;
-					while (iter->right)
-						iter = iter->right;
-				}
-				else
-				{
-					while (iter->parent && iter->parent->left == iter) //might be fucked?
-						iter = iter->parent;
-					iter = iter->parent;
-				}
-				return (iter);
-			}
-			nodebase	**link_to_parent()
-			{
-				nodebase *parent = this->parent;
-				if (!parent) //only happens if the node is root
-					return (NULL);
-				if (parent->left == this)
-					return (&parent->left);
-				if (parent->right == this)
-					return (&parent->right);
-				return (NULL);
-			}
-		public:
+			nodebase(nodebase *parent = NULL, nodebase *left = NULL, nodebase *right = NULL);
+			nodebase(const nodebase& other);
+			nodebase& operator = (const nodebase& other);
+			~nodebase();
+			nodebase	*next();
+			nodebase	*prev();
+			nodebase	**link_to_parent();
+
 			nodebase	*parent;
 			nodebase	*left;
 			nodebase	*right;
@@ -135,7 +79,6 @@ namespace ft
 			typedef Pointer						pointer;
 
 			Iterator(nodebase *ptr = NULL) : ptr(ptr) {}
-//			Iterator(const Iterator& other) : ptr(other.ptr) {}
 			Iterator(const Iterator<Value, Value&, Value*>& other) : ptr(other.ptr) {}
 			Iterator&	operator = (const Iterator& other)
 			{
@@ -188,7 +131,6 @@ namespace ft
 			}
 			nodebase *getptr() { return this->ptr; }
 			nodebase *ptr;
-//		private:
 	};
 }
 
@@ -254,7 +196,7 @@ namespace ft
 
 namespace ft
 {
-	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<std::pair<Key, T> > >
+	template <class Key, class T, class Compare = ft::less<Key>, class Alloc = std::allocator<std::pair<Key, T> > >
 	class map
 	{
 		public:
@@ -293,6 +235,7 @@ namespace ft
 				this->first->parent = this->last;
 				this->last->parent = this->first;
 			}
+
 			map(const map& other) : root(NULL), first(new nodebase()), last(new nodebase()), len(0), compare(other.compare), allocator(other.allocator)
 			{
 				this->first->parent = this->last;
@@ -439,9 +382,6 @@ namespace ft
 				if (!node)
 					return ;
 
-//				std::cout << "Before: " << std::endl;
-//				print_node_info(node);
-				//deal with first/last
 				mapnodebase *lowest = NULL;
 				mapnodebase *highest = NULL;
 				if (node->left == this->first)
@@ -459,7 +399,6 @@ namespace ft
 				if (highest)
 					node->right = NULL;
 
-				//get replacement if needed
 				mapnodebase *replacement = NULL;
 				if (node->right && node->left)
 				{
@@ -481,26 +420,23 @@ namespace ft
 				else if (node->left)
 					replacement = node->left;
 
-				//replace the old parent's corresponding left/right child with replacement
 				mapnodebase **replacementparent_link = (replacement) ? replacement->link_to_parent() : NULL;
-				if (node->parent && node->parent->left == node) //is not root and is left child
+				if (node->parent && node->parent->left == node)
 					node->parent->left = replacement;
-				else if (node->parent && node->parent->right == node) //is not root and is right child
+				else if (node->parent && node->parent->right == node)
 					node->parent->right = replacement;
-				else if (!node->parent)//is root
+				else if (!node->parent)
 					this->root = replacement;
-				if (replacement) //connect the replacement
+				if (replacement)
 				{
 					if (replacementparent_link)
 						*replacementparent_link = NULL;
-					if (!replacement->left) //dont override existing link to child
+					if (!replacement->left)
 						connect_parent_child(replacement, &replacement->left, node->left);
-					if (!replacement->right) //dont override existing link to child
+					if (!replacement->right)
 						connect_parent_child(replacement, &replacement->right, node->right);
 					replacement->parent = node->parent;
 				}
-//				std::cout << "After: " << std::endl;
-//				print_node_info(replacement);
 				delete static_cast<mapnode *>(node);
 				this->len--;
 			}
@@ -510,7 +446,6 @@ namespace ft
 				iterator it = find(key);
 				if (it == this->end())
 					return (0);
-//				std::cout << "not stuck in find" << std::endl;
 				erase(it);
 				return (1);
 			}
@@ -565,7 +500,6 @@ namespace ft
 
 			const_iterator find (const key_type& k) const
 			{
-//				std::cout << "CONST FIND" << std::endl;
 				return (const_iterator(const_cast<map *>(this)->find(k)));
 			}
 
@@ -623,21 +557,6 @@ namespace ft
 			}
 
 		private:
-			// void		print_keyval(const std::string& title, mapnodebase *node, bool parent)
-			// {
-			// 	std::cout << "---- " << title << " ----" << std::endl;
-			// 	if (!node)
-			// 		std::cout << ((parent) ? "Root" : "NULL(EMPTY)") << std::endl;
-			// 	else if (node == this->first)
-			// 		std::cout << "First" << std::endl;
-			// 	else if (node == this->last)
-			// 		std::cout << "Last" << std::endl;
-			// 	else
-			// 	{
-			// 		value_type keyval = static_cast<mapnode*>(node)->getval();
-			// 		std::cout << "Key: " << keyval.first << " : Val: " << keyval.second << std::endl;
-			// 	}
-			// }
 			void		connect_parent_child(mapnodebase *parent, mapnodebase **parent_childptr, mapnodebase *child)
 			{
 				if (child)
@@ -647,17 +566,6 @@ namespace ft
 				if (parent_childptr)
 					*parent_childptr = child;
 			}
-			// void		print_node_info(mapnodebase *node)
-			// {
-			// 	std::cout << "-------------------" << std::endl;
-			// 	print_keyval("Node", node, false);
-			// 	if (!node)
-			// 		return ;
-			// 	print_keyval("Parent", node->parent, true);
-			// 	print_keyval("Left", node->left, false);
-			// 	print_keyval("Right", node->right, false);
-			// 	std::cout << "-------------------" << std::endl;
-			// }
 			mapnodebase	*root;
 			mapnodebase	*first;
 			mapnodebase	*last;

@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/24 15:10:32 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/29 18:43:47 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/29 20:00:19 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include <unistd.h>
 
 template <class Map>
-void	print_keyval(const Map& container) //iterator = const_iterator should throw error apparantly
+void	print_keyval(const Map& container)
 {
 	for (typename Map::const_iterator it = container.begin(); it != container.end(); it++)
 		std::cout << "Key: " << it->first << " : Val: " << it->second << std::endl;
@@ -98,17 +98,14 @@ void	random_order_erase(Map& container, const Vec& content)
 		std::cout << "CONTAINER SIZE AFTER: " << container.size() << std::endl;
 		if (container.size() != lastsize)
 			deleted.insert(element_to_delete_index);
-		else if (deleted.find(element_to_delete_index) == deleted.end()) //couldnt delete it, but it's not deleted yet
+		else if (deleted.find(element_to_delete_index) == deleted.end())
 		{
 			std::cout << "COULDNT DELETE AN ELEMENT EVEN THOUGH IT'S 100% IN MY MAP" << std::endl;
 			break ;
 		}
 		if (!container.size())
 			break ;
-	//	usleep(20000);
-//		sleep(1);
 	}
-	container.info();
 }
 
 template <class Type>
@@ -334,7 +331,7 @@ int main(void)
 	map_valcomp_iter(map_empty, "map_empty", "b");
 
 	map<std::string, size_t>::const_iterator it_const1 = static_cast<const map<std::string, size_t> >(map_empty).begin();
-	map<std::string, size_t>::const_iterator it_const2(it_const1);
+	map<std::string, size_t>::const_iterator it_const2(it_const1); //copy construct a const iterator;
 	comparison_operator_container(map_empty, map_default, "map_empty", "map_default");
 	map_default["a"] = 0;
 	map_default["b"] = 1;

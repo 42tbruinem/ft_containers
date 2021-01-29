@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/22 14:37:01 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/29 18:23:12 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/29 19:59:48 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,28 @@ namespace ft
 		b = tmp;
 	}
 
+// 	template <class T1, class T2>
+// 	class pair
+// 	{
+// 		public:
+// 			pair(const T1& first = T1(), const T2& second = T2()) : first(first), second(second) {}
+// 			pair(const pair& other) { *this = other; }
+// //			template <class U1, class U2>
+// //			pair(const pair<U1, U2>& other) : first(other.first), second(other.second) {}
+// 			pair& operator = (const pair& other)
+// 			{
+// 				if (this != &other)
+// 				{
+// 					this->first = other.first;
+// 					this->second = other.second;
+// 				}
+// 				return (*this);
+// 			}
+// 			~pair() {}
+// 			T1	first;
+// 			T2	second;
+// 	};
+
 	template <typename InputIt1, typename InputIt2, typename Compare>
 	bool	lexicographical_compare(InputIt1 begin1, InputIt2 begin2, InputIt1 end1, InputIt2 end2, Compare comp)
 	{
@@ -43,6 +65,16 @@ namespace ft
 		}
 		return (begin2 != end2);
 	}
+
+	template <class T>
+	class less
+	{
+		public:
+			inline bool operator()(const T &lhs, const T &rhs) const 
+			{
+				return lhs < rhs;
+			}
+	};
 
 	template <typename InputIt1, typename InputIt2>
 	bool	lexicographical_compare(InputIt1 begin1, InputIt2 begin2, InputIt1 end1, InputIt2 end2)

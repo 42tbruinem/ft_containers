@@ -6,7 +6,7 @@
 #    By: tbruinem <tbruinem@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/07/27 16:25:13 by tbruinem      #+#    #+#                  #
-#    Updated: 2021/01/27 12:35:14 by tbruinem      ########   odam.nl          #
+#    Updated: 2021/01/29 19:22:07 by tbruinem      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ MISC_INC = ./misc
 ITER_INC = ./iterator
 UTIL_INC = ./util
 
-CONTAINERS = list vector map
+CONTAINERS = list vector
 INCL = $(CONTAINERS:%=-I ./%)
 
 OBJ = $(SRC:%.cpp=%.o)
@@ -44,12 +44,16 @@ $(CONTAINERS):
 	@echo "Compiling $@"
 	$(CXX) $(CFLAGS) test_$@.cpp -o test_$@ -I . -I $(ITER_INC) -I $(UTIL_INC) -I $(MISC_INC) $(INCL) -D FT=$(FT)
 
+map:
+	@echo "Compiling $@"
+	$(CXX) $(CFLAGS) -I ./map test_$@.cpp ./map/Map.cpp -o test_$@ -I . -I $(ITER_INC) -I $(UTIL_INC) -I $(MISC_INC) $(INCL) -D FT=$(FT)
+
 clean:
 	rm -rf $(OBJ)
 
 fclean: clean
-	rm -rf $(CONTAINERS:%=%_test)
+	rm -rf $(CONTAINERS:%=%_test) map_test
 
 re: fclean all
 
-.PHONY: $(CONTAINERS)
+.PHONY: $(CONTAINERS) map
