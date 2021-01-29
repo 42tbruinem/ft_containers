@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/29 20:00:11 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/29 20:43:34 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,11 +196,11 @@ namespace ft
 
 namespace ft
 {
-	template <class Key, class T, class Compare = ft::less<Key>, class Alloc = std::allocator<std::pair<Key, T> > >
+	template <class Key, class T, class Compare = ft::less<Key>, class Alloc = std::allocator<ft::pair<Key, T> > >
 	class map
 	{
 		public:
-			typedef std::pair<const Key, T>											value_type;
+			typedef ft::pair<const Key, T>											value_type;
 			typedef Key																key_type;
 			typedef Compare															key_compare;
 			typedef T																mapped_type;
@@ -346,11 +346,11 @@ namespace ft
 				erase(this->begin(), this->end());
 			}
 
-			std::pair<iterator,bool> insert (const value_type& value)
+			ft::pair<iterator,bool> insert (const value_type& value)
 			{
 				iterator it = find(value.first);
 				if (it != this->end())
-					return (std::pair<iterator, bool>(it, false));
+					return (ft::pair<iterator, bool>(it, false));
 				mapnodebase **iter = &this->root;
 				mapnodebase *parent = NULL;
 				while (*iter && *iter != this->first && *iter != this->last)
@@ -367,7 +367,7 @@ namespace ft
 				if (this->first->parent == this->last || this->value_comp()(value, static_cast<mapnode *>(this->first->parent)->getval()))
 					connect_parent_child(*iter, &(*iter)->left, this->first);
 				this->len++;
-				return (std::pair<iterator, bool>(iterator(*iter), true));
+				return (ft::pair<iterator, bool>(iterator(*iter), true));
 			}
 
 			template <class InputIterator>
@@ -540,20 +540,20 @@ namespace ft
 				return (const_iterator(const_cast<map *>(this)->upper_bound(k)));
 			}
 
-			std::pair<iterator,iterator> equal_range (const key_type& k)
+			ft::pair<iterator,iterator> equal_range (const key_type& k)
 			{
 				iterator first = this->lower_bound(k);
 				iterator last = this->upper_bound(k);
 
 				if (first != this->end())
 					++first;
-				return (std::pair<iterator, iterator>(first, last));
+				return (ft::pair<iterator, iterator>(first, last));
 			}
 
-			std::pair<const_iterator,const_iterator> equal_range (const key_type& k) const
+			ft::pair<const_iterator,const_iterator> equal_range (const key_type& k) const
 			{
-				std::pair<iterator, iterator>	nonconst = const_cast<map *>(this)->equal_range(k);
-				return (std::pair<const_iterator, const_iterator>(const_iterator(nonconst.first), const_iterator(nonconst.second)));
+				ft::pair<iterator, iterator>	nonconst = const_cast<map *>(this)->equal_range(k);
+				return (ft::pair<const_iterator, const_iterator>(const_iterator(nonconst.first), const_iterator(nonconst.second)));
 			}
 
 		private:

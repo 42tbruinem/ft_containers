@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 13:35:05 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/29 18:18:02 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/29 20:51:34 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,16 +93,16 @@ void	comparison_operator_container(Container a, Container b, std::string a_title
 	std::cout << "----------------------------------------------------------------------" << std::endl;
 }
 
+template <class Key, class Value>
+void	print_content(const pair<Key, Value>& content)
+{
+	std::cout << content.first << " : " << content.second;
+}
+
 template <class T>
 void	print_content(const T& content)
 {
 	std::cout << content;
-}
-
-template <class Key, class Value>
-void	print_content(const std::pair<Key, Value>& content)
-{
-	std::cout << content.first << " : " << content.second;
 }
 
 template <typename Container>

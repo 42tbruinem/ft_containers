@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/24 15:10:32 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/29 20:00:19 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/29 20:43:47 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,21 +51,21 @@ std::vector<std::string>	generate_random_strings(std::string characters, size_t 
 	return (strings);
 }
 
-std::vector<std::pair<std::string, size_t> >	create_pairs_randval(std::vector<std::string> strings, size_t maxvalue)
+std::vector<pair<std::string, size_t> >	create_pairs_randval(std::vector<std::string> strings, size_t maxvalue)
 {
-	std::vector<std::pair<std::string, size_t> >	pairs(strings.size());
+	std::vector<pair<std::string, size_t> >	pairs(strings.size());
 
 	for (size_t i = 0; i < strings.size(); i++)
-		pairs[i] = std::pair<std::string, size_t>(strings[i], std::rand() % maxvalue);
+		pairs[i] = pair<std::string, size_t>(strings[i], std::rand() % maxvalue);
 	return (pairs);
 }
 
-std::vector<std::pair<std::string, size_t> >	create_pairs_sequence(std::vector<std::string> strings)
+std::vector<pair<std::string, size_t> >	create_pairs_sequence(std::vector<std::string> strings)
 {
-	std::vector<std::pair<std::string, size_t> >	pairs(strings.size());
+	std::vector<pair<std::string, size_t> >	pairs(strings.size());
 
 	for (size_t i = 0; i < strings.size(); i++)
-		pairs[i] = std::pair<std::string, size_t>(strings[i], i);
+		pairs[i] = pair<std::string, size_t>(strings[i], i);
 	return (pairs);
 }
 
@@ -136,7 +136,7 @@ void	init_map_random(Map& container, size_t amount, std::vector<Key>& keys)
 	{
 		Key key = generate_key<Key>();
 		size_t oldsize = container.size();
-		container.insert(std::pair<Key, size_t>(key, i));
+		container.insert(pair<Key, size_t>(key, i));
 		if (oldsize != container.size())
 		{
 			keys.push_back(key);
@@ -188,7 +188,7 @@ void	map_equalrange_key(const Container& c, std::string title, const Key& key)
 {
 	std::cout << "finding equalrange of key: '" << key << "' in " << title << std::endl;
 	std::cout << "Results in ";
-	std::pair<typename Container::const_iterator, typename Container::const_iterator>	it = c.equal_range(key);
+	pair<typename Container::const_iterator, typename Container::const_iterator>	it = c.equal_range(key);
 	std::cout << "first: ";
 	if (it.first == c.end())
 		std::cout << "the end";
@@ -289,13 +289,13 @@ int main(void)
 	map_default.clear();
 	map_information(map_default, "map_default");
 	iter_print_container(map_default, "map_default", "\n");
-	map_default.insert(std::pair<std::string, size_t>("hello", 42));
+	map_default.insert(pair<std::string, size_t>("hello", 42));
 	iter_print_container(map_default, "map_default", "\n");
 	map_default.erase("not in map");
 	iter_print_container(map_default, "map_default", "\n");
 	map_default.erase("hello");
 	iter_print_container(map_default, "map_default", "\n");
-	map_default.insert(std::pair<std::string, size_t>("now I'm over here", 404));
+	map_default.insert(pair<std::string, size_t>("now I'm over here", 404));
 	map_empty.clear();
 	iter_print_container(map_default, "map_default", "\n");
 	iter_print_container(map_empty, "map_empty", "\n");
