@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/24 15:10:32 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/29 13:42:04 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/29 18:43:47 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,20 +260,17 @@ int main(void)
 	std::vector<std::string>	map_default_keys;
 	map<std::string, size_t>	map_default;
 
-	init_map_random(map_default, 10, map_default_keys);
+	init_map_random(map_default, 1000, map_default_keys);
 	map<std::string, size_t>	map_range(map_default.begin(), map_default.end());
 	map<std::string, size_t>	map_copy(map_range);
 	map_default = map_copy;
 
-//	random_order_erase(map_default, map_default_keys);
 	subject_title("ELEMENT ACCESS");
 
 	operator_print_container(map_default, "map_default", map_default_keys, " : ");
 
 	subject_title("ITERATORS");
 
-//	random_order_erase(map_range, map_default_keys);
-//	random_order_erase(map_copy, map_default_keys);
 	iter_print_container(map_default, "map_default", "\n");
 	const_iter_print_container(map_default, "map_default", "\n");
 	reverse_iter_print_container(map_default, "map_default", "\n");
@@ -291,6 +288,7 @@ int main(void)
 	subject_title("MODIFIERS");
 
 	map_information(map_default, "map_default");
+	random_order_erase(map_default, map_default_keys);
 	map_default.clear();
 	map_information(map_default, "map_default");
 	iter_print_container(map_default, "map_default", "\n");
@@ -304,6 +302,7 @@ int main(void)
 	map_empty.clear();
 	iter_print_container(map_default, "map_default", "\n");
 	iter_print_container(map_empty, "map_empty", "\n");
+	std::cout << "swapped map_empty with map_default" << std::endl;
 	map_default.swap(map_empty);
 	iter_print_container(map_default, "map_default", "\n");
 	iter_print_container(map_empty, "map_empty", "\n");
@@ -333,5 +332,19 @@ int main(void)
 
 	map_keycomp_iter(map_empty, "map_empty", "b");
 	map_valcomp_iter(map_empty, "map_empty", "b");
+
+	map<std::string, size_t>::const_iterator it_const1 = static_cast<const map<std::string, size_t> >(map_empty).begin();
+	map<std::string, size_t>::const_iterator it_const2(it_const1);
+	comparison_operator_container(map_empty, map_default, "map_empty", "map_default");
+	map_default["a"] = 0;
+	map_default["b"] = 1;
+	map_default["c"] = 2;
+	iter_print_container(map_default, "map_default", "\n");
+	iter_print_container(map_empty, "map_empty", "\n");
+	map_information(map_empty, "map_empty");
+	map_information(map_default, "map_default");
+	comparison_operator_container(map_empty, map_default, "map_empty", "map_default");
+	map_empty.erase("b");
+	comparison_operator_container(map_empty, map_default, "map_empty", "map_default");
 	return (0);
 }

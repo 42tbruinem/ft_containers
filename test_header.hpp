@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 13:35:05 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/28 12:49:32 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/29 18:18:02 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,21 +76,22 @@ void	subject_title(std::string name)
 template <typename Container>
 void	comparison_operator_container(Container a, Container b, std::string a_title, std::string b_title)
 {
+	std::cout << "----------------------------------------------------------------------" << std::endl;
 	std::cout << a_title << " operator == " << b_title << " = " << ((a == b) ? "True" : "False") << std::endl;
 	std::cout << a_title << " operator != " << b_title << " = " << ((a != b) ? "True" : "False") << std::endl;
 	std::cout << a_title << " operator > " << b_title << " = " << ((a > b) ? "True" : "False") << std::endl;
 	std::cout << a_title << " operator < " << b_title << " = " << ((a < b) ? "True" : "False") << std::endl;
 	std::cout << a_title << " operator >= " << b_title << " = " << ((a >= b) ? "True" : "False") << std::endl;
 	std::cout << a_title << " operator <= " << b_title << " = " << ((a <= b) ? "True" : "False") << std::endl;
-	std::cout << "---" << std::endl;
+	std::cout << "----------------------------------------------------------------------" << std::endl;
 	std::cout << b_title << " operator == " << a_title << " = " << ((b == a) ? "True" : "False") << std::endl;
 	std::cout << b_title << " operator != " << a_title << " = " << ((b != a) ? "True" : "False") << std::endl;
 	std::cout << b_title << " operator > " << a_title << " = " << ((b > a) ? "True" : "False") << std::endl;
 	std::cout << b_title << " operator < " << a_title << " = " << ((b < a) ? "True" : "False") << std::endl;
 	std::cout << b_title << " operator >= " << a_title << " = " << ((b >= a) ? "True" : "False") << std::endl;
 	std::cout << b_title << " operator <= " << a_title << " = " << ((b <= a) ? "True" : "False") << std::endl;
+	std::cout << "----------------------------------------------------------------------" << std::endl;
 }
-
 
 template <class T>
 void	print_content(const T& content)
