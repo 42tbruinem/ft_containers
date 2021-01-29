@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/24 15:10:32 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/28 13:01:59 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/29 13:42:04 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,102 @@ void	map_information(const Container& c, std::string title)
 	std::cout << "Size of " << title << " is " << c.size() << std::endl;
 }
 
+template <class Container, class Key>
+void	map_count_key(const Container& c, std::string title, const Key& key)
+{
+	std::cout << title << " contains the key: '" << key << "' " << c.count(key) << " times" << std::endl;
+}
+
+template <class Container, class Key>
+void	map_lowerbound_key(const Container& c, std::string title, const Key& key)
+{
+	std::cout << "finding lowerbound of key: '" << key << "' in " << title << std::endl;
+	std::cout << "Results in: ";
+	typename Container::const_iterator it = c.lower_bound(key);
+	if (it == c.end())
+		std::cout << "the end";
+	else
+		print_content(*it);
+	std::cout << std::endl;
+}
+
+template <class Container, class Key>
+void	map_upperbound_key(const Container& c, std::string title, const Key& key)
+{
+	std::cout << "finding upperbound of key: '" << key << "' in " << title << std::endl;
+	std::cout << "Results in: ";
+	typename Container::const_iterator it = c.upper_bound(key);
+	if (it == c.end())
+		std::cout << "the end";
+	else
+		print_content(*it);
+	std::cout << std::endl;
+}
+
+template <class Container, class Key>
+void	map_equalrange_key(const Container& c, std::string title, const Key& key)
+{
+	std::cout << "finding equalrange of key: '" << key << "' in " << title << std::endl;
+	std::cout << "Results in ";
+	std::pair<typename Container::const_iterator, typename Container::const_iterator>	it = c.equal_range(key);
+	std::cout << "first: ";
+	if (it.first == c.end())
+		std::cout << "the end";
+	else
+		std::cout << it.first->first;
+	std::cout << ", last: ";
+	if (it.second == c.end())
+		std::cout << "the end";
+	else
+		std::cout << it.second->first;
+	std::cout << std::endl;
+}
+
+template <class Container, class Key>
+void	map_keycomp_iter(const Container& c, std::string title, const Key& key)
+{
+	typename Container::key_compare comp_funct = c.key_comp();
+	std::cout << "Comparing all elements of " << title << " against key: '" << key << "' using key_compare" << std::endl;
+
+	for (typename Container::const_iterator it = c.begin(); it != c.end(); it++)
+	{
+		bool before = comp_funct(it->first, key);
+		bool after = comp_funct(key, it->first);
+
+		std::cout << "(" << it->first << ") ";
+		if (!before && !after)
+			std::cout << "is equivalent to ";
+		else if (before)
+			std::cout << "goes before ";
+		else
+			std::cout << "goes after ";
+		std::cout << "key: " << key << std::endl;
+	}
+}
+
+template <class Container, class Key>
+void	map_valcomp_iter(const Container& c, std::string title, const Key& key)
+{
+	typename Container::value_compare comp_funct = c.value_comp();
+	typename Container::value_type	pair(key, 404);
+	std::cout << "Comparing all elements of " << title << " against key: '" << key << "' using value_compare" << std::endl;
+
+	for (typename Container::const_iterator it = c.begin(); it != c.end(); it++)
+	{
+		bool before = comp_funct(*it, pair);
+		bool after = comp_funct(pair, *it);
+
+		std::cout << "(" << it->first << ") ";
+		if (!before && !after)
+			std::cout << "is equivalent to ";
+		else if (before)
+			std::cout << "goes before ";
+		else
+			std::cout << "goes after ";
+		std::cout << "key: " << key << std::endl;
+	}
+}
+
 int main(void)
 {
 	print_version();
@@ -211,5 +307,31 @@ int main(void)
 	map_default.swap(map_empty);
 	iter_print_container(map_default, "map_default", "\n");
 	iter_print_container(map_empty, "map_empty", "\n");
+
+	subject_title("LOOKUP");
+	
+	map_count_key(map_empty, "map_empty", "now I'm over here");
+	iter_print_container(map_empty, "map_empty", "\n");
+	map_empty.erase("now I'm over here");
+	map_count_key(map_empty, "map_empty", "now I'm over here");
+	map_empty["a"] = 0;
+	map_empty["b"] = 1;
+	map_empty["c"] = 2;
+
+	map_lowerbound_key(map_empty, "map_empty", "b");
+	map_upperbound_key(map_empty, "map_empty", "b");
+	map_equalrange_key(map_empty, "map_empty", "b");
+	map_empty.clear();
+	map_lowerbound_key(map_empty, "map_empty", "b");
+	map_upperbound_key(map_empty, "map_empty", "b");
+	map_equalrange_key(map_empty, "map_empty", "b");
+
+	subject_title("OBSERVERS");
+	map_empty["a"] = 0;
+	map_empty["b"] = 1;
+	map_empty["c"] = 2;
+
+	map_keycomp_iter(map_empty, "map_empty", "b");
+	map_valcomp_iter(map_empty, "map_empty", "b");
 	return (0);
 }
