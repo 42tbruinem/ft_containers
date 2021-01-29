@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/24 15:10:32 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/27 16:20:33 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/28 13:01:59 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,12 @@ void	init_map_random(Map& container, size_t amount, std::vector<Key>& keys)
 	}
 }
 
+template <class Container>
+void	map_information(const Container& c, std::string title)
+{
+	std::cout << "Size of " << title << " is " << c.size() << std::endl;
+}
+
 int main(void)
 {
 	print_version();
@@ -158,10 +164,52 @@ int main(void)
 	std::vector<std::string>	map_default_keys;
 	map<std::string, size_t>	map_default;
 
-	init_map_random(map_default, 1000, map_default_keys);
-	iter_print_container(map_default, "map_default", "\n");
-//	map<std::string, size_t>	map_range(map_default.begin(), map_default.end());
+	init_map_random(map_default, 10, map_default_keys);
+	map<std::string, size_t>	map_range(map_default.begin(), map_default.end());
+	map<std::string, size_t>	map_copy(map_range);
+	map_default = map_copy;
 
-	random_order_erase(map_default, map_default_keys);
+//	random_order_erase(map_default, map_default_keys);
+	subject_title("ELEMENT ACCESS");
+
+	operator_print_container(map_default, "map_default", map_default_keys, " : ");
+
+	subject_title("ITERATORS");
+
+//	random_order_erase(map_range, map_default_keys);
+//	random_order_erase(map_copy, map_default_keys);
+	iter_print_container(map_default, "map_default", "\n");
+	const_iter_print_container(map_default, "map_default", "\n");
+	reverse_iter_print_container(map_default, "map_default", "\n");
+	const_reverse_iter_print_container(map_default, "map_default", "\n");
+
+	subject_title("CAPACITY");
+
+	map<std::string, size_t>	map_empty;
+	is_empty(map_empty, "map_empty");
+	map_empty["empty"] = 0;
+	is_empty(map_empty, "map_empty");
+	map_information(map_empty, "map_empty");
+	std::cout << "Max size of " << "map_empty" << " is " << map_empty.max_size() << std::endl;
+
+	subject_title("MODIFIERS");
+
+	map_information(map_default, "map_default");
+	map_default.clear();
+	map_information(map_default, "map_default");
+	iter_print_container(map_default, "map_default", "\n");
+	map_default.insert(std::pair<std::string, size_t>("hello", 42));
+	iter_print_container(map_default, "map_default", "\n");
+	map_default.erase("not in map");
+	iter_print_container(map_default, "map_default", "\n");
+	map_default.erase("hello");
+	iter_print_container(map_default, "map_default", "\n");
+	map_default.insert(std::pair<std::string, size_t>("now I'm over here", 404));
+	map_empty.clear();
+	iter_print_container(map_default, "map_default", "\n");
+	iter_print_container(map_empty, "map_empty", "\n");
+	map_default.swap(map_empty);
+	iter_print_container(map_default, "map_default", "\n");
+	iter_print_container(map_empty, "map_empty", "\n");
 	return (0);
 }

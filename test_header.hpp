@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 13:35:05 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/27 12:07:23 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/28 12:49:32 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@
 #ifndef FT
 # define FT 1
 #endif
+
+# include <vector>
 
 template <typename Container>
 void	capacity_information(Container c, std::string title)
@@ -118,6 +120,22 @@ void	const_operator_print_container(const Container& c, std::string title, std::
 	std::cout << std::endl;
 }
 
+template <typename Container, class Key>
+void	operator_print_container(Container c, std::string title, const std::vector<Key>& keys, std::string delim = ",")
+{
+	std::cout << "Printing " << title << " of size " << c.size() << " using [] operator element access" << std::endl;
+
+	for (size_t i = 0; i < keys.size(); i++)
+	{
+		print_content(c[keys[i]]);
+		if (i + 1 < keys.size())
+			std::cout << delim;
+		else
+			std::cout << "\n";
+	}
+	std::cout << std::endl;
+}
+
 template <typename Container>
 void	operator_print_container(Container c, std::string title, std::string delim = ",")
 {
@@ -132,6 +150,12 @@ void	operator_print_container(Container c, std::string title, std::string delim 
 			std::cout << "\n";
 	}
 	std::cout << std::endl;
+}
+
+template <class Container>
+void	is_empty(const Container& c, std::string title)
+{
+	std::cout << "container " << title << " is " << ((c.empty()) ? "empty" : "not empty") << std::endl;
 }
 
 //iterator print functions
