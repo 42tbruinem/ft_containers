@@ -1,0 +1,250 @@
+Compiling map
+g++ -Wall -Wextra -Werror -pedantic -std=c++98 -g -fsanitize=address -I ./map test_map.cpp ./map/Map.cpp -o test_map -I . -I ./iterator -I ./util -I ./misc -I ./list -I ./vector -D FT=1
+In file included from ./test_header.hpp:16:0,
+                 from test_map.cpp:16:
+./map/Map.hpp:563:12: error: invalid use of template-name ‘ft::map’ without an argument list
+    typedef ft::map::nodebase    nodebase;
+            ^~
+./map/Map.hpp:563:12: note: class template argument deduction is only available with -std=c++1z or -std=gnu++1z
+In file included from ./test_header.hpp:16:0,
+                 from test_map.cpp:16:
+./map/Map.hpp:28:8: note: ‘template<class Key, class T, class Compare, class Alloc> class ft::map’ declared here
+  class map
+        ^~~
+In file included from ./test_header.hpp:16:0,
+                 from test_map.cpp:16:
+./map/Map.hpp:564:12: error: invalid use of template-name ‘ft::map’ without an argument list
+    typedef ft::map::node<Value>    node;
+            ^~
+./map/Map.hpp:564:12: note: class template argument deduction is only available with -std=c++1z or -std=gnu++1z
+In file included from ./test_header.hpp:16:0,
+                 from test_map.cpp:16:
+./map/Map.hpp:28:8: note: ‘template<class Key, class T, class Compare, class Alloc> class ft::map’ declared here
+  class map
+        ^~~
+In file included from ./test_header.hpp:16:0,
+                 from test_map.cpp:16:
+./map/Map.hpp:570:22: error: expected ‘)’ before ‘*’ token
+    Iterator(nodebase *ptr = NULL) : ptr(ptr) {}
+                      ^
+./map/Map.hpp:621:4: error: ‘nodebase’ does not name a type
+    nodebase *getptr() { return this->ptr; }
+    ^~~~~~~~
+./map/Map.hpp:622:4: error: ‘nodebase’ does not name a type
+    nodebase *ptr;
+    ^~~~~~~~
+./map/Map.hpp: In constructor ‘ft::Iterator<Value, Reference, Pointer, Category>::Iterator(const ft::Iterator<Value, Value&, Value*>&)’:
+./map/Map.hpp:571:61: error: class ‘ft::Iterator<Value, Reference, Pointer, Category>’ does not have any field named ‘ptr’
+    Iterator(const Iterator<Value, Value&, Value*>& other) : ptr(other.ptr) {}
+                                                             ^~~
+./map/Map.hpp: In member function ‘Pointer ft::Iterator<Value, Reference, Pointer, Category>::operator->()’:
+./map/Map.hpp:615:26: error: ‘node’ does not name a type
+     return (&static_cast<node *>(this->ptr)->getval());
+                          ^~~~
+./map/Map.hpp:615:31: error: expected ‘>’ before ‘*’ token
+     return (&static_cast<node *>(this->ptr)->getval());
+                               ^
+./map/Map.hpp:615:31: error: expected ‘(’ before ‘*’ token
+./map/Map.hpp:615:32: error: expected primary-expression before ‘>’ token
+     return (&static_cast<node *>(this->ptr)->getval());
+                                ^
+./map/Map.hpp:615:55: error: expected ‘)’ before ‘;’ token
+     return (&static_cast<node *>(this->ptr)->getval());
+                                                       ^
+./map/Map.hpp: In member function ‘Reference ft::Iterator<Value, Reference, Pointer, Category>::operator*()’:
+./map/Map.hpp:619:25: error: ‘node’ does not name a type
+     return (static_cast<node *>(this->ptr)->getval());
+                         ^~~~
+./map/Map.hpp:619:30: error: expected ‘>’ before ‘*’ token
+     return (static_cast<node *>(this->ptr)->getval());
+                              ^
+./map/Map.hpp:619:30: error: expected ‘(’ before ‘*’ token
+./map/Map.hpp:619:31: error: expected primary-expression before ‘>’ token
+     return (static_cast<node *>(this->ptr)->getval());
+                               ^
+./map/Map.hpp:619:54: error: expected ‘)’ before ‘;’ token
+     return (static_cast<node *>(this->ptr)->getval());
+                                                      ^
+./map/Map.hpp: In instantiation of ‘ft::map<Key, T, Compare, Alloc>::iterator ft::map<Key, T, Compare, Alloc>::begin() [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >; ft::map<Key, T, Compare, Alloc>::iterator = ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>]’:
+test_map.cpp:261:55:   required from here
+./map/Map.hpp:202:13: error: no matching function for call to ‘ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>::Iterator(ft::map<std::__cxx11::basic_string<char>, long unsigned int>::nodebase*&)’
+     return (iterator(this->first->parent));
+            ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./map/Map.hpp:571:4: note: candidate: ft::Iterator<Value, Reference, Pointer, Category>::Iterator(const ft::Iterator<Value, Value&, Value*>&) [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]
+    Iterator(const Iterator<Value, Value&, Value*>& other) : ptr(other.ptr) {}
+    ^~~~~~~~
+./map/Map.hpp:571:4: note:   no known conversion for argument 1 from ‘ft::map<std::__cxx11::basic_string<char>, long unsigned int>::nodebase*’ to ‘const ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>&’
+./map/Map.hpp: In instantiation of ‘ft::map<Key, T, Compare, Alloc>::iterator ft::map<Key, T, Compare, Alloc>::end() [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >; ft::map<Key, T, Compare, Alloc>::iterator = ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>]’:
+test_map.cpp:261:74:   required from here
+./map/Map.hpp:212:13: error: no matching function for call to ‘ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>::Iterator(ft::map<std::__cxx11::basic_string<char>, long unsigned int>::mapnodebase*&)’
+     return (iterator(this->last));
+            ~^~~~~~~~~~~~~~~~~~~~~
+./map/Map.hpp:571:4: note: candidate: ft::Iterator<Value, Reference, Pointer, Category>::Iterator(const ft::Iterator<Value, Value&, Value*>&) [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]
+    Iterator(const Iterator<Value, Value&, Value*>& other) : ptr(other.ptr) {}
+    ^~~~~~~~
+./map/Map.hpp:571:4: note:   no known conversion for argument 1 from ‘ft::map<std::__cxx11::basic_string<char>, long unsigned int>::mapnodebase* {aka ft::map<std::__cxx11::basic_string<char>, long unsigned int>::nodebase*}’ to ‘const ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>&’
+./map/Map.hpp: In instantiation of ‘class ft::ReverseIterator<ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag> >’:
+./test_header.hpp:202:39:   required from ‘void reverse_iter_print_container(Container, std::__cxx11::string, std::__cxx11::string) [with Container = ft::map<std::__cxx11::basic_string<char>, long unsigned int>; std::__cxx11::string = std::__cxx11::basic_string<char>]’
+test_map.cpp:273:63:   required from here
+./map/Map.hpp:636:42: error: no type named ‘node’ in ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’
+    typedef typename Iterator::node       node;
+                                          ^~~~
+./map/Map.hpp:637:45: error: no type named ‘nodebase’ in ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’
+    typedef typename Iterator::nodebase      nodebase;
+                                             ^~~~~~~~
+./map/Map.hpp: In instantiation of ‘class ft::ReverseIterator<ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag> >’:
+./test_header.hpp:219:45:   required from ‘void const_reverse_iter_print_container(Container, std::__cxx11::string, std::__cxx11::string) [with Container = ft::map<std::__cxx11::basic_string<char>, long unsigned int>; std::__cxx11::string = std::__cxx11::basic_string<char>]’
+test_map.cpp:274:69:   required from here
+./map/Map.hpp:636:42: error: no type named ‘node’ in ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’
+    typedef typename Iterator::node       node;
+                                          ^~~~
+./map/Map.hpp:637:45: error: no type named ‘nodebase’ in ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’
+    typedef typename Iterator::nodebase      nodebase;
+                                             ^~~~~~~~
+./map/Map.hpp: In instantiation of ‘ft::pair<ft::Iterator<ft::pair<const Key, T>, ft::pair<const Key, T>&, ft::pair<const Key, T>*>, bool> ft::map<Key, T, Compare, Alloc>::insert(const value_type&) [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >; ft::map<Key, T, Compare, Alloc>::value_type = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>]’:
+test_map.cpp:292:59:   required from here
+./map/Map.hpp:295:38: error: no matching function for call to ‘ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>::Iterator(ft::map<std::__cxx11::basic_string<char>, long unsigned int>::mapnodebase*&)’
+     return (ft::pair<iterator, bool>(iterator(*iter), true));
+                                      ^~~~~~~~~~~~~~~
+./map/Map.hpp:571:4: note: candidate: ft::Iterator<Value, Reference, Pointer, Category>::Iterator(const ft::Iterator<Value, Value&, Value*>&) [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]
+    Iterator(const Iterator<Value, Value&, Value*>& other) : ptr(other.ptr) {}
+    ^~~~~~~~
+./map/Map.hpp:571:4: note:   no known conversion for argument 1 from ‘ft::map<std::__cxx11::basic_string<char>, long unsigned int>::mapnodebase* {aka ft::map<std::__cxx11::basic_string<char>, long unsigned int>::nodebase*}’ to ‘const ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>&’
+./map/Map.hpp: In instantiation of ‘ft::map<Key, T, Compare, Alloc>::const_iterator ft::map<Key, T, Compare, Alloc>::begin() const [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >; ft::map<Key, T, Compare, Alloc>::const_iterator = ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>]’:
+test_map.cpp:333:117:   required from here
+./map/Map.hpp:207:13: error: no matching function for call to ‘ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>::Iterator(ft::map<std::__cxx11::basic_string<char>, long unsigned int>::nodebase*&)’
+     return (const_iterator(this->first->parent));
+            ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./map/Map.hpp:571:4: note: candidate: ft::Iterator<Value, Reference, Pointer, Category>::Iterator(const ft::Iterator<Value, Value&, Value*>&) [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]
+    Iterator(const Iterator<Value, Value&, Value*>& other) : ptr(other.ptr) {}
+    ^~~~~~~~
+./map/Map.hpp:571:4: note:   no known conversion for argument 1 from ‘ft::map<std::__cxx11::basic_string<char>, long unsigned int>::nodebase*’ to ‘const ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>&’
+./map/Map.hpp:560:8: note: candidate: ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>::Iterator(const ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>&)
+  class Iterator
+        ^~~~~~~~
+./map/Map.hpp:560:8: note:   no known conversion for argument 1 from ‘ft::map<std::__cxx11::basic_string<char>, long unsigned int>::nodebase*’ to ‘const ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>&’
+./map/Map.hpp: In instantiation of ‘ft::map<Key, T, Compare, Alloc>::const_iterator ft::map<Key, T, Compare, Alloc>::end() const [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >; ft::map<Key, T, Compare, Alloc>::const_iterator = ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>]’:
+./map/Map.hpp:186:6:   required from ‘ft::map<Key, T, Compare, Alloc>& ft::map<Key, T, Compare, Alloc>::operator=(const ft::map<Key, T, Compare, Alloc>&) [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >]’
+test_map.cpp:263:16:   required from here
+./map/Map.hpp:217:13: error: no matching function for call to ‘ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>::Iterator(ft::map<std::__cxx11::basic_string<char>, long unsigned int>::mapnodebase*)’
+     return (const_iterator(const_cast<mapnodebase*>(this->last)));
+            ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./map/Map.hpp:571:4: note: candidate: ft::Iterator<Value, Reference, Pointer, Category>::Iterator(const ft::Iterator<Value, Value&, Value*>&) [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]
+    Iterator(const Iterator<Value, Value&, Value*>& other) : ptr(other.ptr) {}
+    ^~~~~~~~
+./map/Map.hpp:571:4: note:   no known conversion for argument 1 from ‘ft::map<std::__cxx11::basic_string<char>, long unsigned int>::mapnodebase* {aka ft::map<std::__cxx11::basic_string<char>, long unsigned int>::nodebase*}’ to ‘const ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>&’
+./map/Map.hpp:560:8: note: candidate: ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>::Iterator(const ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>&)
+  class Iterator
+        ^~~~~~~~
+./map/Map.hpp:560:8: note:   no known conversion for argument 1 from ‘ft::map<std::__cxx11::basic_string<char>, long unsigned int>::mapnodebase* {aka ft::map<std::__cxx11::basic_string<char>, long unsigned int>::nodebase*}’ to ‘const ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>&’
+./map/Map.hpp: In instantiation of ‘ft::Iterator<Value, Reference, Pointer, Category>& ft::Iterator<Value, Reference, Pointer, Category>::operator++() [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]’:
+./test_header.hpp:173:7:   required from ‘void iter_print_container(Container, std::__cxx11::string, std::__cxx11::string) [with Container = ft::map<std::__cxx11::basic_string<char>, long unsigned int>; std::__cxx11::string = std::__cxx11::basic_string<char>]’
+test_map.cpp:271:55:   required from here
+./map/Map.hpp:598:11: error: ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     this->ptr = this->ptr->next();
+     ~~~~~~^~~
+./map/Map.hpp:598:23: error: ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     this->ptr = this->ptr->next();
+                 ~~~~~~^~~
+./map/Map.hpp: In instantiation of ‘bool ft::Iterator<Value, Reference, Pointer, Category>::operator==(const ft::Iterator<Value, Reference, Pointer, Category>&) const [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]’:
+./test_header.hpp:173:12:   required from ‘void iter_print_container(Container, std::__cxx11::string, std::__cxx11::string) [with Container = ft::map<std::__cxx11::basic_string<char>, long unsigned int>; std::__cxx11::string = std::__cxx11::basic_string<char>]’
+test_map.cpp:271:55:   required from here
+./map/Map.hpp:583:19: error: ‘const class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     return (this->ptr == other.ptr);
+             ~~~~~~^~~
+./map/Map.hpp:583:32: error: ‘const class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     return (this->ptr == other.ptr);
+                          ~~~~~~^~~
+./map/Map.hpp: In instantiation of ‘ft::Iterator<Value, Reference, Pointer, Category>& ft::Iterator<Value, Reference, Pointer, Category>::operator++() [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]’:
+./test_header.hpp:190:7:   required from ‘void const_iter_print_container(Container, std::__cxx11::string, std::__cxx11::string) [with Container = ft::map<std::__cxx11::basic_string<char>, long unsigned int>; std::__cxx11::string = std::__cxx11::basic_string<char>]’
+test_map.cpp:272:61:   required from here
+./map/Map.hpp:598:11: error: ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     this->ptr = this->ptr->next();
+     ~~~~~~^~~
+./map/Map.hpp:598:23: error: ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     this->ptr = this->ptr->next();
+                 ~~~~~~^~~
+./map/Map.hpp: In instantiation of ‘bool ft::Iterator<Value, Reference, Pointer, Category>::operator==(const ft::Iterator<Value, Reference, Pointer, Category>&) const [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]’:
+./test_header.hpp:190:12:   required from ‘void const_iter_print_container(Container, std::__cxx11::string, std::__cxx11::string) [with Container = ft::map<std::__cxx11::basic_string<char>, long unsigned int>; std::__cxx11::string = std::__cxx11::basic_string<char>]’
+test_map.cpp:272:61:   required from here
+./map/Map.hpp:583:19: error: ‘const class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     return (this->ptr == other.ptr);
+             ~~~~~~^~~
+./map/Map.hpp:583:32: error: ‘const class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     return (this->ptr == other.ptr);
+                          ~~~~~~^~~
+./map/Map.hpp: In instantiation of ‘ft::map<Key, T, Compare, Alloc>::iterator ft::map<Key, T, Compare, Alloc>::find(const key_type&) [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >; ft::map<Key, T, Compare, Alloc>::iterator = ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>; ft::map<Key, T, Compare, Alloc>::key_type = std::__cxx11::basic_string<char>]’:
+./map/Map.hpp:261:23:   required from ‘T& ft::map<Key, T, Compare, Alloc>::operator[](const Key&) [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >]’
+test_map.cpp:280:19:   required from here
+./map/Map.hpp:413:19: error: no matching function for call to ‘ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>::Iterator(ft::map<std::__cxx11::basic_string<char>, long unsigned int>::mapnodebase*&)’
+     iterator it = iterator(this->root);
+                   ^~~~~~~~~~~~~~~~~~~~
+./map/Map.hpp:571:4: note: candidate: ft::Iterator<Value, Reference, Pointer, Category>::Iterator(const ft::Iterator<Value, Value&, Value*>&) [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]
+    Iterator(const Iterator<Value, Value&, Value*>& other) : ptr(other.ptr) {}
+    ^~~~~~~~
+./map/Map.hpp:571:4: note:   no known conversion for argument 1 from ‘ft::map<std::__cxx11::basic_string<char>, long unsigned int>::mapnodebase* {aka ft::map<std::__cxx11::basic_string<char>, long unsigned int>::nodebase*}’ to ‘const ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>&’
+./map/Map.hpp:421:15: error: no matching function for call to ‘ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>::Iterator(ft::map<std::__cxx11::basic_string<char>, long unsigned int>::node<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int> >::base*&)’
+       return (iterator(iter));
+              ~^~~~~~~~~~~~~~~
+./map/Map.hpp:571:4: note: candidate: ft::Iterator<Value, Reference, Pointer, Category>::Iterator(const ft::Iterator<Value, Value&, Value*>&) [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]
+    Iterator(const Iterator<Value, Value&, Value*>& other) : ptr(other.ptr) {}
+    ^~~~~~~~
+./map/Map.hpp:571:4: note:   no known conversion for argument 1 from ‘ft::map<std::__cxx11::basic_string<char>, long unsigned int>::node<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int> >::base* {aka ft::map<std::__cxx11::basic_string<char>, long unsigned int>::nodebase*}’ to ‘const ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>&’
+./map/Map.hpp: In instantiation of ‘ft::Iterator<Value, Reference, Pointer, Category>& ft::Iterator<Value, Reference, Pointer, Category>::operator=(const ft::Iterator<Value, Reference, Pointer, Category>&) [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]’:
+./map/Map.hpp:263:9:   required from ‘T& ft::map<Key, T, Compare, Alloc>::operator[](const Key&) [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >]’
+test_map.cpp:280:19:   required from here
+./map/Map.hpp:576:12: error: ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+      this->ptr = other.ptr;
+      ~~~~~~^~~
+./map/Map.hpp:576:24: error: ‘const class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+      this->ptr = other.ptr;
+                  ~~~~~~^~~
+./map/Map.hpp: In instantiation of ‘void ft::map<Key, T, Compare, Alloc>::erase(ft::map<Key, T, Compare, Alloc>::iterator) [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >; ft::map<Key, T, Compare, Alloc>::iterator = ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>]’:
+./map/Map.hpp:374:10:   required from ‘size_t ft::map<Key, T, Compare, Alloc>::erase(const Key&) [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >; size_t = long unsigned int]’
+test_map.cpp:294:32:   required from here
+./map/Map.hpp:306:28: error: ‘ft::map<std::__cxx11::basic_string<char>, long unsigned int>::iterator {aka class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>}’ has no member named ‘getptr’
+     mapnodebase *node = it.getptr();
+                         ~~~^~~~~~
+./map/Map.hpp: In instantiation of ‘ft::Iterator<Value, Reference, Pointer, Category> ft::Iterator<Value, Reference, Pointer, Category>::operator++(int) [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]’:
+test_map.cpp:211:75:   required from ‘void map_keycomp_iter(const Container&, std::__cxx11::string, const Key&) [with Container = ft::map<std::__cxx11::basic_string<char>, long unsigned int>; Key = char [2]; std::__cxx11::string = std::__cxx11::basic_string<char>]’
+test_map.cpp:330:46:   required from here
+./map/Map.hpp:593:11: error: ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     this->ptr = this->ptr->next();
+     ~~~~~~^~~
+./map/Map.hpp:593:23: error: ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     this->ptr = this->ptr->next();
+                 ~~~~~~^~~
+./map/Map.hpp: In instantiation of ‘ft::Iterator<Value, Reference, Pointer, Category> ft::Iterator<Value, Reference, Pointer, Category>::operator++(int) [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]’:
+./map/Map.hpp:301:31:   required from ‘void ft::map<Key, T, Compare, Alloc>::insert(InputIterator, InputIterator) [with InputIterator = ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>; Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >]’
+./map/Map.hpp:178:5:   required from ‘ft::map<Key, T, Compare, Alloc>::map(InputIterator, InputIterator, const Compare&, const Alloc&, typename ft::enable_if<ft::is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type*) [with InputIterator = ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>; Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >; typename ft::enable_if<ft::is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type = ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>]’
+test_map.cpp:261:75:   required from here
+./map/Map.hpp:593:11: error: ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     this->ptr = this->ptr->next();
+     ~~~~~~^~~
+./map/Map.hpp:593:23: error: ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     this->ptr = this->ptr->next();
+                 ~~~~~~^~~
+./map/Map.hpp: In instantiation of ‘ft::Iterator<Value, Reference, Pointer, Category>& ft::Iterator<Value, Reference, Pointer, Category>::operator--() [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]’:
+./map/Map.hpp:444:6:   required from ‘ft::map<Key, T, Compare, Alloc>::iterator ft::map<Key, T, Compare, Alloc>::lower_bound(const key_type&) [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >; ft::map<Key, T, Compare, Alloc>::iterator = ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>; ft::map<Key, T, Compare, Alloc>::key_type = std::__cxx11::basic_string<char>]’
+./map/Map.hpp:450:13:   required from ‘ft::map<Key, T, Compare, Alloc>::const_iterator ft::map<Key, T, Compare, Alloc>::lower_bound(const key_type&) const [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >; ft::map<Key, T, Compare, Alloc>::const_iterator = ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>; ft::map<Key, T, Compare, Alloc>::key_type = std::__cxx11::basic_string<char>]’
+test_map.cpp:165:37:   required from ‘void map_lowerbound_key(const Container&, std::__cxx11::string, const Key&) [with Container = ft::map<std::__cxx11::basic_string<char>, long unsigned int>; Key = char [2]; std::__cxx11::string = std::__cxx11::basic_string<char>]’
+test_map.cpp:317:48:   required from here
+./map/Map.hpp:610:11: error: ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     this->ptr = this->ptr->prev();
+     ~~~~~~^~~
+./map/Map.hpp:610:23: error: ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     this->ptr = this->ptr->prev();
+                 ~~~~~~^~~
+./map/Map.hpp: In instantiation of ‘ft::Iterator<Value, Reference, Pointer, Category> ft::Iterator<Value, Reference, Pointer, Category>::operator--(int) [with Value = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>; Reference = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&; Pointer = ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*; Category = ft::bidirectional_iterator_tag]’:
+./map/Map.hpp:457:69:   required from ‘ft::map<Key, T, Compare, Alloc>::iterator ft::map<Key, T, Compare, Alloc>::upper_bound(const key_type&) [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >; ft::map<Key, T, Compare, Alloc>::iterator = ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>; ft::map<Key, T, Compare, Alloc>::key_type = std::__cxx11::basic_string<char>]’
+./map/Map.hpp:465:13:   required from ‘ft::map<Key, T, Compare, Alloc>::const_iterator ft::map<Key, T, Compare, Alloc>::upper_bound(const key_type&) const [with Key = std::__cxx11::basic_string<char>; T = long unsigned int; Compare = ft::less<std::__cxx11::basic_string<char> >; Alloc = std::allocator<ft::pair<std::__cxx11::basic_string<char>, long unsigned int> >; ft::map<Key, T, Compare, Alloc>::const_iterator = ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, const ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>; ft::map<Key, T, Compare, Alloc>::key_type = std::__cxx11::basic_string<char>]’
+test_map.cpp:178:37:   required from ‘void map_upperbound_key(const Container&, std::__cxx11::string, const Key&) [with Container = ft::map<std::__cxx11::basic_string<char>, long unsigned int>; Key = char [2]; std::__cxx11::string = std::__cxx11::basic_string<char>]’
+test_map.cpp:318:48:   required from here
+./map/Map.hpp:605:11: error: ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     this->ptr = this->ptr->prev();
+     ~~~~~~^~~
+./map/Map.hpp:605:23: error: ‘class ft::Iterator<ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>&, ft::pair<const std::__cxx11::basic_string<char>, long unsigned int>*, ft::bidirectional_iterator_tag>’ has no member named ‘ptr’
+     this->ptr = this->ptr->prev();
+                 ~~~~~~^~~
+Makefile:48: recipe for target 'map' failed
+make: *** [map] Error 1

@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/06 19:28:46 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/13 21:48:37 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/30 13:35:01 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,10 @@ namespace ft
 	class	vector
 	{
 		public:
+			typedef	T												value_type;
+			typedef	T&												reference;
+			typedef T*												pointer;
+			typedef const reference									const_reference;
 			typedef RandomAccessIterator<T*, T&>					iterator;
 			typedef ReverseRandomAccessIterator<T*, T&>				reverse_iterator;
 			typedef RandomAccessIterator<const T*, const T&>		const_iterator;

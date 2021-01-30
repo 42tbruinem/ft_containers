@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 13:35:05 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/29 20:51:34 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/30 13:23:41 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,13 @@
  #include "Vector.hpp"
  #include "List.hpp"
  #include "Map.hpp"
+ #include "Stack.hpp"
   using namespace ft;
 #else
  #include <vector>
  #include <map>
  #include <list>
+ #include <stack>
   using namespace std;
 #endif
 

@@ -6,7 +6,7 @@
 #    By: tbruinem <tbruinem@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/07/27 16:25:13 by tbruinem      #+#    #+#                  #
-#    Updated: 2021/01/29 19:22:07 by tbruinem      ########   odam.nl          #
+#    Updated: 2021/01/30 13:32:44 by tbruinem      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ MISC_INC = ./misc
 ITER_INC = ./iterator
 UTIL_INC = ./util
 
-CONTAINERS = list vector
+CONTAINERS = list vector stack
 INCL = $(CONTAINERS:%=-I ./%)
 
 OBJ = $(SRC:%.cpp=%.o)
@@ -42,7 +42,7 @@ all: $(CONTAINERS)
 
 $(CONTAINERS):
 	@echo "Compiling $@"
-	$(CXX) $(CFLAGS) test_$@.cpp -o test_$@ -I . -I $(ITER_INC) -I $(UTIL_INC) -I $(MISC_INC) $(INCL) -D FT=$(FT)
+	$(CXX) $(CFLAGS) test_$@.cpp -o test_$@ -I . -I $(ITER_INC) -I $(UTIL_INC) -I $(MISC_INC) $(INCL) -I ./map -D FT=$(FT)
 
 map:
 	@echo "Compiling $@"

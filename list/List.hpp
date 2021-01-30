@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/26 15:50:30 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/12/16 16:08:37 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/30 13:34:03 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ namespace ft
 				node	*next;
 		};
 		public:
+			typedef T														value_type;
 			typedef T*														pointer;
 			typedef T&														reference;
 			typedef const T*												const_pointer;

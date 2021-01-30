@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/29 20:43:34 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/29 21:18:15 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 # include "GenericFunctions.hpp"
 # include <memory>
-# include <utility>
 # include <traits.hpp>
 
 namespace ft
