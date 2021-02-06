@@ -6,7 +6,7 @@
 #    By: tbruinem <tbruinem@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/07/27 16:25:13 by tbruinem      #+#    #+#                  #
-#    Updated: 2021/01/30 13:32:44 by tbruinem      ########   odam.nl          #
+#    Updated: 2021/01/31 13:06:43 by tbruinem      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ MISC_INC = ./misc
 ITER_INC = ./iterator
 UTIL_INC = ./util
 
-CONTAINERS = list vector stack
+CONTAINERS = list vector stack queue
 INCL = $(CONTAINERS:%=-I ./%)
 
 OBJ = $(SRC:%.cpp=%.o)
@@ -52,7 +52,7 @@ clean:
 	rm -rf $(OBJ)
 
 fclean: clean
-	rm -rf $(CONTAINERS:%=%_test) map_test
+	rm -rf $(CONTAINERS:%=test_%) test_map
 
 re: fclean all
 

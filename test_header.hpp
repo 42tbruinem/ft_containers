@@ -6,36 +6,44 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 13:35:05 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/30 13:23:41 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/01/30 14:54:50 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#if FT == 1
+#ifndef TEST_HEADER_HPP
+# define TEST_HEADER_HPP
+
+enum	e_namespace
+{
+	STANDARD,
+	FORTY_TWO
+};
+
+#ifndef FT
+# define FT FORTY_TWO
+#endif
+
+#if FT == FORTY_TWO
  #include "Vector.hpp"
  #include "List.hpp"
  #include "Map.hpp"
  #include "Stack.hpp"
+ #include "Queue.hpp"
   using namespace ft;
 #else
  #include <vector>
- #include <map>
  #include <list>
+ #include <map>
  #include <stack>
+ #include <queue>
   using namespace std;
 #endif
-
-#ifndef TEST_HEADER_HPP
-# define TEST_HEADER_HPP
 
 # include <iostream>
 # include <string>
 # include <stdio.h>
 
-#ifndef FT
-# define FT 1
-#endif
-
-# include <vector>
+#include <vector> //see line 129
 
 template <typename Container>
 void	capacity_information(Container c, std::string title)
