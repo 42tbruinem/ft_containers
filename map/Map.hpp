@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/29 21:18:15 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/02/26 11:25:40 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -370,7 +370,8 @@ namespace ft
 			}
 
 			template <class InputIterator>
-			void insert (InputIterator first, InputIterator last)
+			void insert (InputIterator first, InputIterator last,
+				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL)
 			{
 				for (;first != last; first++)
 					insert(*first);

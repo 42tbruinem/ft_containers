@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/26 15:50:30 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/30 13:34:03 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/02/26 11:24:06 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,12 @@
 
 # include <memory>
 # include <limits>
-# include <traits.hpp>
+
+# include "traits.hpp"
 # include "IteratorFunctions.hpp"
-# include <BidirectionalIterator.hpp>
-# include <ReverseBidirectionalIterator.hpp>
-# include <GenericFunctions.hpp>
+# include "BidirectionalIterator.hpp"
+# include "ReverseBidirectionalIterator.hpp"
+# include "GenericFunctions.hpp"
 
 namespace ft
 {
