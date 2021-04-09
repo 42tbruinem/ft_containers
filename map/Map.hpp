@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/02/26 11:25:40 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/09 12:42:35 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "GenericFunctions.hpp"
 # include <memory>
 # include <traits.hpp>
+# include <cstdlib>
 
 namespace ft
 {
@@ -188,7 +189,7 @@ namespace ft
 			}
 			pointer				operator->()
 			{
-				return (&(operator*));
+				return (iterator.ptr);
 			}
 	};
 }

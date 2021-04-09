@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/10 19:16:57 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/02/01 11:55:34 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/09 12:31:06 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,10 @@ int	main(void)
 	iter_print_container<vector<int> >(vec_range, "vec_range");
 	iter_print_container<vector<int> >(vec_copy, "vec_copy");
 
+	int		int_arr[] = {0, 5, 3, 7, 6, 9, 3};
+
+	vector<int>	vec_pointer(int_arr, int_arr + (sizeof(int_arr) / sizeof(int)));
+	iter_print_container<vector<int> >(vec_pointer, "vec_pointer");
 	//Modifiers
 	subject_title("MODIFIERS");
 

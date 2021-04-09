@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/06 19:28:46 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/31 13:11:32 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/09 12:35:51 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,45 +24,54 @@
 
 namespace ft
 {
-	template <typename T, class Alloc = std::allocator<T> >
+	template <typename T, typename Alloc = std::allocator<T> >
 	class	vector
 	{
 		public:
 			typedef	T												value_type;
+			typedef Alloc											allocator_type;
 			typedef	T&												reference;
+			typedef const T&										const_reference;
 			typedef T*												pointer;
-			typedef const reference									const_reference;
+			typedef const T*										const_pointer;
 			typedef RandomAccessIterator<T*, T&>					iterator;
-			typedef ReverseRandomAccessIterator<T*, T&>				reverse_iterator;
 			typedef RandomAccessIterator<const T*, const T&>		const_iterator;
+			typedef ReverseRandomAccessIterator<T*, T&>				reverse_iterator;
 			typedef ReverseRandomAccessIterator<const T*, const T&>	const_reverse_iterator;
+			typedef ptrdiff_t										difference_type;
+			typedef size_t											size_type;
 
 //			CONSTRUCTORS//DESTRUCTOR//OPERATOR=
 
+			//TODO use allocator, start at NULL
+			//DEFAULT
 			vector(const Alloc& alloc = Alloc()) : alloc(alloc)
 			{
 				this->cap = 4;
 				this->data = new T[this->cap];
 				this->len = 0;
 			}
+			//FILL
+			vector(size_t n, const T& val = T(), const Alloc& alloc = Alloc()) : alloc(alloc)
+			{
+				this->cap = n + (n % 4);
+				this->data = new T[this->cap];
+				for (size_type i = 0; i < n; i++)
+					this->data[i] = val;
+				this->len = n;
+			}
+			//TODO fill using push_back
+			//RANGE
 			template <typename InputIterator>
 			vector(InputIterator first, InputIterator last,
-				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL,
+				typename ft::iterator_traits<InputIterator>::type* = NULL,
 				const Alloc& alloc = Alloc()) : alloc(alloc)
 			{
 				this->cap = ft::distance(first, last);
 				this->data = new T[this->cap];
-				for (size_t i = 0; first != last; first++, i++)
+				for (size_type i = 0; first != last; first++, i++)
 					this->data[i] = *first;
 				this->len = this->cap;
-			}
-			vector(size_t size, const T& val = T(), const Alloc& alloc = Alloc()) : alloc(alloc)
-			{
-				this->cap = size + (size % 4);
-				this->data = new T[this->cap];
-				for (size_t i = 0; i < size; i++)
-					this->data[i] = val;
-				this->len = size;
 			}
 			vector(const vector& orig) : alloc(orig.alloc)
 			{
@@ -197,7 +206,7 @@ namespace ft
 
 			template <typename InputIterator>
 			void	assign(InputIterator first, InputIterator last,
-				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL)
+				typename ft::iterator_traits<InputIterator>::type* = NULL)
 			{
 				size_t	dist = ft::distance(first, last);
 				this->reallocate(dist, 0);
@@ -251,7 +260,7 @@ namespace ft
 			}
 			template <typename InputIterator>
 			void	insert(iterator position, InputIterator first, InputIterator last,
-				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL)
+				typename ft::iterator_traits<InputIterator>::type* = NULL)
 			{
 				size_t n = ft::distance(first, last);
 

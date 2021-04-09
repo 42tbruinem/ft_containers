@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/22 14:37:01 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/02/26 11:27:12 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/02/26 11:53:05 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ namespace ft
 	class less : public binary_function<T, T, bool>
 	{
 		public:
-			inline bool operator()(const T &lhs, const T &rhs) const 
+			inline bool operator() (const T &lhs, const T &rhs) const 
 			{
 				return lhs < rhs;
 			}

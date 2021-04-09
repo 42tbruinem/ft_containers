@@ -6,7 +6,7 @@
 #    By: tbruinem <tbruinem@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/07/27 16:25:13 by tbruinem      #+#    #+#                  #
-#    Updated: 2021/02/26 11:14:54 by tbruinem      ########   odam.nl          #
+#    Updated: 2021/04/09 12:38:47 by tbruinem      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ INCL = $(CONTAINERS:%=-I ./%)
 
 OBJ = $(SRC:%.cpp=%.o)
 CFLAGS = -Wall -Wextra -Werror -pedantic -std=c++98
-CXX = g++
+CXX = clang++
 
 FT = 0
 

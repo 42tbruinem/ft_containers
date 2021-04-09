@@ -6,14 +6,14 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/21 10:10:41 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/27 12:08:19 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/09 12:42:57 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TRAITS_HPP
  #define TRAITS_HPP
 
-# include <stdlib.h>
+//# include <stdlib.h>
 
 //tags
 namespace ft
@@ -27,19 +27,6 @@ namespace ft
 	struct bidirectional_iterator_tag : public forward_iterator_tag { };
 
 	struct random_access_iterator_tag : public bidirectional_iterator_tag { };
-}
-
-//enable_if
-namespace ft
-{
-	template <bool value, typename T = void>
-	struct enable_if {};
-
-	template <typename T>
-	struct enable_if<true, T>
-	{
-		typedef T type;
-	};
 }
 
 //are_same
@@ -80,53 +67,48 @@ namespace ft
 	};
 }
 
-
-//------------------------------------------------------------------
+//-----------------------------------ENABLE_IF---------------------------------------------
 
 namespace ft
 {
-	//add category if pointer
+	template <bool, typename T = void>
+	struct enable_if {};
 
-	//check if input_iterator
+	template <typename T>
+	struct enable_if<true, T> { typedef T type; };
+}
 
-	//see if iterator_category is defined
+//------------------------------------HAS_ITERATOR_CATEGORY------------------------------------------------
 
-	template<typename T>
-	struct has_category
+namespace ft
+{
+	template <class T>
+	struct has_iterator_category
 	{
 		private:
-			typedef int false_type;
-			typedef char true_type;
-			template <typename V>
-			false_type test(...);
-			template <typename V>
-			true_type test( typename V::iterator_category* = NULL);
+			typedef char		true_type;
+			typedef int			false_type;
+
+			template <class U>
+				static true_type	test(typename U::iterator_category* = 0);
+			template <class U>
+				static false_type	test(...);
 		public:
-			static const bool result = sizeof(test<T>(0)) == sizeof(true_type);
+			static const bool result = (sizeof(true_type) == sizeof(test<T>(0)));
 	};
+}
 
-	template <typename T, bool>
-	struct _is_iterator {};
+//-------------------------------------ITERATOR_TRAITS-----------------------------------------------
+
+namespace ft
+{
+	template <typename T>
+	struct iterator_traits : public enable_if<has_iterator_category<T>::result, T> {};
 
 	template <typename T>
-	struct _is_iterator<T, true>
+	struct iterator_traits<T*>
 	{
-		typedef typename T::iterator_category	iterator_category;
-	};
-
-	template <typename T>
-	struct get_category : public _is_iterator<T, has_category<T>::result> {};
-
-	template <typename T>
-	struct get_category<T*>
-	{
-		typedef ft::random_access_iterator_tag	iterator_category;
-	};
-
-	template <typename T>
-	struct get_category<const T*>
-	{
-		typedef ft::random_access_iterator_tag	iterator_category;
+		typedef random_access_iterator_tag type;
 	};
 }
 
