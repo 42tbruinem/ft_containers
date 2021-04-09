@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/11 19:52:27 by tbruinem      #+#    #+#                 */
-/*   Updated: 2020/11/26 15:04:52 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/09 19:12:47 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define RANDOM_ACCESS_ITERATOR_HPP
 
 # include <traits.hpp>
+# include <cstdlib>
 
 namespace ft
 {

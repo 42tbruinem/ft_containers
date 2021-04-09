@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/26 15:50:30 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/02/26 11:24:06 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/09 19:38:42 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,83 +27,93 @@ namespace ft
 	template <class T, class Alloc = std::allocator<T> >
 	class	list
 	{
-		class node
-		{
-			public:
-				node() : prev(NULL), next(NULL) {}
-				node(const T& element, node *prev = NULL, node *next = NULL) : element(element), prev(prev), next(next) {}
-				node& operator = (const node& other)
-				{
-					if (this != &other)
+		private:
+			class node
+			{
+				public:
+					node() : prev(NULL), next(NULL) {}
+					node(const T& element, node *prev = NULL, node *next = NULL) : element(element), prev(prev), next(next) {}
+					node& operator = (const node& other)
 					{
-						this->element = other.element;
-						this->prev = other.prev;
-						this->next = other.next;
+						if (this != &other)
+						{
+							this->element = other.element;
+							this->prev = other.prev;
+							this->next = other.next;
+						}
+						return (*this);
 					}
-					return (*this);
-				}
-				~node() {}
-				T		element;
-				node	*prev;
-				node	*next;
-		};
+					~node() {}
+					T		element;
+					node	*prev;
+					node	*next;
+			};
 		public:
 			typedef T														value_type;
-			typedef T*														pointer;
+			typedef Alloc													allocator_type;
 			typedef T&														reference;
-			typedef const T*												const_pointer;
 			typedef const T& 												const_reference;
+			typedef T*														pointer;
+			typedef const T*												const_pointer;
 			typedef BidirectionalIterator<node, T*, T&>						iterator;
 			typedef BidirectionalIterator<node, const T*, const T&>			const_iterator;
 			typedef ReverseBidirectionalIterator<node, T&, const T&>		reverse_iterator;
 			typedef ReverseBidirectionalIterator<node, const T*, const T&>	const_reverse_iterator;
+			typedef ptrdiff_t												difference_type;
+			typedef size_t													size_type;
 
-			//CONSTRUCTORS / DESTRUCTOR
+//-------------------------------------------------------CONSTRUCTOR-----------------------------------------------------
 
-			list(const Alloc& alloc = Alloc()) : len(0), head(new node()), tail(new node()), alloc(alloc)
+			//DEFAULT
+			explicit list(const Alloc& alloc = Alloc()) : len(0), head(new node()), tail(new node()), alloc(alloc)
 			{
 				head->next = tail;
 				tail->prev = head;
 			}
-			list(size_t n, const T& val = T(), const Alloc& alloc = Alloc()) : len(0), head(new node()), tail(new node()), alloc(alloc)
+			//FILL
+			explicit list(size_t n, const T& val = T(), const Alloc& alloc = Alloc()) : len(0), head(new node()), tail(new node()), alloc(alloc)
 			{
 				head->next = tail;
 				tail->prev = head;
-				for (size_t i = 0; i < n; i++)
-					newNode(val, i);
+				this->assign(n, val);
 			}
+			//RANGE
 			template<class InputIterator>
 			list(InputIterator first, InputIterator last,
-				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL,
+				typename ft::iterator_traits<InputIterator>::type* = NULL,
 				const Alloc& alloc = Alloc()) : len(0), head(new node()), tail(new node()), alloc(alloc)
 			{
 				head->next = tail;
 				tail->prev = head;
-				for (; first != last; first++)
-					newNode(*first);
+				this->assign(first, last);
 			}
+			//COPY
 			list(const list& other) : len(0), head(new node()), tail(new node()), alloc(other.alloc)
 			{
 				head->next = tail;
 				tail->prev = head;
-				for (const_iterator it = other.begin(); it != other.end(); it++)
-					newNode(*it);
+				this->assign(other.begin(), other.end());
 			}
+
+//-------------------------------------------------------DESTRUCTOR-----------------------------------------------------
+
 			~list()
 			{
 				clear();
 				delete this->head;
 				delete this->tail;
 			}
+
+//-------------------------------------------------------ASSIGNMENT OPERATOR-----------------------------------------------------
+
 			list& operator = (const list& other)
 			{
-				clear();
-				for (typename list<T>::const_iterator it = other.begin(); it != other.end(); it++)
-					newNode(*it);
+				if (this != &other)
+					this->assign(other.begin(), other.end());
 				return (*this);
 			}
 
-			// ITERATORS
+//-------------------------------------------------------ITERATORS-----------------------------------------------------
 
 			iterator begin()
 			{
@@ -113,6 +123,7 @@ namespace ft
 			{
 				return (const_iterator(this->head->next));
 			}
+
 			iterator end()
 			{
 				return (iterator(this->tail));
@@ -121,6 +132,7 @@ namespace ft
 			{
 				return (const_iterator(this->tail));
 			}
+
 			reverse_iterator rbegin()
 			{
 				return (reverse_iterator(this->tail->prev));
@@ -129,6 +141,7 @@ namespace ft
 			{
 				return (const_reverse_iterator(this->tail->prev));
 			}
+
 			reverse_iterator rend()
 			{
 				return (reverse_iterator(this->head));
@@ -138,11 +151,11 @@ namespace ft
 				return (const_reverse_iterator(this->head));
 			}
 
-			//CAPACITY
+//-------------------------------------------------------CAPACITY-----------------------------------------------------
 
 			bool empty() const
 			{
-				return !(this->len);
+				return (!this->len);
 			}
 			size_t size() const
 			{
@@ -153,7 +166,7 @@ namespace ft
 				return (alloc.max_size());
 			}
 
-			//ELEMENT ACCESS
+//-------------------------------------------------------ELEMENT ACCESS-----------------------------------------------------
 
 			T& front()
 			{
@@ -163,6 +176,7 @@ namespace ft
 			{
 				return (this->head->next->element);
 			}
+
 			T& back()
 			{
 				return (this->tail->prev->element);
@@ -172,22 +186,23 @@ namespace ft
 				return (this->tail->prev->element);
 			}
 
-			//MODIFIERS
+//-------------------------------------------------------MODIFIERS-----------------------------------------------------
 
+			//RANGE
 			template <class InputIterator>
 			void assign(InputIterator first, InputIterator last,
-				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL)
+				typename ft::iterator_traits<InputIterator>::type* = NULL)
 			{
 				clear();
-				for (; first != last; first++)
-					newNode(*first);
+				this->insert(this->begin(), first, last);
 			}
+			//FILL
 			void assign(size_t n, const T& val)
 			{
 				clear();
-				for (size_t i = 0; i < n; i++)
-					newNode(val);
+				this->insert(this->begin(), n, val);
 			}
+
 			void push_front(const T& val)
 			{
 				newNode(val, 0);
@@ -204,29 +219,33 @@ namespace ft
 			{
 				delNode();
 			}
+
+			//SINGLE ELEMENT
 			iterator insert(iterator position, const T& val)
 			{
 				size_t pos = ft::distance(this->begin(), position);
 				return (iterator(newNode(val, pos)));
 			}
+			//FILL
 			void insert(iterator position, size_t n, const T& val)
 			{
 				size_t pos = ft::distance(this->begin(), position);
 
-				if (pos + n >= std::numeric_limits<size_t>::max()) //protection I guess
-					return ;
 				for (size_t i = 0; i < n; i++)
 					newNode(val, pos + i);
 			}
+			//RANGE
 			template <class InputIterator>
 			void insert(iterator position, InputIterator first, InputIterator last,
-				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL)
+				typename ft::iterator_traits<InputIterator>::type* = NULL)
 			{
 				size_t pos = ft::distance(this->begin(), position);
 
 				for (; first != last; first++)
 					newNode(*first, pos++);
 			}
+
+			//SINGLE ELEMENT
 			iterator erase(iterator position)
 			{
 				size_t pos = ft::distance(this->begin(), position);
@@ -235,6 +254,7 @@ namespace ft
 				delNode(pos);
 				return (position);
 			}
+			//RANGE
 			iterator erase(iterator first, iterator last)
 			{
 				size_t pos = ft::distance(this->begin(), first);
@@ -244,13 +264,14 @@ namespace ft
 					delNode(pos);
 				return (last);
 			}
+
 			void swap(list& x)
 			{
 				ft::swap(this->head, x.head);
 				ft::swap<size_t>(this->len, x.len);
 				ft::swap(this->tail, x.tail);
 			}
-			void resize(size_t n, T val = T())
+			void resize(size_t n, const T& val = T())
 			{
 				size_t len = this->len;
 				if (this->len == n)
@@ -268,22 +289,22 @@ namespace ft
 			}
 			void clear()
 			{
-				size_t len = this->len;
-
-				for (size_t i = 0; i < len; i++)
-					delNode();
+				this->erase(this->begin(), this->end());
 			}
 
-			//OPERATIONS
+//-------------------------------------------------------OPERATIONS-----------------------------------------------------
 
+			//ENTIRE LIST
 			void splice (iterator position, list& x)
 			{
 				splice(position, x, x.begin(), x.end());
 			}
+			//SINGLE ELEMENT
 			void splice (iterator position, list& x, iterator i)
 			{
 				splice(position, x, i, ++iterator(i));
 			}
+			//ELEMENT RANGE
 			void splice (iterator position, list& x, iterator first, iterator last)
 			{
 				if (first == last)
@@ -297,6 +318,7 @@ namespace ft
 				this->len += len;
 				x.len -= (len > x.len) ? x.len : len;
 			}
+
 			void remove (const T& val)
 			{
 				for (iterator it = this->begin(); it != this->end();)
@@ -436,7 +458,8 @@ namespace ft
 			Alloc	alloc;
 	};
 
-	
+//-------------------------------------------------------RELATIONAL OPERATORS-----------------------------------------------------
+
 	template <class T>
 	bool	operator == (const list<T>& src, const list<T>& other)
 	{
