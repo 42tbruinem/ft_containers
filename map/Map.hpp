@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/04/09 12:42:35 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/09 21:19:09 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,50 +18,45 @@
 # include <traits.hpp>
 # include <cstdlib>
 
+//TODO write insert with "hint"
+
 namespace ft
 {
-	class nodebase
+	template <class KeyVal>
+	struct node
 	{
-		public:
-			nodebase(nodebase *parent = NULL, nodebase *left = NULL, nodebase *right = NULL);
-			nodebase(const nodebase& other);
-			nodebase& operator = (const nodebase& other);
-			~nodebase();
-			nodebase	*next();
-			nodebase	*prev();
-			nodebase	**link_to_parent();
+		node(const KeyVal& keyval, node *parent = NULL, node *left = NULL, node *right = NULL) :
+		parent(parent),
+		left(left),
+		right(right),
+		keyval(keyval) {}
 
-			nodebase	*parent;
-			nodebase	*left;
-			nodebase	*right;
-	};
+		node(const node& other) :
+		parent(other.parent),
+		left(other.left),
+		right(other.right),
+		keyval(other.keyval) {}
 
-	template <class Value>
-	class node : public nodebase
-	{
-		public:
-			typedef nodebase			base;
-			node(const Value& value, nodebase *parent = NULL, nodebase *left = NULL, nodebase *right = NULL) : nodebase(parent, left, right), value(value) {}
-			node(const node& other) : nodebase(other.parent, other.left, other.right), value(other.value) {}
-			node& operator = (const node& other)
+		node& operator = (const node& other)
+		{
+			if (this != &other)
 			{
-				if (this != &other)
-				{
-					this->key = other.key;
-					this->value = other.value;
-					this->parent = other.parent;
-					this->left = other.left;
-					this->right = other.right;
-				}
-				return (*this);
+				this->key = other.key;
+				this->keyval = other.keyval;
+				this->parent = other.parent;
+				this->left = other.left;
+				this->right = other.right;
 			}
-			Value&	getval()
-			{
-				return (this->value);
-			}
-			~node() {}
-		private:
-			Value	value;
+			return (*this);
+		}
+		~node() {}
+
+//------------------------------------------VARIABLES------------------------------------------
+
+		node	*parent;
+		node	*left;
+		node	*right;
+		KeyVal	keyval;
 	};
 }
 
@@ -71,15 +66,16 @@ namespace ft
 	class Iterator
 	{
 		private:
-			typedef ft::nodebase				nodebase;
-			typedef ft::node<Value>				node;
+			typedef typename ft::node<Value>	node;
+			node*								ptr;
 		public:
 			typedef Category					iterator_category;
 			typedef Reference					reference;
 			typedef Pointer						pointer;
+			typedef Value						keyvalue;
 
-			Iterator(nodebase *ptr = NULL) : ptr(ptr) {}
-			Iterator(const Iterator<Value, Value&, Value*>& other) : ptr(other.ptr) {}
+			Iterator(node* ptr = NULL) : ptr(ptr) {}
+			Iterator(const Iterator<keyvalue, keyvalue&, keyvalue*>& other) : ptr(other.ptr) {}
 			Iterator&	operator = (const Iterator& other)
 			{
 				if (this != &other)
@@ -123,29 +119,31 @@ namespace ft
 			}
 			Pointer	operator -> ()
 			{
-				return (&static_cast<node *>(this->ptr)->getval());
+				return (&this->ptr->keyval);
 			}
 			Reference	operator * ()
 			{
-				return (static_cast<node *>(this->ptr)->getval());
+				return (this->ptr);
 			}
-			nodebase *getptr() { return this->ptr; }
-			nodebase *ptr;
 	};
 }
 
 namespace ft
 {
+	//ReverseIterator serves as a wrapper for Iterator
 	template <class Iterator>
 	class ReverseIterator
 	{
-		Iterator	iterator;
 		public:
 			typedef typename Iterator::iterator_category			iterator_category;
 			typedef typename Iterator::reference					reference;
 			typedef typename Iterator::pointer						pointer;
-
-			ReverseIterator(ft::nodebase* ptr) : iterator(ptr) {}
+			typedef typename Iterator::keyvalue						keyvalue;
+		private:
+			typedef typename ft::node<keyvalue>						node;
+			Iterator	iterator;
+		public:
+			ReverseIterator(node* ptr) : iterator(ptr) {}
 			ReverseIterator(const Iterator& other) : iterator(other) {}
 			ReverseIterator(const ReverseIterator& other) : iterator(other.iterator) {}
 			ReverseIterator& operator = (const ReverseIterator& other)
@@ -185,35 +183,41 @@ namespace ft
 			}
 			reference			operator*()
 			{
-				return (*iterator);
+				return (Iterator::operator*());
 			}
 			pointer				operator->()
 			{
-				return (iterator.ptr);
+				return (Iterator::operator->());
 			}
 	};
 }
 
 namespace ft
 {
-	template <class Key, class T, class Compare = ft::less<Key>, class Alloc = std::allocator<ft::pair<Key, T> > >
+	template <class Key, class Val, class Compare = ft::less<Key>, class Alloc = std::allocator<ft::pair<const Key, Val> > >
 	class map
 	{
+		private:
+			typedef ft::pair<const Key, Val>										keyval_type;
+			typedef typename ft::node<keyval_type>									node;
 		public:
-			typedef ft::pair<const Key, T>											value_type;
 			typedef Key																key_type;
+			typedef Val																mapped_type;
+			typedef ft::pair<const Key, Val>										value_type;
 			typedef Compare															key_compare;
-			typedef T																mapped_type;
+			typedef Alloc															allocator_type;
 			typedef value_type&														reference;
+			typedef const Val&														const_reference;
 			typedef value_type*														pointer;
-			typedef ft::node<value_type>											mapnode;
-			typedef ft::nodebase													mapnodebase;
+			typedef const Val*														const_pointer;
 			typedef Iterator<value_type, value_type&, value_type*>					iterator;
 			typedef Iterator<value_type, const value_type&, const value_type*>		const_iterator;
 			typedef ReverseIterator<iterator>										reverse_iterator;
 			typedef ReverseIterator<const_iterator>									const_reverse_iterator;
+			typedef ptrdiff_t														difference_type;
+			typedef size_t															size_type;
 
-			class value_compare : ft::binary_function<value_type,value_type,bool>
+			class value_compare : ft::binary_function<value_type, value_type, bool>
 			{
 				protected:
 					Compare comp;
@@ -228,30 +232,35 @@ namespace ft
 					}
 			};
 
-			//CONSTRUCTORS
+//-------------------------------------------------------CONSTRUCTORS-----------------------------------------------------
 
-			explicit map(const Compare& compare = Compare(), const Alloc& alloc = Alloc()) : root(NULL), first(new nodebase()), last(new nodebase()), len(0), compare(compare), allocator(alloc)
+			//DEFAULT
+			explicit map(const Compare& compare = Compare(), const Alloc& alloc = Alloc()) : root(NULL), first(new node()), last(new node()), len(0), compare(compare), allocator(alloc)
 			{
 				this->first->parent = this->last;
 				this->last->parent = this->first;
 			}
 
-			map(const map& other) : root(NULL), first(new nodebase()), last(new nodebase()), len(0), compare(other.compare), allocator(other.allocator)
+			//COPY
+			map(const map& other) : root(NULL), first(new node()), last(new node()), len(0), compare(other.compare), allocator(other.allocator)
 			{
 				this->first->parent = this->last;
 				this->last->parent = this->first;
 				*this = other;
 			}
 
+			//RANGE
 			template <class InputIterator>
 			map(InputIterator first, InputIterator last, const Compare& compare = Compare(), const Alloc& alloc = Alloc(),
 			typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL) :
-				root(NULL), first(new nodebase()), last(new nodebase()), len(0), compare(compare), allocator(alloc)
+				root(NULL), first(new node()), last(new node()), len(0), compare(compare), allocator(alloc)
 			{
 				this->first->parent = this->last;
 				this->last->parent = this->first;
 				this->insert(first, last);
 			}
+
+//-------------------------------------------------------ASSIGNMENT OPERATOR-----------------------------------------------------
 
 			map& operator = (const map& other)
 			{
@@ -263,6 +272,8 @@ namespace ft
 				return (*this);
 			}
 
+//-------------------------------------------------------DESTRUCTOR-----------------------------------------------------
+
 			~map()
 			{
 				this->clear();
@@ -270,13 +281,12 @@ namespace ft
 				delete this->last;
 			}
 
-			//ITERATORS
+//-------------------------------------------------------ITERATORS-----------------------------------------------------
 
 			iterator	begin()
 			{
 				return (iterator(this->first->parent));
 			}
-
 			const_iterator begin() const
 			{
 				return (const_iterator(this->first->parent));
@@ -286,17 +296,15 @@ namespace ft
 			{
 				return (iterator(this->last));
 			}
-
 			const_iterator end() const
 			{
-				return (const_iterator(const_cast<mapnodebase*>(this->last)));
+				return (const_iterator(const_cast<node*>(this->last)));
 			}
 
 			reverse_iterator rbegin()
 			{
 				return (reverse_iterator(this->last->parent));
 			}
-
 			const_reverse_iterator rbegin() const
 			{
 				return (const_reverse_iterator(this->last->parent));
@@ -306,13 +314,12 @@ namespace ft
 			{
 				return (reverse_iterator(this->first));
 			}
-
 			const_reverse_iterator rend() const
 			{
 				return (const_reverse_iterator(this->first));
 			}
 
-			//CAPACITY
+//-------------------------------------------------------CAPACITY-----------------------------------------------------
 
 			bool	empty() const
 			{
@@ -329,42 +336,42 @@ namespace ft
 				return (this->allocator.max_size());
 			}
 
-			//ELEMENT ACCESS
+//-------------------------------------------------------ELEMENT ACCESS-----------------------------------------------------
 
-			T&	operator [] (const Key& key)
+			Val&	operator [] (const Key& key)
 			{
 				iterator it = find(key);
 				if (it == this->end())
-					it = insert(value_type(key, T())).first;
+					it = insert(value_type(key, Val())).first;
 				return (it->second);
 			}
 
-			//MODIFIERS
+//-------------------------------------------------------MODIFIERS-----------------------------------------------------
 
 			void	clear()
 			{
 				erase(this->begin(), this->end());
 			}
 
-			ft::pair<iterator,bool> insert (const value_type& value)
+			ft::pair<iterator, bool> insert (const value_type& value)
 			{
 				iterator it = find(value.first);
 				if (it != this->end())
 					return (ft::pair<iterator, bool>(it, false));
-				mapnodebase **iter = &this->root;
-				mapnodebase *parent = NULL;
+				node **iter = &this->root;
+				node *parent = NULL;
 				while (*iter && *iter != this->first && *iter != this->last)
 				{
 					parent = (*iter);
-					if (this->value_comp()(static_cast<mapnode *>(*iter)->getval(), value))
+					if (this->value_comp()((*iter)->keyval, value))
 						iter = &(*iter)->right;
-					else if (this->value_comp()(value,static_cast<mapnode *>(*iter)->getval()))
+					else if (this->value_comp()((*iter)->keyval))
 						iter = &(*iter)->left;
 				}
-				*iter = new mapnode(value, parent, NULL, NULL);
-				if (this->last->parent == this->first || this->value_comp()(static_cast<mapnode *>(this->last->parent)->getval(), value))
+				*iter = new node(value, parent, NULL, NULL);
+				if (this->last->parent == this->first || this->value_comp()(this->last->parent.keyval, value))
 					connect_parent_child(*iter, &(*iter)->right, this->last);
-				if (this->first->parent == this->last || this->value_comp()(value, static_cast<mapnode *>(this->first->parent)->getval()))
+				if (this->first->parent == this->last || this->value_comp()(value, this->first->parent.keyval))
 					connect_parent_child(*iter, &(*iter)->left, this->first);
 				this->len++;
 				return (ft::pair<iterator, bool>(iterator(*iter), true));
@@ -377,36 +384,37 @@ namespace ft
 				for (;first != last; first++)
 					insert(*first);
 			}
+
 			void	erase(iterator it)
 			{
-				mapnodebase *node = it.getptr();
-				if (!node)
+				node *iter = it.getptr();
+				if (!iter)
 					return ;
 
-				mapnodebase *lowest = NULL;
-				mapnodebase *highest = NULL;
-				if (node->left == this->first)
+				node*	lowest = NULL;
+				node*	highest = NULL;
+				if (iter->left == this->first)
 				{
-					lowest = node->next();
+					lowest = iter->next();
 					connect_parent_child(lowest, &lowest->left, this->first);
 				}
-				if (node->right == this->last)
+				if (iter->right == this->last)
 				{
-					highest = node->prev();
+					highest = iter->prev();
 					connect_parent_child(highest, &highest->right, this->last);
 				}
 				if (lowest)
-					node->left = NULL;
+					iter->left = NULL;
 				if (highest)
-					node->right = NULL;
+					iter->right = NULL;
 
-				mapnodebase *replacement = NULL;
-				if (node->right && node->left)
+				node*	replacement = NULL;
+				if (iter->right && iter->left)
 				{
-					replacement = node->left;
+					replacement = iter->left;
 					while (replacement->right)
 						replacement = replacement->right;
-					if (replacement != node->left)
+					if (replacement != iter->left)
 					{
 						replacement->parent->right = replacement->left;
 						if (replacement->left && replacement->left != this->first)
@@ -416,29 +424,29 @@ namespace ft
 						}
 					}
 				}
-				else if (node->right)
-					replacement = node->right;
-				else if (node->left)
-					replacement = node->left;
+				else if (iter->right)
+					replacement = iter->right;
+				else if (iter->left)
+					replacement = iter->left;
 
-				mapnodebase **replacementparent_link = (replacement) ? replacement->link_to_parent() : NULL;
-				if (node->parent && node->parent->left == node)
-					node->parent->left = replacement;
-				else if (node->parent && node->parent->right == node)
-					node->parent->right = replacement;
-				else if (!node->parent)
+				node**	replacementparent_link = (replacement) ? replacement->link_to_parent() : NULL;
+				if (iter->parent && iter->parent->left == iter)
+					iter->parent->left = replacement;
+				else if (iter->parent && iter->parent->right == iter)
+					iter->parent->right = replacement;
+				else if (!iter->parent)
 					this->root = replacement;
 				if (replacement)
 				{
 					if (replacementparent_link)
 						*replacementparent_link = NULL;
 					if (!replacement->left)
-						connect_parent_child(replacement, &replacement->left, node->left);
+						connect_parent_child(replacement, &replacement->left, iter->left);
 					if (!replacement->right)
-						connect_parent_child(replacement, &replacement->right, node->right);
-					replacement->parent = node->parent;
+						connect_parent_child(replacement, &replacement->right, iter->right);
+					replacement->parent = iter->parent;
 				}
-				delete static_cast<mapnode *>(node);
+				delete iter;
 				this->len--;
 			}
 
@@ -467,7 +475,7 @@ namespace ft
 				ft::swap(this->compare, other.compare);
 			}
 
-			//OBSERVERS
+//-------------------------------------------------------OBVSERVERS-----------------------------------------------------
 
 			key_compare key_comp() const
 			{
@@ -479,19 +487,19 @@ namespace ft
 				return (value_compare(this->compare));
 			}
 
-			//OPERATIONS
+//-------------------------------------------------------OPERATIONS-----------------------------------------------------
 
 			iterator find (const key_type& k)
 			{
 				if (!this->root)
 					return (this->end());
-				typename mapnode::base *iter = this->root;
+				node *iter = this->root;
 				iterator it = iterator(this->root);
 				while (iter && iter != this->first && iter != this->last)
 				{
-					if (this->key_comp()(k, static_cast<mapnode *>(iter)->getval().first))
+					if (this->key_comp()(k, iter->keyval))
 						iter = iter->left;
-					else if (this->key_comp()(static_cast<mapnode *>(iter)->getval().first,k))
+					else if (this->key_comp()(iter->keyval))
 						iter = iter->right;
 					else
 						return (iterator(iter));
@@ -558,7 +566,7 @@ namespace ft
 			}
 
 		private:
-			void		connect_parent_child(mapnodebase *parent, mapnodebase **parent_childptr, mapnodebase *child)
+			void		connect_parent_child(node *parent, node **parent_childptr, node *child)
 			{
 				if (child)
 					child->parent = parent;
@@ -567,24 +575,24 @@ namespace ft
 				if (parent_childptr)
 					*parent_childptr = child;
 			}
-			mapnodebase	*root;
-			mapnodebase	*first;
-			mapnodebase	*last;
+			node	*root;
+			node	*first;
+			node	*last;
 			size_t	len;
 			Compare	compare;
 			Alloc	allocator;
 	};
 
-	//NON-MEMBER FUNCTIONS
+//-------------------------------------------------------RELATION OPERATORS-----------------------------------------------------
 
-	template<class Key, class T, class Compare, class Alloc>
-	bool operator==(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	template<class Key, class Val, class Compare, class Alloc>
+	bool operator == (const map<Key,Val,Compare,Alloc>& lhs, const map<Key,Val,Compare,Alloc>& rhs)
 	{
 		if (lhs.size() != rhs.size())
 			return (false);
-		typename map<Key,T,Compare,Alloc>::value_compare comp = lhs.value_comp();
-		typename map<Key,T,Compare,Alloc>::const_iterator it1 = lhs.begin();
-		typename map<Key,T,Compare,Alloc>::const_iterator it2 = rhs.begin();
+		typename map<Key,Val,Compare,Alloc>::value_compare comp = lhs.value_comp();
+		typename map<Key,Val,Compare,Alloc>::const_iterator it1 = lhs.begin();
+		typename map<Key,Val,Compare,Alloc>::const_iterator it2 = rhs.begin();
 		for (; it1 != lhs.end(); it1++, it2++)
 		{
 			if (comp(*it1, *it2) || comp(*it2, *it1))
@@ -593,38 +601,38 @@ namespace ft
 		return (true);
 	}
 
-	template<class Key, class T, class Compare, class Alloc>
-	bool operator!=(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	template<class Key, class Val, class Compare, class Alloc>
+	bool operator != (const map<Key,Val,Compare,Alloc>& lhs, const map<Key,Val,Compare,Alloc>& rhs)
 	{
 		return !(lhs == rhs);
 	}
 
-	template<class Key, class T, class Compare, class Alloc>
-	bool operator<(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	template<class Key, class Val, class Compare, class Alloc>
+	bool operator < (const map<Key,Val,Compare,Alloc>& lhs, const map<Key,Val,Compare,Alloc>& rhs)
 	{
 		return (ft::lexicographical_compare(lhs.begin(), rhs.begin(), lhs.end(), rhs.end(), lhs.value_comp()));
 	}
 
-	template<class Key, class T, class Compare, class Alloc>
-	bool operator>(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	template<class Key, class Val, class Compare, class Alloc>
+	bool operator > (const map<Key,Val,Compare,Alloc>& lhs, const map<Key,Val,Compare,Alloc>& rhs)
 	{
 		return (rhs < lhs);
 	}
 
-	template<class Key, class T, class Compare, class Alloc>
-	bool operator>=(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	template<class Key, class Val, class Compare, class Alloc>
+	bool operator >= (const map<Key,Val,Compare,Alloc>& lhs, const map<Key,Val,Compare,Alloc>& rhs)
 	{
 		return !(lhs < rhs);
 	}
 
-	template<class Key, class T, class Compare, class Alloc>
-	bool operator<=(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	template<class Key, class Val, class Compare, class Alloc>
+	bool operator <= (const map<Key,Val,Compare,Alloc>& lhs, const map<Key,Val,Compare,Alloc>& rhs)
 	{
 		return !(rhs < lhs);
 	}
 
-	template <class Key, class T, class Compare, class Alloc>
-	void	swap(map<Key,T,Compare,Alloc>& x, map<Key,T,Compare,Alloc>& y)
+	template <class Key, class Val, class Compare, class Alloc>
+	void	swap(map<Key,Val,Compare,Alloc>& x, map<Key,Val,Compare,Alloc>& y)
 	{
 		x.swap(y);
 	}
