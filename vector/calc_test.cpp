@@ -1,33 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   IteratorFunctions.hpp                              :+:    :+:            */
+/*   calc_test.cpp                                      :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/10/11 20:15:39 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/04/09 17:26:34 by tbruinem      ########   odam.nl         */
+/*   Created: 2021/04/09 13:17:59 by tbruinem      #+#    #+#                 */
+/*   Updated: 2021/04/09 13:20:08 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ITERATOR_FUNCTIONS_HPP
-# define ITERATOR_FUNCTIONS_HPP
+#include <cmath>
+#include <iostream>
+#include <unistd.h>
 
-#include <cstddef>
-
-namespace ft
+size_t calc_capacity(size_t size)
 {
-	template <class InputIterator>
-	size_t	distance(InputIterator first, InputIterator last)
-	{
-		size_t n = 0;
-		while (first != last)
-		{
-			n++;
-			first++;
-		}
-		return (n);
-	}
+	return((size_t)pow(2, ceil(log2(size))));
 }
 
-#endif
+int main(void)
+{
+	for (size_t i = 0; i < 1000; i++)
+	{
+		std::cout << "input: " << i << " | output: " << calc_capacity(i) << std::endl;
+		sleep(1);
+	}
+	return (0);
+}
