@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 13:35:05 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/04/09 18:10:23 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/09 18:35:00 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,13 @@
 # include <stdio.h>
 
 #include <vector> //see line 129
+
+#define WHITE "\033[37;01m"
+#define RED "\033[31m"
+#define GREEN "\033[32m"
+#define YELLOW "\033[33m"
+#define BLUE "\033[34m"
+#define RESET "\033[m"
 
 template <typename Container>
 void	capacity_information(Container c, std::string title)
@@ -82,22 +89,21 @@ void	subject_title(std::string name)
 }
 
 template <typename Container>
-void	comparison_operator_container(Container a, Container b, std::string a_title, std::string b_title)
-{
+void	comparison_operator_container(Container a, Container b, std::string a_title, std::string b_title) {
 	std::cout << "----------------------------------------------------------------------" << std::endl;
-	std::cout << a_title << " operator == " << b_title << " = " << ((a == b) ? "True" : "False") << std::endl;
-	std::cout << a_title << " operator != " << b_title << " = " << ((a != b) ? "True" : "False") << std::endl;
-	std::cout << a_title << " operator > " << b_title << " = " << ((a > b) ? "True" : "False") << std::endl;
-	std::cout << a_title << " operator < " << b_title << " = " << ((a < b) ? "True" : "False") << std::endl;
-	std::cout << a_title << " operator >= " << b_title << " = " << ((a >= b) ? "True" : "False") << std::endl;
-	std::cout << a_title << " operator <= " << b_title << " = " << ((a <= b) ? "True" : "False") << std::endl;
+	std::cout << a_title << YELLOW << " operator == " << RESET << b_title << " = " << ((a == b) ? GREEN "True" : RED "False") << RESET << std::endl;
+	std::cout << a_title << YELLOW << " operator != " << RESET << b_title << " = " << ((a != b) ? GREEN "True" : RED "False") << RESET << std::endl;
+	std::cout << a_title << YELLOW << " operator <  " << RESET << b_title << " = " << ((a < b) ? GREEN "True" : RED "False") << RESET << std::endl;
+	std::cout << a_title << YELLOW << " operator <= " << RESET << b_title << " = " << ((a <= b) ? GREEN "True" : RED "False") << RESET << std::endl;
+	std::cout << a_title << YELLOW << " operator >  " << RESET << b_title << " = " << ((a > b) ? GREEN "True" : RED "False") << RESET << std::endl;
+	std::cout << a_title << YELLOW << " operator >= " << RESET << b_title << " = " << ((a >= b) ? GREEN "True" : RED "False") << RESET << std::endl;
 	std::cout << "----------------------------------------------------------------------" << std::endl;
-	std::cout << b_title << " operator == " << a_title << " = " << ((b == a) ? "True" : "False") << std::endl;
-	std::cout << b_title << " operator != " << a_title << " = " << ((b != a) ? "True" : "False") << std::endl;
-	std::cout << b_title << " operator > " << a_title << " = " << ((b > a) ? "True" : "False") << std::endl;
-	std::cout << b_title << " operator < " << a_title << " = " << ((b < a) ? "True" : "False") << std::endl;
-	std::cout << b_title << " operator >= " << a_title << " = " << ((b >= a) ? "True" : "False") << std::endl;
-	std::cout << b_title << " operator <= " << a_title << " = " << ((b <= a) ? "True" : "False") << std::endl;
+	std::cout << b_title << YELLOW << " operator == " << RESET << a_title << " = " << ((b == a) ? GREEN "True" : RED "False") << RESET << std::endl;
+	std::cout << b_title << YELLOW << " operator != " << RESET << a_title << " = " << ((b != a) ? GREEN "True" : RED "False") << RESET << std::endl;
+	std::cout << b_title << YELLOW << " operator <  " << RESET << a_title << " = " << ((b < a) ? GREEN "True" : RED "False") << RESET << std::endl;
+	std::cout << b_title << YELLOW << " operator <= " << RESET << a_title << " = " << ((b <= a) ? GREEN "True" : RED "False") << RESET << std::endl;
+	std::cout << b_title << YELLOW << " operator >  " << RESET << a_title << " = " << ((b > a) ? GREEN "True" : RED "False") << RESET << std::endl;
+	std::cout << b_title << YELLOW << " operator >= " << RESET << a_title << " = " << ((b >= a) ? GREEN "True" : RED "False") << RESET << std::endl;
 	std::cout << "----------------------------------------------------------------------" << std::endl;
 }
 
