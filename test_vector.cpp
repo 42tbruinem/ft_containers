@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/10 19:16:57 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/04/09 17:32:11 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/09 18:29:19 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,17 +170,22 @@ int	main(void)
 	vector<int> const vec_const(5, 10);
 	subject_title("ELEMENT ACCESS");
 
+	vector<int>	vec_empty;
 	operator_print_container<vector<int> >(vec_default, "vec_default");
 	const_operator_print_container<vector<int> >(vec_const, "vec_const");
 
 	iter_print_container<vector<int> >(vec_copy, "vec_copy");
 	iter_print_container<vector<int> >(vec_default, "vec_default");
+	iter_print_container<vector<int> >(vec_empty, "vec_empty");
 	const_iter_print_container<vector<int> >(vec_copy, "vec_copy");
 	const_iter_print_container<vector<int> >(vec_default, "vec_default");
+	const_iter_print_container<vector<int> >(vec_empty, "vec_empty");
 	reverse_iter_print_container<vector<int> >(vec_copy, "vec_copy");
 	reverse_iter_print_container<vector<int> >(vec_copy, "vec_default");
+	reverse_iter_print_container<vector<int> >(vec_empty, "vec_empty");
 	const_reverse_iter_print_container<vector<int> >(vec_copy, "vec_copy");
 	const_reverse_iter_print_container<vector<int> >(vec_copy, "vec_default");
+	const_reverse_iter_print_container<vector<int> >(vec_empty, "vec_empty");
 	subject_title("SWAP");
 
 	swap(vec_copy, vec_default);

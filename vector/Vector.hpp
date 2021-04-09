@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/10/06 19:28:46 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/04/09 17:33:02 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/09 18:33:19 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,15 +137,14 @@ namespace ft
 			{
 				return (alloc.max_size());
 			}
-			//TODO use allocator
 			void	resize(size_t n, T val = T())
 			{
 				if (n == this->len)
 					return ;
 				if (n < this->len)
-					this->erase(this->begin() + (this->len - n), this->end());
+					this->erase(this->end() - (this->len - n), this->end());
 				else
-					this->insert(this->end(), n, val);
+					this->insert(this->end(), n - this->len, val);
 			}
 			size_t capacity() const
 			{
@@ -189,13 +188,13 @@ namespace ft
 			T&	at(size_t n)
 			{
 				if (n >= this->len)
-					throw std::out_of_range("requested index is out of range");
+					throw std::out_of_range("Error: requested index is out of range");
 				return (this->data[n]);
 			}
 			const T&	at(size_t n) const
 			{
 				if (n >= this->len)
-					throw std::out_of_range("requested index is out of range");
+					throw std::out_of_range("Error: requested index is out of range");
 				return (this->data[n]);
 			}
 
@@ -219,7 +218,6 @@ namespace ft
 
 //-------------------------------------------------------MODIFIERS-----------------------------------------------------
 
-			//ASSIGN - replace current content
 			//RANGE
 			template <typename InputIterator>
 			void	assign(InputIterator first, InputIterator last,
@@ -251,7 +249,6 @@ namespace ft
 				alloc.destroy(&this->data[this->len - 1]);
 				this->len--;
 			}
-			//TODO use allocator
 			//SINGLE ELEMENT
 			iterator	insert(iterator position, const T& val)
 			{
@@ -259,7 +256,6 @@ namespace ft
 				return (position);
 			}
 			//FILL
-			//TODO actually make it functional
 			void	insert(iterator position, size_t n, const T& val)
 			{
 				if (!n)
@@ -269,7 +265,7 @@ namespace ft
 					this->reserve((this->cap * 2) + !this->cap);
 
 				size_t i;
-				for (i = this->len + n; i > dist + n; i--)
+				for (i = this->len + n; i >= dist + n; i--)
 				{
 					alloc.construct(&this->data[i], this->data[i - n]);
 					alloc.destroy(&this->data[i - n]);
@@ -293,7 +289,7 @@ namespace ft
 					this->reserve((this->cap * 2) + !this->cap);
 
 				size_t i;
-				for (i = this->len + n; i > dist + n; i--)
+				for (i = this->len + n; i >= dist + n; i--)
 				{
 					alloc.construct(&this->data[i], this->data[i - n]);
 					alloc.destroy(&this->data[i - n]);
@@ -322,6 +318,7 @@ namespace ft
 					alloc.construct(&this->data[pos + i], this->data[pos + i + dist]);
 					alloc.destroy(&this->data[pos + i + dist]);
 				}
+				this->len -= dist;
 				return (begin() + pos);
 			}
 

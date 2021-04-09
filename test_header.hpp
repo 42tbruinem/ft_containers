@@ -6,24 +6,22 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/28 13:35:05 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/30 14:54:50 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/09 18:10:23 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TEST_HEADER_HPP
 # define TEST_HEADER_HPP
 
-enum	e_namespace
-{
-	STANDARD,
-	FORTY_TWO
-};
-
 #ifndef FT
-# define FT FORTY_TWO
-#endif
-
-#if FT == FORTY_TWO
+ #define FT 1
+ #include "Vector.hpp"
+ #include "List.hpp"
+ #include "Map.hpp"
+ #include "Stack.hpp"
+ #include "Queue.hpp"
+  using namespace ft;
+#elif FT == 1
  #include "Vector.hpp"
  #include "List.hpp"
  #include "Map.hpp"
