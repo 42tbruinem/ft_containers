@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/04/09 12:42:35 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/10 14:08:46 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,29 +20,28 @@
 
 namespace ft
 {
-	class nodebase
-	{
-		public:
-			nodebase(nodebase *parent = NULL, nodebase *left = NULL, nodebase *right = NULL);
-			nodebase(const nodebase& other);
-			nodebase& operator = (const nodebase& other);
-			~nodebase();
-			nodebase	*next();
-			nodebase	*prev();
-			nodebase	**link_to_parent();
+	// class node
+	// {
+	// 	public:
+	// 		node(node *parent = NULL, node *left = NULL, node *right = NULL);
+	// 		node(const node& other);
+	// 		node& operator = (const node& other);
+	// 		~node();
+	// 		node	*next();
+	// 		node	*prev();
+	// 		node	**link_to_parent();
 
-			nodebase	*parent;
-			nodebase	*left;
-			nodebase	*right;
-	};
+	// 		node	*parent;
+	// 		node	*left;
+	// 		node	*right;
+	// };
 
 	template <class Value>
-	class node : public nodebase
+	class node
 	{
 		public:
-			typedef nodebase			base;
-			node(const Value& value, nodebase *parent = NULL, nodebase *left = NULL, nodebase *right = NULL) : nodebase(parent, left, right), value(value) {}
-			node(const node& other) : nodebase(other.parent, other.left, other.right), value(other.value) {}
+			node(const Value& value = Value(), node *parent = NULL, node *left = NULL, node *right = NULL) : parent(parent), left(left), right(right), value(value) {}
+			node(const node& other) : parent(other.parent), left(other.left), right(other.right), value(other.value) {}
 			node& operator = (const node& other)
 			{
 				if (this != &other)
@@ -55,13 +54,60 @@ namespace ft
 				}
 				return (*this);
 			}
-			Value&	getval()
-			{
-				return (this->value);
-			}
 			~node() {}
-		private:
+//		private:
+			node	*parent;
+			node	*left;
+			node	*right;
 			Value	value;
+			node	*next()
+			{
+				node *iter = this;
+				if (iter->right)
+				{
+					iter = iter->right;
+					while (iter->left)
+						iter = iter->left;
+				}
+				else
+				{
+					while (iter->parent && iter->parent->right == iter)
+						iter = iter->parent;
+					iter = iter->parent;
+				}
+				return (iter);
+			}
+
+			node	*prev()
+			{
+				node *iter = this;
+				if (iter->left)
+				{
+					iter = iter->left;
+					while (iter->right)
+						iter = iter->right;
+				}
+				else
+				{
+					while (iter->parent && iter->parent->left == iter)
+						iter = iter->parent;
+					iter = iter->parent;
+				}
+				return (iter);
+			}
+
+			node	**link_to_parent()
+			{
+				node *parent = this->parent;
+				if (!parent)
+					return (NULL);
+				if (parent->left == this)
+					return (&parent->left);
+				if (parent->right == this)
+					return (&parent->right);
+				return (NULL);
+			}
+
 	};
 }
 
@@ -71,14 +117,14 @@ namespace ft
 	class Iterator
 	{
 		private:
-			typedef ft::nodebase				nodebase;
 			typedef ft::node<Value>				node;
 		public:
 			typedef Category					iterator_category;
 			typedef Reference					reference;
 			typedef Pointer						pointer;
+			typedef Value						value;
 
-			Iterator(nodebase *ptr = NULL) : ptr(ptr) {}
+			Iterator(node *ptr = NULL) : ptr(ptr) {}
 			Iterator(const Iterator<Value, Value&, Value*>& other) : ptr(other.ptr) {}
 			Iterator&	operator = (const Iterator& other)
 			{
@@ -123,14 +169,13 @@ namespace ft
 			}
 			Pointer	operator -> ()
 			{
-				return (&static_cast<node *>(this->ptr)->getval());
+				return (&this->ptr->value);
 			}
 			Reference	operator * ()
 			{
-				return (static_cast<node *>(this->ptr)->getval());
+				return (this->ptr->value);
 			}
-			nodebase *getptr() { return this->ptr; }
-			nodebase *ptr;
+			node *ptr;
 	};
 }
 
@@ -144,8 +189,9 @@ namespace ft
 			typedef typename Iterator::iterator_category			iterator_category;
 			typedef typename Iterator::reference					reference;
 			typedef typename Iterator::pointer						pointer;
+			typedef typename Iterator::value						value;
 
-			ReverseIterator(ft::nodebase* ptr) : iterator(ptr) {}
+			ReverseIterator(ft::node<value>* ptr) : iterator(ptr) {}
 			ReverseIterator(const Iterator& other) : iterator(other) {}
 			ReverseIterator(const ReverseIterator& other) : iterator(other.iterator) {}
 			ReverseIterator& operator = (const ReverseIterator& other)
@@ -207,7 +253,6 @@ namespace ft
 			typedef value_type&														reference;
 			typedef value_type*														pointer;
 			typedef ft::node<value_type>											mapnode;
-			typedef ft::nodebase													mapnodebase;
 			typedef Iterator<value_type, value_type&, value_type*>					iterator;
 			typedef Iterator<value_type, const value_type&, const value_type*>		const_iterator;
 			typedef ReverseIterator<iterator>										reverse_iterator;
@@ -230,13 +275,13 @@ namespace ft
 
 			//CONSTRUCTORS
 
-			explicit map(const Compare& compare = Compare(), const Alloc& alloc = Alloc()) : root(NULL), first(new nodebase()), last(new nodebase()), len(0), compare(compare), allocator(alloc)
+			explicit map(const Compare& compare = Compare(), const Alloc& alloc = Alloc()) : root(NULL), first(new mapnode()), last(new mapnode()), len(0), compare(compare), allocator(alloc)
 			{
 				this->first->parent = this->last;
 				this->last->parent = this->first;
 			}
 
-			map(const map& other) : root(NULL), first(new nodebase()), last(new nodebase()), len(0), compare(other.compare), allocator(other.allocator)
+			map(const map& other) : root(NULL), first(new mapnode()), last(new mapnode()), len(0), compare(other.compare), allocator(other.allocator)
 			{
 				this->first->parent = this->last;
 				this->last->parent = this->first;
@@ -246,7 +291,7 @@ namespace ft
 			template <class InputIterator>
 			map(InputIterator first, InputIterator last, const Compare& compare = Compare(), const Alloc& alloc = Alloc(),
 			typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL) :
-				root(NULL), first(new nodebase()), last(new nodebase()), len(0), compare(compare), allocator(alloc)
+				root(NULL), first(new mapnode()), last(new mapnode()), len(0), compare(compare), allocator(alloc)
 			{
 				this->first->parent = this->last;
 				this->last->parent = this->first;
@@ -289,7 +334,7 @@ namespace ft
 
 			const_iterator end() const
 			{
-				return (const_iterator(const_cast<mapnodebase*>(this->last)));
+				return (const_iterator(const_cast<mapnode*>(this->last)));
 			}
 
 			reverse_iterator rbegin()
@@ -351,20 +396,20 @@ namespace ft
 				iterator it = find(value.first);
 				if (it != this->end())
 					return (ft::pair<iterator, bool>(it, false));
-				mapnodebase **iter = &this->root;
-				mapnodebase *parent = NULL;
+				mapnode **iter = &this->root;
+				mapnode *parent = NULL;
 				while (*iter && *iter != this->first && *iter != this->last)
 				{
 					parent = (*iter);
-					if (this->value_comp()(static_cast<mapnode *>(*iter)->getval(), value))
+					if (this->value_comp()((*iter)->value, value))
 						iter = &(*iter)->right;
-					else if (this->value_comp()(value,static_cast<mapnode *>(*iter)->getval()))
+					else if (this->value_comp()(value, (*iter)->value))
 						iter = &(*iter)->left;
 				}
 				*iter = new mapnode(value, parent, NULL, NULL);
-				if (this->last->parent == this->first || this->value_comp()(static_cast<mapnode *>(this->last->parent)->getval(), value))
+				if (this->last->parent == this->first || this->value_comp()(this->last->parent->value, value))
 					connect_parent_child(*iter, &(*iter)->right, this->last);
-				if (this->first->parent == this->last || this->value_comp()(value, static_cast<mapnode *>(this->first->parent)->getval()))
+				if (this->first->parent == this->last || this->value_comp()(value, this->first->parent->value))
 					connect_parent_child(*iter, &(*iter)->left, this->first);
 				this->len++;
 				return (ft::pair<iterator, bool>(iterator(*iter), true));
@@ -379,12 +424,12 @@ namespace ft
 			}
 			void	erase(iterator it)
 			{
-				mapnodebase *node = it.getptr();
+				mapnode *node = it.ptr;
 				if (!node)
 					return ;
 
-				mapnodebase *lowest = NULL;
-				mapnodebase *highest = NULL;
+				mapnode *lowest = NULL;
+				mapnode *highest = NULL;
 				if (node->left == this->first)
 				{
 					lowest = node->next();
@@ -400,7 +445,7 @@ namespace ft
 				if (highest)
 					node->right = NULL;
 
-				mapnodebase *replacement = NULL;
+				mapnode *replacement = NULL;
 				if (node->right && node->left)
 				{
 					replacement = node->left;
@@ -421,7 +466,7 @@ namespace ft
 				else if (node->left)
 					replacement = node->left;
 
-				mapnodebase **replacementparent_link = (replacement) ? replacement->link_to_parent() : NULL;
+				mapnode **replacementparent_link = (replacement) ? replacement->link_to_parent() : NULL;
 				if (node->parent && node->parent->left == node)
 					node->parent->left = replacement;
 				else if (node->parent && node->parent->right == node)
@@ -438,7 +483,7 @@ namespace ft
 						connect_parent_child(replacement, &replacement->right, node->right);
 					replacement->parent = node->parent;
 				}
-				delete static_cast<mapnode *>(node);
+				delete node;
 				this->len--;
 			}
 
@@ -485,13 +530,13 @@ namespace ft
 			{
 				if (!this->root)
 					return (this->end());
-				typename mapnode::base *iter = this->root;
+				mapnode *iter = this->root;
 				iterator it = iterator(this->root);
 				while (iter && iter != this->first && iter != this->last)
 				{
-					if (this->key_comp()(k, static_cast<mapnode *>(iter)->getval().first))
+					if (this->key_comp()(k, iter->value.first))
 						iter = iter->left;
-					else if (this->key_comp()(static_cast<mapnode *>(iter)->getval().first,k))
+					else if (this->key_comp()(iter->value.first,k))
 						iter = iter->right;
 					else
 						return (iterator(iter));
@@ -558,7 +603,7 @@ namespace ft
 			}
 
 		private:
-			void		connect_parent_child(mapnodebase *parent, mapnodebase **parent_childptr, mapnodebase *child)
+			void		connect_parent_child(mapnode *parent, mapnode **parent_childptr, mapnode *child)
 			{
 				if (child)
 					child->parent = parent;
@@ -567,9 +612,9 @@ namespace ft
 				if (parent_childptr)
 					*parent_childptr = child;
 			}
-			mapnodebase	*root;
-			mapnodebase	*first;
-			mapnodebase	*last;
+			mapnode	*root;
+			mapnode	*first;
+			mapnode	*last;
 			size_t	len;
 			Compare	compare;
 			Alloc	allocator;

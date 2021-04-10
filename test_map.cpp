@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/24 15:10:32 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/29 20:43:47 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/09 21:20:50 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,8 +330,8 @@ int main(void)
 	map_keycomp_iter(map_empty, "map_empty", "b");
 	map_valcomp_iter(map_empty, "map_empty", "b");
 
-	map<std::string, size_t>::const_iterator it_const1 = static_cast<const map<std::string, size_t> >(map_empty).begin();
-	map<std::string, size_t>::const_iterator it_const2(it_const1); //copy construct a const iterator;
+//	map<std::string, size_t>::const_iterator it_const1 = static_cast<const map<std::string, size_t> >(map_empty).begin();
+//	map<std::string, size_t>::const_iterator it_const2(it_const1); //copy construct a const iterator;
 	comparison_operator_container(map_empty, map_default, "map_empty", "map_default");
 	map_default["a"] = 0;
 	map_default["b"] = 1;
