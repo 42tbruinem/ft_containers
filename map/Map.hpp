@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/04/10 15:06:45 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/10 16:02:13 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -411,6 +411,7 @@ namespace ft
 				erase(this->begin(), this->end());
 			}
 
+			//SINGLE ELEMENT
 			ft::pair<iterator,bool> insert (const value_type& value)
 			{
 				iterator it = find(value.first);
@@ -434,6 +435,13 @@ namespace ft
 				this->len++;
 				return (ft::pair<iterator, bool>(iterator(*iter), true));
 			}
+			//HINT
+			iterator insert(iterator position, const value_type& value)
+			{
+				(void)position;
+				return (insert(value).first);
+			}
+			//RANGE
 			template <class InputIterator>
 			void insert (InputIterator first, InputIterator last,
 				typename ft::iterator_traits<InputIterator>::type* = NULL)
@@ -442,6 +450,7 @@ namespace ft
 					insert(*first);
 			}
 
+			//WITH ITERATOR
 			void	erase(iterator it)
 			{
 				mapnode *node = it.ptr;
@@ -506,7 +515,7 @@ namespace ft
 				delete node;
 				this->len--;
 			}
-
+			//WITH KEY
 			size_t	erase(const Key& key)
 			{
 				iterator it = find(key);
@@ -515,6 +524,7 @@ namespace ft
 				erase(it);
 				return (1);
 			}
+			//RANGE
 			void	erase(iterator first, iterator last)
 			{
 				for (;first != last;)
@@ -584,7 +594,6 @@ namespace ft
 					--it;
 				return (it);
 			}
-
 			const_iterator lower_bound (const key_type& k) const
 			{
 				return (const_iterator(const_cast<map *>(this)->lower_bound(k)));
@@ -636,7 +645,7 @@ namespace ft
 //-------------------------------------------------------RELATIONAL OPERATORS-----------------------------------------------------
 
 	template<class Key, class T, class Compare, class Alloc>
-	bool operator==(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	bool operator == (const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
 	{
 		if (lhs.size() != rhs.size())
 			return (false);
@@ -652,31 +661,31 @@ namespace ft
 	}
 
 	template<class Key, class T, class Compare, class Alloc>
-	bool operator!=(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	bool operator != (const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
 	{
 		return !(lhs == rhs);
 	}
 
 	template<class Key, class T, class Compare, class Alloc>
-	bool operator<(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	bool operator < (const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
 	{
 		return (ft::lexicographical_compare(lhs.begin(), rhs.begin(), lhs.end(), rhs.end(), lhs.value_comp()));
 	}
 
 	template<class Key, class T, class Compare, class Alloc>
-	bool operator>(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	bool operator > (const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
 	{
 		return (rhs < lhs);
 	}
 
 	template<class Key, class T, class Compare, class Alloc>
-	bool operator>=(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	bool operator >= (const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
 	{
 		return !(lhs < rhs);
 	}
 
 	template<class Key, class T, class Compare, class Alloc>
-	bool operator<=(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
+	bool operator <= (const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
 	{
 		return !(rhs < lhs);
 	}
