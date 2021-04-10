@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/04/10 14:17:12 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/10 15:06:45 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <memory>
 # include <traits.hpp>
 # include <cstdlib>
+
+//TODO write insert with 'hint'
 
 namespace ft
 {
@@ -94,13 +96,27 @@ namespace ft
 	};
 }
 
+
 namespace ft
 {
+	//forward declaration had to be made to be able to declare them as friend in Iterator
+	template <typename, typename, typename, typename>
+	class map;
+	template <typename>
+	class ReverseIterator;
+
 	template <class Value, class Reference, class Pointer, class Category = ft::bidirectional_iterator_tag>
 	class Iterator
 	{
 		private:
+			template <typename>
+			friend class ft::ReverseIterator; //needed to be able to access .ptr in ReverseIterator
+			template <typename, typename, typename, typename>
+			friend class ft::map; //needed to be able to access .ptr in map
+			template <typename, typename, typename, typename>
+			friend class Iterator; //needed for const Iterator conversion
 			typedef ft::node<Value>				node;
+			node *ptr;
 		public:
 			typedef Category					iterator_category;
 			typedef Reference					reference;
@@ -158,7 +174,6 @@ namespace ft
 			{
 				return (this->ptr->value);
 			}
-			node *ptr;
 	};
 }
 
@@ -167,7 +182,8 @@ namespace ft
 	template <class Iterator>
 	class ReverseIterator
 	{
-		Iterator	iterator;
+		private:
+			Iterator	iterator;
 		public:
 			typedef typename Iterator::iterator_category			iterator_category;
 			typedef typename Iterator::reference					reference;
@@ -229,30 +245,39 @@ namespace ft
 	class map
 	{
 		public:
-			typedef ft::pair<const Key, T>											value_type;
 			typedef Key																key_type;
-			typedef Compare															key_compare;
 			typedef T																mapped_type;
+			typedef ft::pair<const Key, T>											value_type;
+			typedef Compare															key_compare;
+			typedef Alloc															allocator_type;
 			typedef value_type&														reference;
 			typedef const T&														const_reference;
 			typedef value_type*														pointer;
 			typedef const T*														const_pointer;
-			typedef ft::node<value_type>											mapnode;
 			typedef Iterator<value_type, value_type&, value_type*>					iterator;
 			typedef Iterator<value_type, const value_type&, const value_type*>		const_iterator;
 			typedef ReverseIterator<iterator>										reverse_iterator;
 			typedef ReverseIterator<const_iterator>									const_reverse_iterator;
 			typedef ptrdiff_t														difference_type;
 			typedef size_t															size_type;
-
+		private:
+			typedef ft::node<value_type>											mapnode;
+			mapnode	*root;
+			mapnode	*first;
+			mapnode	*last;
+			size_t	len;
+			Compare	compare;
+			Alloc	allocator;
+		public:
 //-------------------------------------------------------VALUE COMPARE-----------------------------------------------------
 
 			class value_compare : ft::binary_function<value_type,value_type,bool>
 			{
+				friend class map;
 				protected:
 					Compare comp;
-				public:
 					value_compare (Compare c) : comp(c) {}
+				public:
 					typedef bool											result_type;
 					typedef value_type										first_argument_type;
 					typedef value_type										second_argument_type;
@@ -261,7 +286,6 @@ namespace ft
 						return comp(x.first, y.first);
 					}
 			};
-
 //-------------------------------------------------------CONSTRUCTORS-----------------------------------------------------
 
 			//DEFAULT
@@ -607,12 +631,6 @@ namespace ft
 				if (parent_childptr)
 					*parent_childptr = child;
 			}
-			mapnode	*root;
-			mapnode	*first;
-			mapnode	*last;
-			size_t	len;
-			Compare	compare;
-			Alloc	allocator;
 	};
 
 //-------------------------------------------------------RELATIONAL OPERATORS-----------------------------------------------------
