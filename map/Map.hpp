@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/04/10 14:08:46 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/10 14:17:12 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,22 +20,6 @@
 
 namespace ft
 {
-	// class node
-	// {
-	// 	public:
-	// 		node(node *parent = NULL, node *left = NULL, node *right = NULL);
-	// 		node(const node& other);
-	// 		node& operator = (const node& other);
-	// 		~node();
-	// 		node	*next();
-	// 		node	*prev();
-	// 		node	**link_to_parent();
-
-	// 		node	*parent;
-	// 		node	*left;
-	// 		node	*right;
-	// };
-
 	template <class Value>
 	class node
 	{
@@ -55,7 +39,6 @@ namespace ft
 				return (*this);
 			}
 			~node() {}
-//		private:
 			node	*parent;
 			node	*left;
 			node	*right;
@@ -251,12 +234,18 @@ namespace ft
 			typedef Compare															key_compare;
 			typedef T																mapped_type;
 			typedef value_type&														reference;
+			typedef const T&														const_reference;
 			typedef value_type*														pointer;
+			typedef const T*														const_pointer;
 			typedef ft::node<value_type>											mapnode;
 			typedef Iterator<value_type, value_type&, value_type*>					iterator;
 			typedef Iterator<value_type, const value_type&, const value_type*>		const_iterator;
 			typedef ReverseIterator<iterator>										reverse_iterator;
 			typedef ReverseIterator<const_iterator>									const_reverse_iterator;
+			typedef ptrdiff_t														difference_type;
+			typedef size_t															size_type;
+
+//-------------------------------------------------------VALUE COMPARE-----------------------------------------------------
 
 			class value_compare : ft::binary_function<value_type,value_type,bool>
 			{
@@ -273,14 +262,16 @@ namespace ft
 					}
 			};
 
-			//CONSTRUCTORS
+//-------------------------------------------------------CONSTRUCTORS-----------------------------------------------------
 
+			//DEFAULT
 			explicit map(const Compare& compare = Compare(), const Alloc& alloc = Alloc()) : root(NULL), first(new mapnode()), last(new mapnode()), len(0), compare(compare), allocator(alloc)
 			{
 				this->first->parent = this->last;
 				this->last->parent = this->first;
 			}
 
+			//COPY
 			map(const map& other) : root(NULL), first(new mapnode()), last(new mapnode()), len(0), compare(other.compare), allocator(other.allocator)
 			{
 				this->first->parent = this->last;
@@ -288,15 +279,18 @@ namespace ft
 				*this = other;
 			}
 
+			//RANGE
 			template <class InputIterator>
 			map(InputIterator first, InputIterator last, const Compare& compare = Compare(), const Alloc& alloc = Alloc(),
-			typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL) :
+			typename ft::iterator_traits<InputIterator>::type* = NULL) :
 				root(NULL), first(new mapnode()), last(new mapnode()), len(0), compare(compare), allocator(alloc)
 			{
 				this->first->parent = this->last;
 				this->last->parent = this->first;
 				this->insert(first, last);
 			}
+
+//-------------------------------------------------------ASSIGNMENT OPERATOR-----------------------------------------------------
 
 			map& operator = (const map& other)
 			{
@@ -308,6 +302,8 @@ namespace ft
 				return (*this);
 			}
 
+//-------------------------------------------------------DESTRUCTOR-----------------------------------------------------
+
 			~map()
 			{
 				this->clear();
@@ -315,7 +311,7 @@ namespace ft
 				delete this->last;
 			}
 
-			//ITERATORS
+//-------------------------------------------------------ITERATORS-----------------------------------------------------
 
 			iterator	begin()
 			{
@@ -357,7 +353,7 @@ namespace ft
 				return (const_reverse_iterator(this->first));
 			}
 
-			//CAPACITY
+//-------------------------------------------------------CAPACITY-----------------------------------------------------
 
 			bool	empty() const
 			{
@@ -374,7 +370,7 @@ namespace ft
 				return (this->allocator.max_size());
 			}
 
-			//ELEMENT ACCESS
+//-------------------------------------------------------ELEMENT ACCESS-----------------------------------------------------
 
 			T&	operator [] (const Key& key)
 			{
@@ -384,7 +380,7 @@ namespace ft
 				return (it->second);
 			}
 
-			//MODIFIERS
+//-------------------------------------------------------MODIFIERS-----------------------------------------------------
 
 			void	clear()
 			{
@@ -414,14 +410,14 @@ namespace ft
 				this->len++;
 				return (ft::pair<iterator, bool>(iterator(*iter), true));
 			}
-
 			template <class InputIterator>
 			void insert (InputIterator first, InputIterator last,
-				typename enable_if<is_iterator<typename InputIterator::iterator_category>::result, InputIterator>::type* = NULL)
+				typename ft::iterator_traits<InputIterator>::type* = NULL)
 			{
 				for (;first != last; first++)
 					insert(*first);
 			}
+
 			void	erase(iterator it)
 			{
 				mapnode *node = it.ptr;
@@ -495,7 +491,6 @@ namespace ft
 				erase(it);
 				return (1);
 			}
-
 			void	erase(iterator first, iterator last)
 			{
 				for (;first != last;)
@@ -512,7 +507,7 @@ namespace ft
 				ft::swap(this->compare, other.compare);
 			}
 
-			//OBSERVERS
+//-------------------------------------------------------OBSERVERS-----------------------------------------------------
 
 			key_compare key_comp() const
 			{
@@ -524,7 +519,7 @@ namespace ft
 				return (value_compare(this->compare));
 			}
 
-			//OPERATIONS
+//-------------------------------------------------------OPERATIONS-----------------------------------------------------
 
 			iterator find (const key_type& k)
 			{
@@ -620,7 +615,7 @@ namespace ft
 			Alloc	allocator;
 	};
 
-	//NON-MEMBER FUNCTIONS
+//-------------------------------------------------------RELATIONAL OPERATORS-----------------------------------------------------
 
 	template<class Key, class T, class Compare, class Alloc>
 	bool operator==(const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs)
@@ -667,6 +662,8 @@ namespace ft
 	{
 		return !(rhs < lhs);
 	}
+
+//-------------------------------------------------------SWAP-----------------------------------------------------
 
 	template <class Key, class T, class Compare, class Alloc>
 	void	swap(map<Key,T,Compare,Alloc>& x, map<Key,T,Compare,Alloc>& y)
