@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/30 12:48:03 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/30 14:21:18 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/05/05 12:57:36 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 namespace ft
 {
-	//forard declare stack
+	//forward declare stack
 	template<class T, class Container>
 	class stack;
 
