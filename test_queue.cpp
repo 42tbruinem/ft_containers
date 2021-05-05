@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/30 13:08:51 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/30 20:33:26 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/05/01 17:31:54 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <iostream>
 #include <string>
 #include "Queue.hpp"
+#include <stdlib.h>
 
 template <class Type>
 Type	generate_key()

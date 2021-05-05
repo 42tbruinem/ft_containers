@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/30 13:08:51 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/01/30 14:08:52 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/05/01 17:31:43 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <iostream>
 #include <string>
 #include "Stack.hpp"
+#include <stdlib.h>
 
 template <class Type>
 Type	generate_key()

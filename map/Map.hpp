@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/16 15:13:49 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/04/10 16:02:13 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/10 16:13:30 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@
 # include <memory>
 # include <traits.hpp>
 # include <cstdlib>
-
-//TODO write insert with 'hint'
 
 namespace ft
 {
@@ -114,7 +112,7 @@ namespace ft
 			template <typename, typename, typename, typename>
 			friend class ft::map; //needed to be able to access .ptr in map
 			template <typename, typename, typename, typename>
-			friend class Iterator; //needed for const Iterator conversion
+			friend class Iterator; //needed for non-const to const Iterator conversion
 			typedef ft::node<Value>				node;
 			node *ptr;
 		public:
@@ -268,9 +266,10 @@ namespace ft
 			size_t	len;
 			Compare	compare;
 			Alloc	allocator;
-		public:
+		
 //-------------------------------------------------------VALUE COMPARE-----------------------------------------------------
 
+		public:
 			class value_compare : ft::binary_function<value_type,value_type,bool>
 			{
 				friend class map;

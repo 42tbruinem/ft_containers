@@ -6,14 +6,9 @@
 #    By: tbruinem <tbruinem@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/07/27 16:25:13 by tbruinem      #+#    #+#                  #
-#    Updated: 2021/04/10 13:53:29 by tbruinem      ########   odam.nl          #
+#    Updated: 2021/05/05 12:08:04 by tbruinem      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
-
-#SRC = test_vector.cpp
-SRC =	test_list.cpp \
-		test_vector.cpp \
-		test_map.cpp
 
 VEC_INC = ./vector
 LIST_INC = ./list
@@ -22,11 +17,16 @@ ITER_INC = ./iterator
 UTIL_INC = ./util
 
 CONTAINERS = list vector stack queue map
-INCL = $(CONTAINERS:%=-I ./%)
+INCL := $(CONTAINERS:%=-I ./%)
 
-OBJ = $(SRC:%.cpp=%.o)
+
 CFLAGS = -Wall -Wextra -Werror -pedantic -std=c++98
 CXX = clang++
+
+CONTAINERS := $(CONTAINERS:%=test_%)
+
+SRC :=	$(CONTAINERS:%=%.cpp)
+OBJ :=	$(SRC:%.cpp=%.o)
 
 FT = 0
 
@@ -36,20 +36,19 @@ endif
 
 all: $(CONTAINERS)
 
-# %.o: %.cpp
-# 	@echo "Compiling $@"
-# 	$(CXX) $(CFLAGS) -c $< -o $@ -I . -I $(ITER_INC) -I $(UTIL_INC) -I $(MISC_INC) $(INCL) -D FT=$(FT)
-
-$(CONTAINERS):
+%.o: %.cpp
 	@echo "Compiling $@"
-	$(CXX) $(CFLAGS) test_$@.cpp -o test_$@ -I . -I $(ITER_INC) -I $(UTIL_INC) -I $(MISC_INC) $(INCL) -D FT=$(FT)
+	$(CXX) $(CFLAGS) -c $< -o $@ -I . -I $(ITER_INC) -I $(UTIL_INC) -I $(MISC_INC) $(INCL) -D FT=$(FT)
+
+.SECONDEXPANSION:
+$(CONTAINERS): $$@.o
+	@echo "Compiling $@"
+	$(CXX) $(CFLAGS) $^ -o $@ -I . -I $(ITER_INC) -I $(UTIL_INC) -I $(MISC_INC) $(INCL) -D FT=$(FT)
 
 clean:
-	rm -rf $(OBJ)
+	rm -f $(OBJ)
 
 fclean: clean
-	rm -rf $(CONTAINERS:%=test_%)
+	rm -f $(CONTAINERS)
 
 re: fclean all
-
-.PHONY: $(CONTAINERS)
